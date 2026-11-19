@@ -1,0 +1,1854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#3bb3a8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Health">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Health Monitor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#3bb3a8; --teal-d:#23867d; --teal-dd:#165e58; --teal-l:#dff4f1; --teal-ll:#f1faf8;
+  --bg:#e6f6f3; --card:#ffffff; --ink:#1f2d33; --ink2:#4f6168; --muted:#7f9096; --line:#d5e7e4;
+  --good:#2f9e5b; --warn:#c98a12; --bad:#d0463b; --info:#3a7bd5;
+  --r:16px; --shadow:0 2px 10px rgba(30,90,85,.08);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{font-family:Nunito,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:15px}
+button,input,select,textarea{font:inherit;color:inherit}
+.app{max-width:440px;margin:0 auto;min-height:100%;background:var(--teal-ll);position:relative;display:flex;flex-direction:column;box-shadow:0 0 40px rgba(30,90,85,.12)}
+header.top{position:sticky;top:0;z-index:20;background:var(--teal-l);padding:calc(12px + env(safe-area-inset-top)) 16px 12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line)}
+header.top h1{font-size:18px;margin:0;flex:1;text-align:center;font-weight:800;letter-spacing:.2px}
+.iconbtn{width:38px;height:38px;border-radius:12px;border:0;background:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:var(--shadow)}
+.iconbtn svg{width:20px;height:20px}
+.iconbtn.ghost{background:transparent;box-shadow:none}
+main{flex:1;padding:14px 14px calc(96px + env(safe-area-inset-bottom))}
+.sync{font-size:12px;color:var(--muted);text-align:center;margin:-4px 0 10px}
+.sync.warn{color:var(--warn)}
+/* nav */
+nav.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:440px;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:flex-end;padding:8px 6px calc(8px + env(safe-area-inset-bottom));z-index:30}
+nav.bottom a{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:var(--muted);text-decoration:none;font-weight:700;padding:4px 0}
+nav.bottom a svg{width:22px;height:22px}
+nav.bottom a.on{color:var(--teal-d)}
+nav.bottom a.center .bub{width:54px;height:54px;border-radius:50%;background:var(--teal);display:grid;place-items:center;margin-top:-26px;box-shadow:0 6px 16px rgba(59,179,168,.45);border:4px solid #fff}
+nav.bottom a.center .bub svg{width:28px;height:28px;color:#fff}
+/* cards */
+.card{background:var(--card);border-radius:var(--r);padding:14px;box-shadow:var(--shadow);margin-bottom:12px}
+.card h3{margin:0 0 8px;font-size:15px;font-weight:800;display:flex;align-items:center;gap:8px}
+.card h3 .sp{flex:1}
+.link{color:var(--teal-d);font-weight:700;font-size:13px;background:none;border:0;cursor:pointer;padding:0;text-decoration:none}
+.hello{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.avatar{width:52px;height:52px;border-radius:50%;background:var(--teal);color:#fff;display:grid;place-items:center;font-weight:800;font-size:20px;flex:none}
+.hello .t{font-size:13px;color:var(--muted)} .hello .n{font-size:19px;font-weight:800}
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px}
+.tile{background:#fff;border:2px solid var(--line);border-radius:var(--r);padding:14px 10px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;font-weight:700;font-size:13px;text-align:center}
+.tile:hover{border-color:var(--teal)}
+.tile .ic{width:44px;height:44px;border-radius:14px;background:var(--teal-l);display:grid;place-items:center;color:var(--teal-d)}
+.tile .ic svg{width:24px;height:24px}
+.tile.hot{background:var(--teal);border-color:var(--teal);color:#fff}
+.tile.hot .ic{background:rgba(255,255,255,.2);color:#fff}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.stat{background:var(--teal-ll);border-radius:12px;padding:8px 6px;text-align:center}
+.stat b{display:block;font-size:17px;font-weight:800}
+.stat span{font-size:11px;color:var(--muted)}
+.row{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.row:first-of-type{border-top:0}
+.row .main{flex:1;min-width:0}
+.row .ttl{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .sub{font-size:12.5px;color:var(--muted)}
+.row.click{cursor:pointer}
+.pill{display:inline-block;font-size:11px;font-weight:800;padding:2px 8px;border-radius:999px;background:var(--teal-l);color:var(--teal-dd)}
+.pill.bad{background:#fbe3e1;color:#9b2c23}.pill.warn{background:#fbf0d9;color:#7d5608}.pill.good{background:#dff3e6;color:#1d6b3c}.pill.grey{background:#eef1f2;color:#5b6b70}
+.medic{width:40px;height:40px;border-radius:12px;background:var(--teal-l);display:grid;place-items:center;color:var(--teal-d);flex:none}
+.medic svg{width:22px;height:22px}
+.chk{width:34px;height:34px;border-radius:50%;border:2px solid var(--teal);background:#fff;display:grid;place-items:center;cursor:pointer;flex:none;color:#fff}
+.chk.on{background:var(--teal)}
+.chk svg{width:18px;height:18px}
+.bar{height:8px;background:var(--teal-l);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--teal);border-radius:99px}
+.empty{color:var(--muted);font-size:13px;text-align:center;padding:14px 6px}
+.btn{border:0;background:var(--teal);color:#fff;font-weight:800;border-radius:999px;padding:11px 18px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;letter-spacing:.3px}
+.btn:hover{background:var(--teal-d)}
+.btn.block{width:100%}
+.btn.sec{background:var(--teal-l);color:var(--teal-dd)}
+.btn.out{background:#fff;color:var(--teal-dd);border:2px solid var(--teal)}
+.btn.danger{background:#fbe3e1;color:#9b2c23}
+.btn.sm{padding:7px 12px;font-size:13px}
+.btn[disabled]{opacity:.55;cursor:default}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.seg{display:flex;background:#fff;border-radius:999px;padding:4px;margin-bottom:12px;box-shadow:var(--shadow);overflow-x:auto}
+.seg button{flex:1;border:0;background:none;padding:8px 10px;border-radius:999px;font-weight:800;font-size:13px;color:var(--muted);cursor:pointer;white-space:nowrap}
+.seg button.on{background:var(--teal);color:#fff}
+.search{display:flex;align-items:center;gap:8px;background:#fff;border:2px solid var(--line);border-radius:12px;padding:8px 12px;margin-bottom:10px}
+.search input{border:0;outline:0;flex:1;background:none}
+.search svg{width:18px;height:18px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:2px solid var(--line);background:#fff;border-radius:999px;padding:5px 11px;font-size:13px;font-weight:700;cursor:pointer}
+.chip.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.alert{border-radius:14px;padding:12px 14px;margin-bottom:12px;font-size:14px}
+.alert.bad{background:#fbe3e1;color:#7a221b;border:1px solid #f1bdb7}
+.alert.warn{background:#fbf0d9;color:#6b4a07;border:1px solid #efd9a6}
+.alert.good{background:#dff3e6;color:#1a5c34;border:1px solid #b9e2c7}
+.alert.info{background:var(--teal-l);color:var(--teal-dd);border:1px solid #bfe6e0}
+.alert b{display:block;margin-bottom:3px}
+.small{font-size:12px;color:var(--muted)}
+/* forms */
+.sheet-bg{position:fixed;inset:0;background:rgba(20,45,45,.45);z-index:50;display:flex;align-items:flex-end;justify-content:center;animation:fade .15s}
+.sheet{background:#fff;width:100%;max-width:440px;max-height:92vh;overflow:auto;border-radius:22px 22px 0 0;padding:8px 16px calc(18px + env(safe-area-inset-bottom));animation:up .2s ease-out}
+.sheet .grab{width:44px;height:5px;background:var(--line);border-radius:9px;margin:4px auto 10px}
+.sheet h2{font-size:18px;margin:0 0 12px;font-weight:800;display:flex;align-items:center}
+.sheet h2 span{flex:1}
+@keyframes up{from{transform:translateY(40px);opacity:.4}}
+@keyframes fade{from{opacity:0}}
+label.f{display:block;margin-bottom:10px;font-size:12.5px;font-weight:700;color:var(--ink2)}
+label.f input,label.f select,label.f textarea{display:block;width:100%;margin-top:4px;border:2px solid var(--line);border-radius:12px;padding:9px 11px;background:var(--teal-ll);outline:0;font-weight:600;font-size:14.5px}
+label.f input:focus,label.f select:focus,label.f textarea:focus{border-color:var(--teal);background:#fff}
+label.f textarea{min-height:70px;resize:vertical}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.times{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.times input{width:auto!important;display:inline-block!important;margin:0!important}
+.switch{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.switch:first-of-type{border-top:0}
+.switch .main{flex:1}
+.tog{width:46px;height:28px;border-radius:99px;background:#cfdcdb;position:relative;cursor:pointer;border:0;flex:none}
+.tog::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:.15s}
+.tog.on{background:var(--teal)}
+.tog.on::after{left:21px}
+/* calendar */
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.cal .dh{font-size:11px;font-weight:800;color:var(--muted);padding:4px 0}
+.cal .d{aspect-ratio:1;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;font-size:13px;cursor:pointer;position:relative}
+.cal .d.o{color:#b9c6c8}
+.cal .d.today{outline:2px solid var(--teal)}
+.cal .d.sel{background:var(--teal);color:#fff}
+.cal .dots{display:flex;gap:2px;height:5px;margin-top:2px}
+.cal .dots i{width:5px;height:5px;border-radius:50%}
+.calhead{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.calhead b{flex:1;text-align:center}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--ink2);margin-top:8px}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:middle}
+/* chart */
+.chart{display:flex;align-items:flex-end;gap:8px;height:130px;padding:6px 2px 0;border-bottom:1px solid var(--line);position:relative}
+.chart .col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;position:relative;cursor:default}
+.chart .col .b{width:60%;max-width:26px;background:var(--teal);border-radius:4px 4px 0 0;min-height:2px}
+.chart .col:hover .b{background:var(--teal-d)}
+.chart .col .tip{position:absolute;bottom:calc(100% - 4px);background:var(--ink);color:#fff;font-size:11px;padding:3px 6px;border-radius:6px;white-space:nowrap;opacity:0;pointer-events:none;transform:translateY(-4px)}
+.chart .col:hover .tip{opacity:1}
+.chart .tline{position:absolute;left:0;right:0;border-top:1.5px dashed #9fb7b4;pointer-events:none}
+.chart .tline span{position:absolute;right:0;top:-16px;font-size:10.5px;color:var(--muted)}
+.xl{display:flex;gap:8px;padding:4px 2px 0}
+.xl span{flex:1;text-align:center;font-size:11px;color:var(--muted)}
+/* files */
+.thumb{width:48px;height:48px;border-radius:10px;background:var(--teal-l);display:grid;place-items:center;overflow:hidden;flex:none;color:var(--teal-d)}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.thumb svg{width:24px;height:24px}
+.viewer img{max-width:100%;border-radius:12px;display:block;margin:0 auto 10px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:14px}
+.kv dt{color:var(--muted);font-weight:700}
+.kv dd{margin:0}
+/* toast */
+#toasts{position:fixed;bottom:calc(92px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:calc(100% - 24px);max-width:416px;z-index:80;display:flex;flex-direction:column-reverse;gap:8px;pointer-events:none}
+.toast{pointer-events:auto}
+.toast{background:var(--ink);color:#fff;border-radius:14px;padding:12px 14px;display:flex;gap:10px;align-items:center;box-shadow:0 8px 24px rgba(0,0,0,.25);animation:up .2s}
+.toast .main{flex:1;font-size:14px}
+.toast button{background:var(--teal);color:#fff;border:0;border-radius:99px;padding:6px 10px;font-weight:800;cursor:pointer;font-size:12.5px}
+.toast button.x{background:transparent;color:#cfe;padding:4px 6px}
+.menu .row{cursor:pointer}
+.menu .row svg{width:22px;height:22px;color:var(--teal-d)}
+.disclaimer{font-size:11.5px;color:var(--muted);margin-top:8px;line-height:1.4}
+.spinner{width:16px;height:16px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ocrbox{border:2px dashed var(--teal);border-radius:14px;padding:14px;text-align:center;background:var(--teal-ll);margin-bottom:12px}
+.hidden{display:none!important}
+ol.steps{padding-left:20px;margin:0 0 14px}ol.steps li{margin-bottom:14px;font-size:14px}
+.pill.rep{background:#ece8f8;color:#4b3a8c}
+.prnrow .btn{white-space:nowrap}
+.skipb{border:1.5px solid var(--line);background:#fff;color:var(--muted);border-radius:999px;padding:5px 10px;font-weight:800;font-size:12px;cursor:pointer}
+.skipb:hover{border-color:var(--bad);color:var(--bad)}
+h3 .pill{white-space:nowrap}
+.row.dimmed .ttl{color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(0,0,0,.25)}
+.optcard{border:2px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px}
+.optcard h4{margin:0 0 6px;font-size:14.5px}
+.pill.food{background:#e4f3e9;color:#1d6b3c}.pill.food.pre{background:#fdf0dc;color:#7d4c08}.pill.food.any{background:#eef1f2;color:#4b5b60}
+.pill.foodq{border:1.5px dashed #c98a12;background:#fffaf0;color:#7d5608;cursor:pointer;font:inherit;font-size:11px;font-weight:800}
+.foodbtns{display:grid;grid-template-columns:1fr 1fr;gap:8px}.foodbtns .btn{padding:12px 8px}
+.pill.case{background:#e7eefc;color:#2b4f8f}
+.casehead{background:linear-gradient(135deg,var(--teal),var(--teal-d));color:#fff}
+.casehead h3{color:#fff;font-size:18px}
+.casehead .small{color:rgba(255,255,255,.85)}
+.casehead .stat{background:rgba(255,255,255,.16)}
+.casehead .stat span{color:rgba(255,255,255,.85)}
+.sect{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin:14px 2px 6px}
+.medgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
+.medgrid input,.medgrid select{display:block;margin-top:3px;color:var(--ink);border:2px solid var(--line);border-radius:10px;padding:6px 8px;background:var(--teal-ll);width:100%;font-size:13.5px;font-weight:600}
+.rxmed{border:2px solid var(--line);border-radius:14px;padding:10px;margin-bottom:8px}
+.rxmed.off{opacity:.5}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <button class="iconbtn ghost" id="backBtn" aria-label="Back" style="visibility:hidden"></button>
+    <h1 id="title">Health Monitor</h1>
+    <button class="iconbtn" id="addBtn" aria-label="Quick add"></button>
+  </header>
+  <main id="view"></main>
+  <nav class="bottom" id="nav"></nav>
+</div>
+<div id="toasts"></div>
+<div id="sheetRoot"></div>
+<div id="extRoot"></div>
+
+<script>
+/* ---------------- icons ---------------- */
+const I = {
+  home:'<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>',
+  pill:'<rect x="2.5" y="8.5" width="19" height="7" rx="3.5" transform="rotate(-40 12 12)"/><path d="M9.2 8.6l6.2 7"/>',
+  heart:'<path d="M12 20s-7.5-4.6-9.3-9.2C1.4 7.4 3.6 4 7 4c2 0 3.3 1 5 3 1.7-2 3-3 5-3 3.4 0 5.6 3.4 4.3 6.8C19.5 15.4 12 20 12 20z"/><path d="M3.5 12h4l1.6-3 2.6 6 1.8-3.5h7"/>',
+  folder:'<path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H9l2 2h8.5A1.5 1.5 0 0 1 21 8.5v9A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/>',
+  more:'<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  back:'<path d="M15 5l-7 7 7 7"/>',
+  check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  doctor:'<circle cx="12" cy="7.5" r="4"/><path d="M4 21c.6-4.2 3.8-7 8-7s7.4 2.8 8 7"/><path d="M12 15v4M10 17h4"/>',
+  hospital:'<path d="M4 21V9l8-5 8 5v12z"/><path d="M12 10v6M9 13h6"/>',
+  thermo:'<path d="M10 14.5V5a2 2 0 1 1 4 0v9.5a4 4 0 1 1-4 0z"/><path d="M12 9v7"/>',
+  cal:'<rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+  file:'<path d="M6 3h8l5 5v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/>',
+  xray:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M12 6v12M9 8.5h6M8.5 11h7M9 13.5h6"/>',
+  lab:'<path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.8 3h10.4A2 2 0 0 0 19 18l-5-9V3"/><path d="M7.5 15h9"/>',
+  note:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+  food:'<path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M16 3c-2 1.5-3 4-3 7h3v11"/>',
+  run:'<circle cx="14" cy="4.5" r="2"/><path d="M5 21l4-6 3 2 1-5 4 3h3M8 11l3-3 4 1"/>',
+  moon:'<path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/>',
+  target:'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/>',
+  water:'<path d="M12 3s6 6.6 6 11a6 6 0 0 1-12 0c0-4.4 6-11 6-11z"/>',
+  user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c.6-4.2 3.8-7 8-7s7.4 2.8 8 7"/>',
+  bell:'<path d="M6 16V11a6 6 0 1 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/>',
+  search:'<circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/>',
+  scan:'<path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M7 12h10"/>',
+  sick:'<circle cx="12" cy="12" r="9"/><path d="M8.5 10h.01M15.5 10h.01M8.5 16c1-1 2.2-1.5 3.5-1.5s2.5.5 3.5 1.5"/>',
+  edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/>',
+  trash:'<path d="M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13"/>',
+  sparkle:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/>',
+  copy:'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/>',
+  ext:'<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>'
+};
+const ic = (n, extra='') => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" ${extra}>${I[n]||''}</svg>`;
+
+/* ---------------- utils ---------------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+const pad = n => String(n).padStart(2,'0');
+const iso = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const today = () => iso(new Date());
+const parseD = s => { const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); };
+const addDays = (s, n) => { const d = parseD(s); d.setDate(d.getDate()+n); return iso(d); };
+const daysBetween = (a, b) => Math.round((parseD(b) - parseD(a)) / 864e5);
+const fmtD = s => s ? parseD(s).toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'}) : '';
+const fmtDs = s => s ? parseD(s).toLocaleDateString(undefined,{day:'numeric',month:'short'}) : '';
+const fmtT = t => { if(!t) return ''; const [h,m] = t.split(':').map(Number); const d = new Date(); d.setHours(h,m); return d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}); };
+const nowHM = () => { const d = new Date(); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+const hmToMin = t => { const [h,m] = (t||'0:0').split(':').map(Number); return h*60+m; };
+
+/* ---------------- store (on this device: IndexedDB) ---------------- */
+const R = new Map();            // id -> record
+let ASSETS = null, SAMPLE = null;
+let storeMode = 'loading';      // loading | device | memory
+const IDB = {
+  db: null,
+  open(){ return new Promise((res, rej) => { const r = indexedDB.open('health-monitor', 1); r.onupgradeneeded = () => { const d = r.result; if (!d.objectStoreNames.contains('records')) d.createObjectStore('records', {keyPath:'id'}); if (!d.objectStoreNames.contains('blobs')) d.createObjectStore('blobs'); }; r.onsuccess = () => { IDB.db = r.result; res(r.result); }; r.onerror = () => rej(r.error); }); },
+  req(store, mode, fn){ return new Promise((res, rej) => { const t = IDB.db.transaction(store, mode); const q = fn(t.objectStore(store)); t.oncomplete = () => res(q && q.result); t.onerror = () => rej(t.error); t.onabort = () => rej(t.error); }); },
+  all(){ return IDB.req('records', 'readonly', s => s.getAll()); },
+  put(rec){ return IDB.req('records', 'readwrite', s => s.put(rec)); },
+  del(id){ return IDB.req('records', 'readwrite', s => s.delete(id)); },
+  putBlob(id, blob){ return IDB.req('blobs', 'readwrite', s => s.put(blob, id)); },
+  getBlob(id){ return IDB.req('blobs', 'readonly', s => s.get(id)); },
+  delBlob(id){ return IDB.req('blobs', 'readwrite', s => s.delete(id)); },
+  clear(){ return Promise.all([IDB.req('records', 'readwrite', s => s.clear()), IDB.req('blobs', 'readwrite', s => s.clear())]); }
+};
+
+function list(kind){ return [...R.values()].filter(r => r.kind === kind); }
+function get(id){ return R.get(id); }
+function single(kind, defaults){ const id = kind + '~me'; return R.get(id) || {id, kind, ...defaults}; }
+function day(date){ const id = 'day~' + date; return R.get(id) || {id, kind:'day', date, water:0, doses:{}}; }
+
+function persistErr(e){ if (e && /quota/i.test(e.name + e.message)) toast('Your phone is out of space for this app — delete some large records or free up storage.'); }
+function save(rec){
+  rec.updatedAt = Date.now();
+  const copy = JSON.parse(JSON.stringify(rec));
+  R.set(rec.id, copy);
+  if (storeMode === 'device') IDB.put(copy).catch(persistErr);
+  render();
+  return rec;
+}
+function remove(id){
+  const r = R.get(id);
+  R.delete(id);
+  if (storeMode === 'device') { IDB.del(id).catch(persistErr); if (r && r.blobId) IDB.delBlob(r.blobId).catch(()=>{}); }
+  render();
+}
+async function initStore(){
+  render();
+  try {
+    await IDB.open();
+    (await IDB.all()).forEach(r => R.set(r.id, r));
+    // one-time move of anything kept by an earlier version in localStorage
+    try { const raw = localStorage.getItem('hm.records.v1'); if (raw) { for (const r of JSON.parse(raw)) if (!R.has(r.id)) { R.set(r.id, r); await IDB.put(r); } localStorage.removeItem('hm.records.v1'); } } catch(e) {}
+    storeMode = 'device';
+    if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(()=>{});
+  } catch(e) { storeMode = 'memory'; toast('This browser won\'t let the app store data — entries will be lost when you close it. Try opening it in Safari or Chrome (not a private window).', null, 0); }
+  render();
+}
+
+/* ---------------- files kept on the device ---------------- */
+const BLOB_URLS = new Map();    // blobId -> object URL
+const BLOB_LOADING = new Set();
+function fileUrl(f){
+  if (f.dataUrl) return f.dataUrl;
+  if (!f.blobId) return '';
+  if (BLOB_URLS.has(f.blobId)) return BLOB_URLS.get(f.blobId);
+  if (storeMode === 'device' && !BLOB_LOADING.has(f.blobId)) {
+    BLOB_LOADING.add(f.blobId);
+    IDB.getBlob(f.blobId).then(b => { if (b) { BLOB_URLS.set(f.blobId, URL.createObjectURL(b)); render(); const v = document.querySelector('.viewer[data-fid="' + f.id + '"]'); if (v) ACT.viewFile(f.id); } }).catch(()=>{});
+  }
+  return '';
+}
+
+/* ---------------- Claude app bridge ----------------
+   No API key lives in this app. Anything that needs Claude is sent to the
+   Claude app on the phone; the reply is pasted back here. */
+function extractJson(t){
+  const s = String(t||'').replace(/```(?:json)?/gi, '');
+  const a = s.indexOf('{'), b = s.lastIndexOf('}');
+  if (a < 0 || b <= a) throw {code:'bad_reply'};
+  try { return JSON.parse(s.slice(a, b + 1)); } catch(e) { throw {code:'bad_reply'}; }
+}
+function askClaudeApp(prompt, {images = [], json = false, title = 'Ask Claude'} = {}){
+  return new Promise((resolve, reject) => {
+    const root = document.getElementById('extRoot');
+    const file = images[0] ? (images[0] instanceof File ? images[0] : new File([images[0]], 'photo.jpg', {type: images[0].type || 'image/jpeg'})) : null;
+    const canShareFile = !!(file && navigator.canShare && navigator.canShare({files:[file]}));
+    const canShareText = !!navigator.share;
+    const link = 'https://claude.ai/new?q=' + encodeURIComponent(prompt.length > 6000 ? prompt.slice(0, 6000) : prompt);
+    root.innerHTML = `<div class="sheet-bg" style="z-index:70"><div class="sheet"><div class="grab"></div><h2><span>${esc(title)}</span><button class="iconbtn ghost" data-x aria-label="Close">✕</button></h2>
+      <ol class="steps">
+        <li><b>Copy the instructions</b><div class="btns" style="margin-top:6px"><button class="btn sm" data-copy>${ic('copy','style="width:15px;height:15px"')} Copy instructions</button></div></li>
+        <li><b>${file ? 'Send the photo and instructions to Claude' : 'Paste them into Claude'}</b>
+          <div class="btns" style="margin-top:6px">${canShareFile ? `<button class="btn sm" data-share>Share photo to Claude</button>` : canShareText && !file ? `<button class="btn sm" data-sharetext>Share to Claude</button>` : ''}${!file ? `<a class="btn sm out" href="${esc(link)}" target="_blank" rel="noopener">Open Claude ${ic('ext','style="width:14px;height:14px"')}</a>` : ''}</div>
+          <div class="small" style="margin-top:4px">${file ? (canShareFile ? 'Pick the Claude app in the share menu, then paste the instructions into the message.' : 'Open the Claude app, attach the same photo, and paste the instructions.') : 'Open the Claude app and paste the instructions as a new message.'}</div></li>
+        <li><b>${json ? 'Copy Claude\'s whole reply and paste it here' : 'Read Claude\'s answer in the app'}</b>${json ? `<textarea data-reply placeholder="Paste Claude's reply here…" style="width:100%;min-height:110px;margin-top:6px;border:2px solid var(--line);border-radius:12px;padding:9px;background:var(--teal-ll);font-size:13px"></textarea><div class="small" data-err style="color:var(--bad)"></div>` : `<div class="small" style="margin-top:4px">Optional: paste the answer below to keep it with this record.</div><textarea data-reply placeholder="(optional)" style="width:100%;min-height:70px;margin-top:6px;border:2px solid var(--line);border-radius:12px;padding:9px;background:var(--teal-ll);font-size:13px"></textarea>`}</li>
+      </ol>
+      <div class="btns"><button class="btn" data-use style="flex:1">${json ? 'Use this reply' : 'Done'}</button><button class="btn sec" data-x>Cancel</button></div></div></div>`;
+    const close = () => { root.innerHTML = ''; };
+    root.querySelectorAll('[data-x]').forEach(x => x.onclick = () => { close(); reject({code:'cancelled'}); });
+    root.querySelector('[data-copy]').onclick = async e => { try { await navigator.clipboard.writeText(prompt); e.target.closest('button').innerHTML = '✓ Copied'; } catch(_) { const ta = document.createElement('textarea'); ta.value = prompt; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); e.target.closest('button').innerHTML = '✓ Copied'; } catch(__) { toast('Couldn\'t copy automatically.'); } ta.remove(); } };
+    const sh = root.querySelector('[data-share]'); if (sh) sh.onclick = async () => { try { await navigator.clipboard.writeText(prompt); } catch(_) {} try { await navigator.share({files:[file], text: prompt}); } catch(_) {} };
+    const st = root.querySelector('[data-sharetext]'); if (st) st.onclick = async () => { try { await navigator.share({text: prompt}); } catch(_) {} };
+    root.querySelector('[data-use]').onclick = () => {
+      const txt = root.querySelector('[data-reply]').value.trim();
+      if (!json) { close(); resolve({text: txt}); return; }
+      try { const v = extractJson(txt); close(); resolve(v); }
+      catch(e) { root.querySelector('[data-err]').textContent = txt ? 'That doesn\'t look like the full reply — copy everything Claude wrote (it starts with { and ends with }).' : 'Paste Claude\'s reply first.'; }
+    };
+  });
+}
+SAMPLE = Object.assign(async (prompt, opts = {}) => { const r = await askClaudeApp(prompt, {title: opts.title || 'Ask Claude'}); if (opts.onText && r.text) opts.onText({text: r.text}); return {text: r.text}; },
+  { json: (prompt, opts = {}) => askClaudeApp(prompt, {json: true, images: opts.images || [], title: opts.title || 'Ask Claude'}), limits: async () => ({images: true}) });
+
+/* ---------------- toasts & sheets ---------------- */
+function toast(msg, action, ms=6000){
+  const el = document.createElement('div'); el.className = 'toast';
+  el.innerHTML = `<div class="main">${msg}</div>${action ? `<button class="act">${esc(action.label)}</button>` : ''}<button class="x" aria-label="Dismiss">✕</button>`;
+  $('#toasts').appendChild(el);
+  const kill = () => el.remove();
+  el.querySelector('.x').onclick = kill;
+  if (action) el.querySelector('.act').onclick = () => { action.fn(); kill(); };
+  if (ms) setTimeout(kill, ms);
+}
+let sheetOnClose = null;
+function openSheet(title, html, onMount){
+  $('#sheetRoot').innerHTML = `<div class="sheet-bg"><div class="sheet" role="dialog" aria-label="${esc(title)}"><div class="grab"></div><h2><span>${esc(title)}</span><button class="iconbtn ghost" data-close aria-label="Close">✕</button></h2><div class="sbody">${html}</div></div></div>`;
+  const bg = $('#sheetRoot .sheet-bg');
+  bg.addEventListener('click', e => { if (e.target === bg || e.target.closest('[data-close]')) closeSheet(); });
+  onMount && onMount($('#sheetRoot .sbody'));
+  wireCase($('#sheetRoot .sbody'));
+}
+function closeSheet(){ $('#sheetRoot').innerHTML = ''; }
+function confirmSheet(msg, yes){
+  openSheet('Are you sure?', `<p>${msg}</p><div class="btns"><button class="btn danger" id="cy">Delete</button><button class="btn sec" data-close>Cancel</button></div>`, b => b.querySelector('#cy').onclick = () => { closeSheet(); yes(); });
+}
+
+/* form helper: fields = [{k,label,type,opts,req,ph,half}] */
+function fieldHtml(f, v){
+  const val = v ?? f.def ?? '';
+  const req = f.req ? 'required' : '';
+  let inner;
+  if (f.type === 'select') inner = `<select name="${f.k}" ${req}>${f.opts.map(o => { const [ov, ol] = Array.isArray(o) ? o : [o, o]; return `<option value="${esc(ov)}" ${String(ov)===String(val)?'selected':''}>${esc(ol)}</option>`; }).join('')}</select>`;
+  else if (f.type === 'textarea') inner = `<textarea name="${f.k}" placeholder="${esc(f.ph||'')}">${esc(val)}</textarea>`;
+  else inner = `<input name="${f.k}" type="${f.type||'text'}" value="${esc(val)}" placeholder="${esc(f.ph||'')}" ${f.step?`step="${f.step}"`:''} ${f.min!=null?`min="${f.min}"`:''} ${f.max!=null?`max="${f.max}"`:''} ${f.list?`list="${f.list}"`:''} ${req}>`;
+  return `<label class="f">${esc(f.label)}${f.req?' *':''}${inner}</label>`;
+}
+function formHtml(fields, rec={}){
+  let out = '', i = 0;
+  while (i < fields.length) {
+    const f = fields[i];
+    if (f.half && fields[i+1] && fields[i+1].half) { out += `<div class="grid2">${fieldHtml(f, rec[f.k])}${fieldHtml(fields[i+1], rec[fields[i+1].k])}</div>`; i += 2; }
+    else { out += fieldHtml(f, rec[f.k]); i++; }
+  }
+  return out;
+}
+function readForm(form){ const o = {}; new FormData(form).forEach((v, k) => o[k] = typeof v === 'string' ? v.trim() : v); return o; }
+function datalists(){
+  const docs = new Set(), fac = new Set();
+  [...R.values()].forEach(r => { if (r.doctor) docs.add(r.doctor); if (r.facility) fac.add(r.facility); });
+  return `<datalist id="dl-doc">${[...docs].map(d=>`<option value="${esc(d)}">`).join('')}</datalist><datalist id="dl-fac">${[...fac].map(d=>`<option value="${esc(d)}">`).join('')}</datalist>`;
+}
+
+/* ---------------- domain helpers ---------------- */
+function medActiveOn(m, d){ return (!m.start || m.start <= d) && (!m.end || m.end >= d) && !m.stopped; }
+/* repeat: {type:'daily'} | {type:'interval', every} | {type:'weekly', days:[0-6], every} | {type:'monthly', day} | {type:'prn', max, gap} */
+const WD_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const WD_ORDER = [1,2,3,4,5,6,0];
+const ordinal = n => n + (n%10===1&&n!==11?'st':n%10===2&&n!==12?'nd':n%10===3&&n!==13?'rd':'th');
+function repOf(m){ return m.repeat && m.repeat.type ? m.repeat : {type:'daily'}; }
+function isPrn(m){ return repOf(m).type === 'prn'; }
+function lastDayOfMonth(d){ const x = parseD(d); return new Date(x.getFullYear(), x.getMonth()+1, 0).getDate(); }
+function medDueOn(m, d){
+  if (!medActiveOn(m, d)) return false;
+  const r = repOf(m), start = m.start || d;
+  if (r.type === 'prn') return false;
+  if (r.type === 'interval') return daysBetween(start, d) % Math.max(1, +r.every || 1) === 0;
+  if (r.type === 'weekly') {
+    const days = (r.days && r.days.length) ? r.days.map(Number) : [parseD(start).getDay()];
+    if (!days.includes(parseD(d).getDay())) return false;
+    const every = Math.max(1, +r.every || 1); if (every === 1) return true;
+    const monday = x => { const y = parseD(x); y.setDate(y.getDate() - ((y.getDay()+6)%7)); return iso(y); };
+    return Math.floor(daysBetween(monday(start), monday(d)) / 7) % every === 0;
+  }
+  if (r.type === 'monthly') { const want = Math.max(1, Math.min(31, +r.day || parseD(start).getDate())); return +d.slice(8) === Math.min(want, lastDayOfMonth(d)); }
+  return true;
+}
+function nextDue(m, from){ let d = from || today(); for (let i = 0; i < 400; i++, d = addDays(d, 1)) { if (m.end && d > m.end) return null; if (medDueOn(m, d)) return d; } return null; }
+function repeatLabel(m){
+  const r = repOf(m);
+  if (r.type === 'interval') return +r.every === 2 ? 'Every other day' : `Every ${r.every} days`;
+  if (r.type === 'weekly') { const days = (r.days && r.days.length ? r.days : [parseD(m.start||today()).getDay()]).map(Number); const names = WD_ORDER.filter(x => days.includes(x)).map(x => WD_SHORT[x]).join(', '); return (+r.every > 1 ? `Every ${r.every} weeks` : 'Weekly') + ' · ' + names; }
+  if (r.type === 'monthly') return `Monthly · ${ordinal(+r.day || parseD(m.start||today()).getDate())}`;
+  if (r.type === 'prn') return 'As needed' + (r.max ? ` · max ${r.max}/day` : '');
+  return 'Every day';
+}
+/* reads "once a week", "every Monday", "alternate days", "monthly", "SOS / as needed" … */
+function repeatFromText(t, start){
+  const s = ' ' + String(t||'').toLowerCase() + ' ';
+  if (!s.trim()) return null;
+  if (/\b(prn|sos|s\.o\.s|as needed|as required|when needed|if needed|when required|if required|only if|only when|when necessary|if necessary)\b/.test(s)) return {type:'prn'};
+  if (/\b(alternate days?|every other day|every second day|eod|qod|every 2(nd)? days?)\b/.test(s)) return {type:'interval', every:2};
+  let m = s.match(/every (\d{1,2}) days?/); if (m && +m[1] > 1) return {type:'interval', every:+m[1]};
+  const names = [['sun(day)?',0],['mon(day)?',1],['tue(s|sday)?',2],['wed(nesday)?',3],['thu(rs|rsday)?',4],['fri(day)?',5],['sat(urday)?',6]];
+  const days = names.filter(([n]) => new RegExp('\\b' + n + 's?\\b').test(s)).map(([,i]) => i);
+  const every = /\b(every (2|two|other|second) weeks?|fortnight(ly)?|biweekly)\b/.test(s) ? 2 : 1;
+  m = s.match(/\b(\d|two|three|four) times (a|per|each) week\b/);
+  if (m) { const n = {two:2,three:3,four:4}[m[1]] || +m[1]; return {type:'weekly', days: n===2?[1,4]:n===3?[1,3,5]:n===4?[1,2,4,5]:[parseD(start||today()).getDay()], every, auto: ![2,3,4].includes(n)}; }
+  if (days.length && (days.length >= 2 || /\b(every|each|on|weekly|week)\b/.test(s) || /\b(sun|mon|tues|wednes|thurs|fri|satur)day\b/.test(s))) return {type:'weekly', days, every};
+  if (every === 2 || /\b(once (a|per|every) week|weekly|every week|each week|qw|q\.w\.|qwk)\b/.test(s)) return {type:'weekly', days: days.length ? days : [parseD(start||today()).getDay()], every, auto: !days.length};
+  m = s.match(/\b(once (a|per|every) month|monthly|every month|each month)\b/);
+  if (m) { const dm = s.match(/\b(\d{1,2})(st|nd|rd|th)\b/); return {type:'monthly', day: dm ? +dm[1] : parseD(start||today()).getDate(), auto: !dm}; }
+  return null;
+}
+function normRepeat(r, start){
+  if (!r || typeof r !== 'object' || !r.type) return null;
+  const t = String(r.type).toLowerCase();
+  if (t === 'prn') return {type:'prn', max: +r.maxPerDay || +r.max || '', gap: +r.minHoursApart || +r.gap || ''};
+  if (t === 'interval') { const e = +r.everyDays || +r.every; return e > 1 ? {type:'interval', every:e} : null; }
+  if (t === 'weekly') { const map = {sun:0,mon:1,tue:2,wed:3,thu:4,fri:5,sat:6}; const days = (Array.isArray(r.weekdays) ? r.weekdays : r.days || []).map(x => typeof x === 'number' ? x : map[String(x).toLowerCase().slice(0,3)]).filter(x => x >= 0 && x <= 6); return {type:'weekly', days: days.length ? days : [parseD(start||today()).getDay()], every: Math.max(1, +r.everyWeeks || +r.every || 1), auto: !days.length}; }
+  if (t === 'monthly') return {type:'monthly', day: Math.max(1, Math.min(31, +r.dayOfMonth || +r.day || parseD(start||today()).getDate())), auto: !(+r.dayOfMonth || +r.day)};
+  return null;
+}
+function dosesFor(d){
+  const out = [];
+  list('med').filter(m => medDueOn(m, d)).forEach(m => (m.times||[]).forEach(t => out.push({med:m, time:t, key:m.id+'@'+t})));
+  return out.sort((a,b) => a.time.localeCompare(b.time));
+}
+/* dose log: day.doses[key] = {s:'taken'|'skipped'|'missed', at, reason}; older entries are a bare timestamp (= taken) */
+const MISSED_AFTER_MIN = 180; // an unrecorded dose counts as missed this long after its time
+function doseRec(d, key){ const v = (day(d).doses||{})[key]; if (!v) return null; return typeof v === 'number' ? {s:'taken', at:v} : v; }
+function isTaken(d, key){ const r = doseRec(d, key); return !!r && r.s === 'taken'; }
+function isRecorded(d, key){ return !!doseRec(d, key); }
+function doseState(d, x){
+  const r = doseRec(d, x.key); if (r) return r.s;
+  const t = today();
+  if (d < t) return 'missed';
+  if (d > t) return 'upcoming';
+  const late = hmToMin(nowHM()) - hmToMin(x.time);
+  return late >= MISSED_AFTER_MIN ? 'missed' : late >= 0 ? 'due' : 'upcoming';
+}
+function setDose(d, key, val){
+  const rec = day(d); rec.doses = {...(rec.doses||{})};
+  if (val) rec.doses[key] = val; else delete rec.doses[key];
+  save(rec);
+}
+function toggleDose(d, key){ setDose(d, key, isRecorded(d, key) ? null : {s:'taken', at: Date.now()}); }
+/* mark every unrecorded dose of these medicines from `from` until now as taken (for prescriptions added after starting) */
+function backfillDoses(medIds, from, to){
+  const t = today(), now = nowHM(); let n = 0;
+  const last = to && to < t ? to : t;
+  for (let d = from; d <= last; d = addDays(d, 1)) {
+    const rec = day(d), doses = {...(rec.doses||{})}; let changed = false;
+    medIds.map(get).filter(Boolean).forEach(m => {
+      if (!medDueOn(m, d)) return;
+      (m.times||[]).forEach(tm => {
+        const key = m.id + '@' + tm;
+        if (doses[key] || (d === t && tm > now)) return;
+        const at = parseD(d); const [hh, mm] = tm.split(':').map(Number); at.setHours(hh, mm, 0, 0);
+        doses[key] = {s:'taken', at: at.getTime(), bf: true}; changed = true; n++;
+      });
+    });
+    if (changed) save({...rec, doses});
+    if (daysBetween(from, d) > 400) break;
+  }
+  return n;
+}
+function startPickerHtml(def, rxDate){
+  return `<div class="sect">When did you start taking them?</div>
+  <div class="chips" data-stchips><button type="button" class="chip" data-st="today">Today</button>${rxDate && rxDate < today() ? `<button type="button" class="chip" data-st="rx">Prescription date · ${fmtDs(rxDate)}</button>` : ''}<button type="button" class="chip" data-st="other">Another day</button></div>
+  <label class="f" style="margin-top:8px">Start date<input type="date" name="start" value="${def}" max="${today()}" data-stinput></label>
+  ${backfillRowHtml(true, 'these')}`;
+}
+function backfillRowHtml(checked, word='this'){
+  return `<label class="switch hidden" data-bfrow style="padding-top:0;cursor:pointer"><input type="checkbox" name="backfill" value="1" ${checked?'checked':''} style="width:20px;height:20px;accent-color:var(--teal)"><div class="main"><div style="font-weight:700">I've already been taking ${word} since then</div><div class="small" data-bftxt></div></div></label>`;
+}
+function wireStart(root, rxDate){
+  const inp = root.querySelector('[data-stinput]') || root.querySelector('[name=start]'); if (!inp) return;
+  const row = root.querySelector('[data-bfrow]'), txt = root.querySelector('[data-bftxt]');
+  const upd = () => {
+    const v = inp.value, t = today();
+    root.querySelectorAll('[data-st]').forEach(c => c.classList.toggle('on', (c.dataset.st === 'today' && v === t) || (c.dataset.st === 'rx' && v === rxDate) || (c.dataset.st === 'other' && v && v !== t && v !== rxDate)));
+    if (row) { const past = v && v < t; row.classList.toggle('hidden', !past); if (past && txt) txt.textContent = `Doses from ${fmtD(v)} until now will be marked as taken (${daysBetween(v, t)} day${daysBetween(v, t)===1?'':'s'} ago). Untick if you'd rather mark them yourself — you can still change any dose later.`; }
+  };
+  root.querySelectorAll('[data-st]').forEach(c => c.onclick = () => { if (c.dataset.st === 'today') inp.value = today(); else if (c.dataset.st === 'rx') inp.value = rxDate; else { inp.focus(); try { inp.showPicker(); } catch(e) {} } upd(); });
+  inp.addEventListener('input', upd); inp.addEventListener('change', upd); upd();
+}
+const SLOTS = [['morning','Morning','08:00'],['noon','Noon / lunch','13:00'],['afternoon','Afternoon','14:00'],['evening','Evening / dinner','18:00'],['night','Night','21:00'],['bedtime','Bedtime','22:00']];
+const DEF_SLOT_TIMES = Object.fromEntries(SLOTS.map(([k,,t]) => [k, t]));
+const DEF_FREQ_SLOTS = {1:['morning'], 2:['morning','night'], 3:['morning','afternoon','night'], 4:['morning','noon','evening','bedtime']};
+function settings(){
+  const s = single('settings', {});
+  return {...s, kind:'settings', id:'settings~me',
+    targets: {cal:2000, water:8, sleep:8, exercise:30, ...(s.targets||{})},
+    remind: {meds:true, water:false, waterEvery:2, sleep:false, bedtime:'22:30', ...(s.remind||{})},
+    doseTimes: {...DEF_SLOT_TIMES, ...(s.doseTimes||{})},
+    freqSlots: {...DEF_FREQ_SLOTS, ...(s.freqSlots||{})}};
+}
+function slotTime(k){ return settings().doseTimes[k] || DEF_SLOT_TIMES[k]; }
+function freqTimes(n){ return [...new Set((settings().freqSlots[n] || DEF_FREQ_SLOTS[n] || ['morning']).map(slotTime))].sort(); }
+function addHours(hm, h){ const m = (hmToMin(hm) + h*60) % 1440; return `${pad(Math.floor(m/60))}:${pad(m%60)}`; }
+function profile(){ return single('profile', {name:'', dob:'', sex:'', blood:'', height:'', weight:'', allergies:'', conditions:'', ecName:'', ecPhone:''}); }
+function upcomingVisits(){ const t = today(); return list('visit').filter(v => v.date >= t).sort((a,b)=> (a.date+(a.time||'')).localeCompare(b.date+(b.time||''))); }
+function pastVisits(){ const t = today(); return list('visit').filter(v => v.date < t).sort((a,b)=> b.date.localeCompare(a.date)); }
+function activeIllness(){ return list('illness').filter(i => !i.end).sort((a,b)=>b.start.localeCompare(a.start)); }
+
+/* ---------------- cases ---------------- */
+const CASE_KINDS = ['visit','illness','file','med'];
+function caseItems(cid){ return [...R.values()].filter(r => r.caseId === cid && CASE_KINDS.includes(r.kind)); }
+function sortedCases(){ return list('case').sort((a,b) => ((a.status==='closed')-(b.status==='closed')) || (b.created||'').localeCompare(a.created||'')); }
+function caseOf(r){ return r && r.caseId ? get(r.caseId) : null; }
+let HIDE_CASE_TAG = false;
+const CASE_COLORS = [['#e3ecfb','#244b8a'],['#f3e6f7','#6d2f82'],['#fdebdc','#8a4512'],['#fbe3ea','#8c2343'],['#e2f3e7','#1f6638'],['#efe8dc','#5f4a26'],['#e2f1f6','#1d5a6d'],['#f6f0d6','#6b5a0d']];
+function caseColor(c){ const ids = list('case').sort((a,b)=>(a.created||'').localeCompare(b.created||'') || a.id.localeCompare(b.id)).map(x=>x.id); const i = ids.indexOf(c.id); return CASE_COLORS[(i < 0 ? 0 : i) % CASE_COLORS.length]; }
+function caseBubble(c){ if (!c) return ''; const [bg, fg] = caseColor(c); return `<span class="pill case" style="background:${bg};color:${fg}">${ic('folder','style="width:11px;height:11px;vertical-align:-1px"')} ${esc(c.title)}</span>`; }
+function caseTag(r){ const c = caseOf(r); return c && !HIDE_CASE_TAG ? `<div class="sub">${caseBubble(c)}</div>` : ''; }
+function caseField(rec, opt={}){
+  const cur = rec.caseId || (opt.defNew ? '__new' : '');
+  const opts = [['', '— not part of a case —'], ...sortedCases().map(c => [c.id, c.title + (c.status==='closed' ? ' (closed)' : '')]), ['__new', '+ Start a new case…']];
+  return `<label class="f">Case file<select name="caseId" data-casesel>${opts.map(([v,l]) => `<option value="${esc(v)}" ${v===cur?'selected':''}>${esc(l)}</option>`).join('')}</select></label>
+  <label class="f ${cur==='__new'?'':'hidden'}" data-newcase>New case name<input name="newCase" value="${esc(opt.name||'')}" placeholder="e.g. Flu, Knee injury, Pregnancy"></label>`;
+}
+function wireCase(root){
+  root.querySelectorAll('[data-casesel]').forEach(s => { const n = s.closest('form, .sbody').querySelector('[data-newcase]'); s.onchange = () => n && n.classList.toggle('hidden', s.value !== '__new'); });
+}
+function resolveCase(v, fallbackName, date){
+  if (v.caseId === '__new') {
+    const c = {kind:'case', id:'case~'+uid(), title: v.newCase || fallbackName || 'New case', created: date || today(), status:'open', notes:''};
+    save(c); v.caseId = c.id;
+  }
+  delete v.newCase;
+  return v;
+}
+function openCase(id){ UI.caseId = id; try { sessionStorage.setItem('hm.case', id); } catch(e) {} closeSheet(); go('case'); }
+document.addEventListener('click', e => { const el = e.target.closest('[data-opencase]'); if (el) { e.preventDefault(); e.stopPropagation(); openCase(el.dataset.opencase); } }, true);
+function caseKv(r){ const c = caseOf(r); return c ? `<dt>Case</dt><dd><button class="link" data-opencase="${c.id}">${ic('folder','style="width:13px;height:13px;vertical-align:-2px"')} ${esc(c.title)}</button></dd>` : ''; }
+
+/* ---------------- routing ---------------- */
+const ROUTES = {
+  home:{t:'Health Monitor', nav:'home'}, meds:{t:'Prescriptions', nav:'meds'}, health:{t:'General Health', nav:'health'},
+  files:{t:'Records', nav:'files'}, more:{t:'More', nav:'more'}, sick:{t:'Sick Reporting', nav:'more', back:'more'},
+  visits:{t:'Doctor Visits', nav:'more', back:'more'}, calendar:{t:'Calendar', nav:'more', back:'more'},
+  profile:{t:'My Profile', nav:'more', back:'more'}, case:{t:'Case File', nav:'files', back:'files'}, reminders:{t:'Settings', nav:'more', back:'more'}
+};
+let route = 'home';
+const UI = { medCase:'all', recTab:'records', caseId: (()=>{ try { return sessionStorage.getItem('hm.case'); } catch(e){ return null; } })(), medTab:'today', healthTab:'goals', fileCat:'All', fileQ:'', calMonth: today().slice(0,7), calSel: today(), visitTab:'upcoming' };
+function go(r){ if (location.hash.slice(1) !== r) location.hash = r; else { route = r; render(); } window.scrollTo(0,0); }
+window.addEventListener('hashchange', () => { const r = location.hash.slice(1); route = ROUTES[r] ? r : 'home'; render(); window.scrollTo(0,0); });
+
+function renderNav(){
+  const n = ROUTES[route].nav;
+  const items = [['home','Home','home'],['meds','Meds','pill'],['health','Health','heart',true],['files','Records','folder'],['more','More','more']];
+  $('#nav').innerHTML = items.map(([r,l,i,c]) => c
+    ? `<a href="#${r}" class="center ${n===r?'on':''}"><span class="bub">${ic(i)}</span>${l}</a>`
+    : `<a href="#${r}" class="${n===r?'on':''}">${ic(i)}${l}</a>`).join('');
+}
+function render(){
+  const R0 = ROUTES[route];
+  $('#title').textContent = R0.t;
+  const bb = $('#backBtn'); bb.innerHTML = ic('back'); bb.style.visibility = R0.back ? 'visible' : 'hidden'; bb.onclick = () => go(R0.back);
+  $('#addBtn').innerHTML = ic('plus'); $('#addBtn').onclick = quickAdd;
+  renderNav();
+  const v = $('#view');
+  const sync = storeMode === 'device' ? `<div class="sync">✓ Saved on this phone only</div>`
+    : storeMode === 'loading' ? `<div class="sync">Loading your data…</div>`
+    : `<div class="sync warn">⚠ Not saving — this browser blocks storage</div>`;
+  v.innerHTML = sync + (VIEWS[route] || VIEWS.home)();
+  bindView(v);
+  if (route === 'reminders') wireDoseForm(v);
+  if (route === 'more' && navigator.storage && navigator.storage.estimate) navigator.storage.estimate().then(e => { const u = document.getElementById('usage'); if (u) u.innerHTML = `Using <b>${(e.usage/1048576).toFixed(1)} MB</b> on this phone.`; }).catch(()=>{});
+}
+// event delegation via data-act
+const ACT = {};
+function bindView(root){
+  root.querySelectorAll('[data-act]').forEach(el => {
+    const [name, ...args] = el.dataset.act.split('|');
+    el.addEventListener(el.tagName === 'INPUT' && el.type !== 'checkbox' ? 'input' : 'click', e => { e.stopPropagation(); ACT[name] && ACT[name](...args, el, e); });
+  });
+}
+
+/* ---------------- views ---------------- */
+const VIEWS = {};
+
+VIEWS.home = () => {
+  const p = profile(), t = today(), s = settings();
+  const doses = dosesFor(t), taken = doses.filter(d => isTaken(t, d.key)).length, skippedN = doses.filter(d => ['skipped','missed'].includes((doseRec(t, d.key)||{}).s)).length;
+  const nextV = upcomingVisits()[0];
+  const ill = activeIllness();
+  const dRec = day(t);
+  const cal = list('food').filter(f => f.date === t).reduce((a,f)=>a+(+f.cal||0),0);
+  const sl = list('sleep').filter(x => x.date === t)[0];
+  const ex = list('exercise').filter(x => x.date === t).reduce((a,x)=>a+(+x.minutes||0),0);
+  const goals = list('goal').filter(g => !g.done).slice(0,3);
+  const initials = (p.name||'Me').split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  const hr = new Date().getHours();
+  return `
+  <div class="hello"><div class="avatar">${esc(initials)}</div><div><div class="t">${hr<12?'Good morning':hr<18?'Good afternoon':'Good evening'}</div><div class="n">${esc(p.name || 'Welcome')}</div></div></div>
+  ${(() => { const lb = s.lastBackup, has = list('med').length + list('file').length + list('visit').length; return has >= 3 && (!lb || Date.now() - lb > 14*864e5) ? `<div class="alert info"><b>Back up your health data</b>It's stored only on this phone${lb ? ' — last backup ' + daysBetween(iso(new Date(lb)), today()) + ' days ago' : ''}. <button class="link" data-act="backup">Save a backup now →</button></div>` : ''; })()}
+  ${!p.name ? `<div class="alert info"><b>Set up your profile</b>Add your name, allergies and emergency contact so they're always at hand. <button class="link" data-act="nav|profile">Open profile →</button></div>`:''}
+  ${ill.map(i => `<div class="alert warn"><b>${ic('thermo','style="width:16px;height:16px;vertical-align:-3px"')} Currently sick: ${esc(i.title||'Unwell')}</b>Since ${fmtD(i.start)} · day ${daysBetween(i.start,t)+1}${i.symptoms?.length?' · '+esc(i.symptoms.slice(0,4).join(', ')):''}<div class="btns" style="margin-top:8px"><button class="btn sm" data-act="recover|${i.id}">I've recovered</button><button class="btn sm sec" data-act="nav|sick">Details</button></div></div>`).join('')}
+  <div class="card">
+    <h3>${ic('pill','style="width:18px;height:18px;color:var(--teal-d)"')}Today's medication<span class="sp"></span><span class="pill">${taken}/${doses.length} taken</span>${skippedN?`<span class="pill grey" style="margin-left:4px">${skippedN} not taken</span>`:''}</h3>
+    ${doses.length ? doseRows(t, doses) : `<div class="empty">No medication scheduled today.<br><button class="link" data-act="addMed">+ Add a prescription</button></div>`}
+  </div>
+  ${prnCard()}
+  <div class="card">
+    <h3>${ic('doctor','style="width:18px;height:18px;color:var(--teal-d)"')}Next doctor visit<span class="sp"></span><button class="link" data-act="nav|visits">All</button></h3>
+    ${nextV ? visitRow(nextV) : `<div class="empty">No visit scheduled. <button class="link" data-act="addVisit">+ Schedule one</button></div>`}
+  </div>
+  ${(() => { const oc = sortedCases().filter(c => c.status !== 'closed').slice(0,3); return oc.length ? `<div class="card"><h3>${ic('folder','style="width:18px;height:18px;color:var(--teal-d)"')}Open case files<span class="sp"></span><button class="link" data-act="recTabGo|cases">All</button></h3>${oc.map(caseRow).join('')}</div>` : ''; })()}
+  <div class="card">
+    <h3>${ic('heart','style="width:18px;height:18px;color:var(--teal-d)"')}Today<span class="sp"></span><button class="link" data-act="nav|health">Log</button></h3>
+    <div class="stats">
+      <div class="stat"><b>${cal}</b><span>of ${s.targets.cal} kcal</span></div>
+      <div class="stat"><b>${dRec.water||0}</b><span>of ${s.targets.water} glasses</span></div>
+      <div class="stat"><b>${ex}</b><span>of ${s.targets.exercise} min</span></div>
+      <div class="stat"><b>${sl ? sl.hours.toFixed(1) : '–'}</b><span>h sleep</span></div>
+    </div>
+    <div class="btns" style="margin-top:10px"><button class="btn sm sec" data-act="water|1">+ Glass of water</button><button class="btn sm sec" data-act="addFood">+ Meal</button><button class="btn sm sec" data-act="addSleep">+ Sleep</button></div>
+  </div>
+  <div class="card">
+    <h3>${ic('target','style="width:18px;height:18px;color:var(--teal-d)"')}Health goals<span class="sp"></span><button class="link" data-act="healthTab|goals">All</button></h3>
+    ${goals.length ? goals.map(goalRow).join('') : `<div class="empty">No goals yet. <button class="link" data-act="addGoal">+ Add a goal</button></div>`}
+  </div>
+  <div class="tiles">
+    <div class="tile hot" data-act="reportSick"><div class="ic">${ic('thermo')}</div>Report sick</div>
+    <div class="tile" data-act="scanRx"><div class="ic">${ic('scan')}</div>Scan prescription</div>
+    <div class="tile" data-act="addFile"><div class="ic">${ic('folder')}</div>Upload record</div>
+    <div class="tile" data-act="nav|calendar"><div class="ic">${ic('cal')}</div>Calendar</div>
+  </div>`;
+};
+
+const FOOD_OPTS = ['','Before food','After food','With food','Empty stomach','Any time'];
+function normFood(t){
+  const s = String(t||'').toLowerCase().replace(/[_\-]+/g,' ');
+  if (!s.trim()) return '';
+  const meal = '(food|foods|meal|meals|eating|breakfast|lunch|dinner|supper)';
+  if (/with or without|regardless of|food doesn'?t matter|any ?time/.test(s)) return 'Any time';
+  if (/empty stomach|on an? empty/.test(s)) return 'Empty stomach';
+  if (new RegExp('before (a |your |the )?' + meal + '|pre ?' + meal + '|pre ?prandial|\\ba\\.?c\\.?\\b').test(s)) return 'Before food';
+  if (new RegExp('after (a |your |the )?' + meal + '|post ?' + meal + '|post ?prandial|\\bp\\.?c\\.?\\b|full stomach').test(s)) return 'After food';
+  if (new RegExp('with (a |your |the )?' + meal + '|with milk|\\bwith food\\b').test(s)) return 'With food';
+  return '';
+}
+function foodOf(m){ return normFood(m.food) || normFood(m.instructions); }
+function foodText(f){ return f === 'Any time' ? 'With or without food' : f; }
+function foodApplies(m){
+  if (['Injection','Drops','Inhaler','Cream'].includes(m.form)) return false;
+  return !/\b(sprays?|nasal|drops?|eye|ear|inhaler|puffs?|injection|inj\.?|cream|ointment|gel|lotion|patch|suppositor(y|ies)|pessar(y|ies)|nebuli[sz]|shampoo|mouthwash|gargle|topical)\b/i.test((m.name||'') + ' ' + (m.dose||'') + ' ' + (m.instructions||''));
+}
+function foodBadge(m){
+  if (!foodApplies(m) && !foodOf(m)) return '';
+  const f = foodOf(m);
+  if (!f) return `<button class="pill foodq" data-act="setFood|${m.id}">🍽 Before or after food? Set</button>`;
+  return `<span class="pill food ${f==='Before food'||f==='Empty stomach'?'pre':f==='Any time'?'any':''}">🍽 ${foodText(f)}${m.foodSource==='usual'?' · usual':''}</span>`;
+}
+function prnUses(d, id){ return ((day(d).prn||{})[id]) || []; }
+function prnCard(filterFn){
+  const t = today();
+  const ms = list('med').filter(m => isPrn(m) && medActiveOn(m, t) && (!filterFn || filterFn(m)));
+  if (!ms.length) return '';
+  return `<div class="card"><h3>${ic('pill','style="width:18px;height:18px;color:var(--teal-d)"')}As needed<span class="sp"></span><span class="small">only when you need them</span></h3>${ms.map(m => {
+    const r = repOf(m), uses = prnUses(t, m.id), last = uses[uses.length-1];
+    return `<div class="row prnrow"><div class="medic">${ic('pill')}</div><div class="main"><div class="ttl">${esc(m.name)} ${m.dose?`<span class="small">${esc(m.dose)}</span>`:''}</div><div class="sub">${uses.length ? `Taken ${uses.length}× today${r.max ? ` of max ${r.max}` : ''} · last ${new Date(last).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'})}` : 'Not taken today' + (r.max ? ` · max ${r.max}/day` : '')}</div>${m.instructions?`<div class="sub">${esc(m.instructions)}</div>`:''}<div class="sub" style="margin-top:3px">${foodBadge(m)}</div>${HIDE_CASE_TAG?'':`<div class="sub">${caseBubble(caseOf(m))}</div>`}</div><div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end"><button class="btn sm" data-act="prnTake|${m.id}">+ Took a dose</button>${uses.length?`<button class="link" data-act="prnUndo|${m.id}" style="font-size:12px">Undo last</button>`:''}</div></div>`;
+  }).join('')}</div>`;
+}
+function doseRows(d, doses){
+  return doses.map(x => {
+    const r = doseRec(d, x.key), st = doseState(d, x), on = st === 'taken';
+    const statusPill = st === 'taken' ? `<span class="pill good">✓ Taken${r && r.at ? ' ' + new Date(r.at).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}) : ''}</span>`
+      : st === 'skipped' ? `<span class="pill grey">Skipped${r.reason ? ' · ' + esc(r.reason) : ''}</span>`
+      : st === 'missed' ? (r ? `<span class="pill bad">Missed</span>` : `<span class="pill bad">Missed?</span>`)
+      : st === 'due' ? '<span class="pill warn">due</span>' : '';
+    const right = r && r.s !== 'taken'
+      ? `<button class="btn sm sec" data-act="undoDose|${d}|${x.key}" aria-label="Undo">Undo</button>`
+      : `${on ? '' : `<button class="skipb" data-act="skipDose|${d}|${x.key}" aria-label="Skip or missed">Skip</button>`}<button class="chk ${on?'on':''}" aria-label="${on?'Mark not taken':'Mark taken'}" data-act="dose|${d}|${x.key}">${on?ic('check'):''}</button>`;
+    return `<div class="row ${r && r.s !== 'taken' ? 'dimmed' : ''}"><div class="medic">${ic('pill')}</div><div class="main"><div class="ttl">${esc(x.med.name)} ${x.med.dose?`<span class="small">${esc(x.med.dose)}</span>`:''}</div><div class="sub">${fmtT(x.time)}${repOf(x.med).type !== 'daily' ? ` · <span class="pill rep">${repeatLabel(x.med)}</span>` : ''} ${statusPill}</div><div class="sub" style="margin-top:3px">${foodBadge(x.med)}</div>${HIDE_CASE_TAG?'':`<div class="sub">${caseBubble(caseOf(x.med))}</div>`}</div><div style="display:flex;gap:6px;align-items:center">${right}</div></div>`;
+  }).join('');
+}
+function visitRow(v){
+  const up = v.date >= today();
+  const dd = daysBetween(today(), v.date);
+  return `<div class="row click" data-act="viewVisit|${v.id}"><div class="medic">${ic(v.facilityType==='Hospital'?'hospital':'doctor')}</div><div class="main"><div class="ttl">${esc(v.doctor||'Doctor')}${v.specialty?` <span class="small">· ${esc(v.specialty)}</span>`:''}</div><div class="sub">${fmtD(v.date)}${v.time?' · '+fmtT(v.time):''} · ${esc(v.facility||'')}</div>${v.reason?`<div class="sub">${esc(v.reason)}</div>`:''}${caseTag(v)}</div>${up?`<span class="pill">${dd===0?'Today':dd===1?'Tomorrow':'in '+dd+' d'}</span>`:''}</div>`;
+}
+function goalRow(g){
+  const pct = g.target ? Math.max(0, Math.min(100, Math.round((+g.current||0) / +g.target * 100))) : 0;
+  return `<div class="row click" data-act="editGoal|${g.id}"><div class="main"><div class="ttl">${esc(g.title)}</div><div class="sub">${esc(g.current||0)} / ${esc(g.target||'?')} ${esc(g.unit||'')}${g.deadline?' · by '+fmtDs(g.deadline):''}</div><div class="bar" style="margin-top:6px"><i style="width:${pct}%"></i></div></div><span class="pill ${g.done?'good':''}">${g.done?'Done':pct+'%'}</span></div>`;
+}
+
+/* ---- Meds ---- */
+VIEWS.meds = () => {
+  const t = today();
+  const allMeds = list('med');
+  const mcases = sortedCases().filter(c => allMeds.some(m => m.caseId === c.id));
+  if (UI.medCase !== 'all' && UI.medCase !== 'none' && !mcases.some(c => c.id === UI.medCase)) UI.medCase = 'all';
+  const fit = m => UI.medCase === 'all' || (UI.medCase === 'none' ? !caseOf(m) : m.caseId === UI.medCase);
+  const meds = allMeds.filter(fit);
+  const active = meds.filter(m => medActiveOn(m, t) || (m.start > t && !m.stopped));
+  const past = meds.filter(m => !active.includes(m)).sort((a,b)=>(b.prescribedOn||'').localeCompare(a.prescribedOn||''));
+  const tab = UI.medTab;
+  let body = '';
+  if (tab === 'today') {
+    const days = [0,1,2,3,4,5,6].map(i => addDays(t, i));
+    const past = [1,2,3,4,5,6,7].map(i => addDays(t, -i)).filter(d => allMeds.some(m => fit(m) && medDueOn(m, d)));
+    const unrec = past.reduce((a, d) => a + dosesFor(d).filter(x => fit(x.med) && !isRecorded(d, x.key)).length, 0);
+    const earlier = past.length ? `<div class="sect" style="display:flex;align-items:center">Earlier days${unrec ? ` · <span style="color:var(--bad);margin-left:4px">${unrec} not recorded</span>` : ''}<span class="sp" style="flex:1"></span><button class="link" data-act="medPast">${UI.medPast ? 'Hide' : 'Show'}</button></div>${UI.medPast ? past.map(d => { const ds = dosesFor(d).filter(x => fit(x.med)); return `<div class="card"><h3>${parseD(d).toLocaleDateString(undefined,{weekday:'long'})}<span class="sp"></span><span class="small">${fmtD(d)}</span></h3>${ds.length ? doseRows(d, ds) : '<div class="empty">Nothing scheduled</div>'}${ds.some(x => !isRecorded(d, x.key)) ? `<button class="btn sm sec" data-act="allTaken|${d}" style="margin-top:6px">Mark all unrecorded as taken</button>` : ''}</div>`; }).join('') : ''}` : '';
+    body = prnCard(fit) + days.map(d => { const ds = dosesFor(d).filter(x => fit(x.med)); return `<div class="card"><h3>${d===t?'Today':parseD(d).toLocaleDateString(undefined,{weekday:'long'})}<span class="sp"></span><span class="small">${fmtD(d)}</span></h3>${ds.length?doseRows(d, ds):'<div class="empty">Nothing scheduled</div>'}</div>`; }).join('') + earlier;
+  } else if (tab === 'active') {
+    body = `<div class="card">${active.length ? active.map(medRow).join('') : '<div class="empty">No active medication.</div>'}</div>`;
+  } else {
+    body = `<div class="card">${past.length ? past.map(medRow).join('') : '<div class="empty">No past prescriptions.</div>'}</div>`;
+  }
+  return `
+  ${(() => { const mm = list('med').filter(m => (medActiveOn(m, t) || m.start > t) && !isPrn(m) && timingMismatch(m)); return mm.length ? `<div class="alert bad"><b>Dose times don't match the instructions</b>${mm.map(m => `${esc(m.name)}: “${esc(m.instructions)}” but scheduled ${(m.times||[]).map(fmtT).join(', ')}`).join('<br>')}<div class="btns" style="margin-top:8px"><button class="btn sm" data-act="fixTimes">Fix times</button></div></div>` : ''; })()}
+  ${(() => { const miss = list('med').filter(m => (medActiveOn(m, t) || m.start > t) && foodApplies(m) && !foodOf(m)); return miss.length ? `<div class="alert warn"><b>${miss.length} medicine${miss.length>1?'s don\'t':' doesn\'t'} say whether to take ${miss.length>1?'them':'it'} before or after food</b>${esc(miss.map(m=>m.name).join(', '))}<div class="btns" style="margin-top:8px"><button class="btn sm" data-act="fixFoods">Set food timing</button></div></div>` : ''; })()}
+  <div class="ocrbox"><b>Got a new prescription?</b><div class="small" style="margin:4px 0 10px">Snap or upload it and the medicines, doses and schedule are read for you — then you check and confirm.</div><div class="btns" style="justify-content:center"><button class="btn" data-act="scanRx">${ic('scan','style="width:18px;height:18px"')} Scan prescription</button><button class="btn out" data-act="addMed">Add manually</button></div></div>
+  <div class="seg">${[['today','Schedule'],['active','Active ('+active.length+')'],['past','History']].map(([k,l])=>`<button class="${tab===k?'on':''}" data-act="medTab|${k}">${l}</button>`).join('')}</div>
+  ${mcases.length ? `<div class="chips" style="margin-bottom:12px"><button class="chip ${UI.medCase==='all'?'on':''}" data-act="medCase|all">All</button>${mcases.map(c => { const [bg, fg] = caseColor(c); const on = UI.medCase===c.id; return `<button class="chip ${on?'on':''}" data-act="medCase|${c.id}" style="${on?'':`background:${bg};color:${fg};border-color:${bg}`}">${esc(c.title)}${c.status==='closed'?' (closed)':''}</button>`; }).join('')}${allMeds.some(m=>!caseOf(m))?`<button class="chip ${UI.medCase==='none'?'on':''}" data-act="medCase|none">No case</button>`:''}</div>` : ''}
+  ${body}`;
+};
+function medRow(m){
+  const t = today();
+  const st = m.stopped ? '<span class="pill grey">Stopped</span>' : m.start > t ? '<span class="pill">Starts '+fmtDs(m.start)+'</span>' : medActiveOn(m,t) ? '<span class="pill good">Active</span>' : '<span class="pill grey">Finished</span>';
+  return `<div class="row click" data-act="viewMed|${m.id}"><div class="medic">${ic('pill')}</div><div class="main"><div class="ttl">${esc(m.name)} ${m.dose?`<span class="small">${esc(m.dose)}</span>`:''}</div><div class="sub">${isPrn(m) ? '' : (m.times||[]).map(fmtT).join(', ') + ' · '}${repeatLabel(m)}${!isPrn(m) && repOf(m).type !== 'daily' && medActiveOn(m, t) ? (() => { const n = nextDue(m, t); return n ? ` · next ${n === t ? 'today' : fmtDs(n)}` : ''; })() : ''}</div><div class="sub" style="margin:3px 0">${foodBadge(m)}</div><div class="sub">${fmtDs(m.start)}${m.end?' – '+fmtDs(m.end):' – ongoing'}</div><div class="sub">${esc([m.doctor, m.facility].filter(Boolean).join(' · '))}</div>${caseTag(m)}</div>${st}</div>`;
+}
+
+/* ---- Visits ---- */
+VIEWS.visits = () => {
+  const up = upcomingVisits(), past = pastVisits();
+  const tab = UI.visitTab;
+  const rows = tab === 'upcoming' ? up : past;
+  // facilities summary
+  const fac = {};
+  list('visit').forEach(v => { const k = v.facility || 'Unknown'; fac[k] = fac[k] || {n:0, last:'', type:v.facilityType}; fac[k].n++; if (v.date > fac[k].last && v.date <= today()) fac[k].last = v.date; });
+  return `
+  <button class="btn block" data-act="addVisit" style="margin-bottom:12px">+ Add doctor visit</button>
+  <div class="seg">${[['upcoming','Upcoming ('+up.length+')'],['past','Past ('+past.length+')'],['places','Doctors & places']].map(([k,l])=>`<button class="${tab===k?'on':''}" data-act="visitTab|${k}">${l}</button>`).join('')}</div>
+  ${tab === 'places' ? `<div class="card">${Object.keys(fac).length ? Object.entries(fac).map(([k,f]) => `<div class="row"><div class="medic">${ic(f.type==='Hospital'?'hospital':'doctor')}</div><div class="main"><div class="ttl">${esc(k)}</div><div class="sub">${esc(f.type||'')} · ${f.n} visit${f.n>1?'s':''}${f.last?' · last '+fmtD(f.last):''}</div><div class="sub">${esc([...new Set(list('visit').filter(v=>(v.facility||'Unknown')===k).map(v=>v.doctor).filter(Boolean))].join(', '))}</div></div></div>`).join('') : '<div class="empty">No visits recorded yet.</div>'}</div>`
+  : `<div class="card">${rows.length ? rows.map(visitRow).join('') : `<div class="empty">No ${tab} visits.</div>`}</div>`}`;
+};
+
+/* ---- Sick ---- */
+VIEWS.sick = () => {
+  const act = activeIllness();
+  const hist = list('illness').filter(i => i.end).sort((a,b)=>b.start.localeCompare(a.start));
+  const avg = hist.length ? (hist.reduce((a,i)=>a+daysBetween(i.start,i.end)+1,0)/hist.length).toFixed(1) : null;
+  return `
+  <div class="tiles" style="grid-template-columns:1fr"><div class="tile hot" data-act="reportSick" style="flex-direction:row;justify-content:center;gap:12px;padding:16px"><div class="ic">${ic('thermo')}</div><div style="text-align:left"><div style="font-size:16px">I'm feeling sick</div><div style="font-weight:600;opacity:.9;font-size:12.5px">Log symptoms & check whether to see a doctor</div></div></div></div>
+  <div class="card"><h3>Currently sick</h3>${act.length ? act.map(illRow).join('') : '<div class="empty">Nothing active — glad you\'re well!</div>'}</div>
+  <div class="card"><h3>History<span class="sp"></span>${avg?`<span class="small">${hist.length} episode${hist.length>1?'s':''} · avg ${avg} days</span>`:''}</h3>${hist.length ? hist.map(illRow).join('') : '<div class="empty">No past illnesses recorded.</div>'}</div>`;
+};
+function illRow(i){
+  const t = today();
+  const dur = daysBetween(i.start, i.end || t) + 1;
+  return `<div class="row click" data-act="viewIll|${i.id}"><div class="medic" style="${i.end?'':'background:#fbf0d9;color:#7d5608'}">${ic('sick')}</div><div class="main"><div class="ttl">${esc(i.title||'Unwell')}</div><div class="sub">${fmtD(i.start)} → ${i.end?fmtD(i.end):'now'} · ${dur} day${dur>1?'s':''}</div><div class="sub">${esc((i.symptoms||[]).join(', '))}</div>${caseTag(i)}</div>${i.end?'<span class="pill good">Recovered</span>':`<span class="pill warn">Sev ${esc(i.severity||'?')}/10</span>`}</div>`;
+}
+
+/* ---- Files ---- */
+const FILE_CATS = ['Lab report','X-ray','Scan (CT/MRI/Ultrasound)','Prescription','Doctor\'s note','Vaccination','Insurance','Other'];
+const catIcon = c => c==='Lab report'?'lab':c.startsWith('X-ray')||c.startsWith('Scan')?'xray':c==='Prescription'?'pill':c==='Doctor\'s note'?'note':'file';
+const REC_CATS = ['Doctor visit','Sick report', ...FILE_CATS];
+function recordItems(){
+  return [
+    ...list('file').map(f => ({r:f, cat:f.category||'Other', date:f.date||'', text:[f.name,f.reason,f.doctor,f.facility,f.notes,f.category]})),
+    ...list('visit').map(v => ({r:v, cat:'Doctor visit', date:v.date||'', text:[v.doctor,v.facility,v.specialty,v.reason,v.notes,'doctor visit']})),
+    ...list('illness').map(i => ({r:i, cat:'Sick report', date:i.start||'', text:[i.title,...(i.symptoms||[]),i.notes,'sick']}))
+  ].map(x => { const c = caseOf(x.r); if (c) x.text.push(c.title); return x; });
+}
+function recRow(r){ return r.kind === 'visit' ? visitRow(r) : r.kind === 'illness' ? illRow(r) : r.kind === 'med' ? medRow(r) : fileRow(r); }
+VIEWS.files = () => {
+  const tab = UI.recTab;
+  const seg = `<div class="seg">${[['records','Records'],['cases','Case files ('+list('case').length+')']].map(([k,l])=>`<button class="${tab===k?'on':''}" data-act="recTab|${k}">${l}</button>`).join('')}</div>`;
+  if (tab === 'cases') {
+    const cs = sortedCases();
+    return seg + `<button class="btn block" data-act="newCase" style="margin-bottom:12px">${ic('plus','style="width:18px;height:18px"')} New case file</button>
+    <div class="alert info" style="font-size:13px">A case file keeps everything about one health problem together — the doctor visits, prescriptions, medication, lab reports, x-rays and sick reports. Cases are also created for you when you scan a prescription or report feeling sick.</div>
+    <div class="card">${cs.length ? cs.map(caseRow).join('') : '<div class="empty">No case files yet.</div>'}</div>`;
+  }
+  const q = UI.fileQ.toLowerCase(), cat = UI.fileCat;
+  const all = recordItems();
+  const items = all.filter(x => (cat==='All' || x.cat===cat) && (!q || x.text.join(' ').toLowerCase().includes(q))).sort((a,b)=>b.date.localeCompare(a.date));
+  const counts = {}; all.forEach(x => counts[x.cat] = (counts[x.cat]||0)+1);
+  return seg + `
+  <div class="btns" style="margin-bottom:12px"><button class="btn" data-act="addFile" style="flex:1">${ic('plus','style="width:18px;height:18px"')} Upload a record</button><button class="btn out" data-act="scanRx">${ic('scan','style="width:18px;height:18px"')} Scan Rx</button></div>
+  <div class="search">${ic('search')}<input placeholder="Search name, reason, doctor, case…" value="${esc(UI.fileQ)}" data-act="fileQ" id="fileQ"></div>
+  <div class="chips" style="margin-bottom:12px">${['All',...REC_CATS].filter(c=>c==='All'||counts[c]).map(c=>`<button class="chip ${cat===c?'on':''}" data-act="fileCat|${c}">${esc(c)}${c!=='All'?' '+counts[c]:''}</button>`).join('')}</div>
+  <div class="card" id="fileList">${items.length ? items.map(x => recRow(x.r)).join('') : `<div class="empty">${all.length?'No records match.':'No records yet. Upload lab reports, x-rays, prescriptions and doctor\'s notes to keep them in one place.'}</div>`}</div>`;
+};
+function caseSummary(cid){
+  const it = caseItems(cid), n = k => it.filter(k).length;
+  return [[n(r=>r.kind==='visit'),'visit'],[n(r=>r.kind==='med'),'med'],[n(r=>r.kind==='file'&&r.category==='Prescription'),'prescription'],[n(r=>r.kind==='file'&&r.category==='Lab report'),'lab report'],[n(r=>r.kind==='file'&&/^(X-ray|Scan)/.test(r.category||'')),'scan'],[n(r=>r.kind==='illness'),'sick report'],[n(r=>r.kind==='file'&&!/^(X-ray|Scan|Lab report|Prescription)/.test(r.category||'')),'document']].filter(([c])=>c).map(([c,l])=>`${c} ${l}${c>1?'s':''}`).join(' · ');
+}
+function caseDates(cid){ const ds = caseItems(cid).map(r => r.kind==='illness' ? r.start : r.kind==='med' ? (r.prescribedOn||r.start) : r.date).filter(Boolean).sort(); return ds; }
+function caseRow(c){
+  const ds = caseDates(c.id), last = ds[ds.length-1];
+  return `<div class="row click" data-act="openCase|${c.id}"><div class="medic" style="${c.status==='closed'?'background:#eef1f2;color:#5b6b70':''}">${ic('folder')}</div><div class="main"><div class="ttl">${esc(c.title)}</div><div class="sub">Opened ${fmtD(c.created)}${last && last !== c.created ? ' · last update '+fmtDs(last) : ''}</div><div class="sub">${caseSummary(c.id) || 'Empty'}</div></div>${c.status==='closed'?'<span class="pill grey">Closed</span>':'<span class="pill good">Open</span>'}</div>`;
+}
+
+/* ---- case view ---- */
+VIEWS.case = () => {
+  const c = get(UI.caseId);
+  if (!c) { UI.recTab = 'cases'; return `<div class="empty">This case file no longer exists. <button class="link" data-act="nav|files">Back to records</button></div>`; }
+  const it = caseItems(c.id);
+  const by = f => it.filter(f).sort((a,b)=>{ const d = r => r.kind==='illness'?r.start:r.kind==='med'?(r.prescribedOn||r.start):r.date; return (d(b)||'').localeCompare(d(a)||''); });
+  const sections = [
+    ['Sick reports', 'thermo', by(r=>r.kind==='illness')],
+    ['Doctor visits', 'doctor', by(r=>r.kind==='visit')],
+    ['Prescriptions', 'note', by(r=>r.kind==='file'&&r.category==='Prescription')],
+    ['Medication', 'pill', by(r=>r.kind==='med')],
+    ['Lab reports', 'lab', by(r=>r.kind==='file'&&r.category==='Lab report')],
+    ['X-rays & scans', 'xray', by(r=>r.kind==='file'&&/^(X-ray|Scan)/.test(r.category||''))],
+    ['Other documents', 'file', by(r=>r.kind==='file'&&!/^(X-ray|Scan|Lab report|Prescription)/.test(r.category||''))]
+  ];
+  const ds = caseDates(c.id);
+  const t = today();
+  const activeMeds = it.filter(r=>r.kind==='med' && medActiveOn(r,t)).length;
+  const next = it.filter(r=>r.kind==='visit' && r.date >= t).sort((a,b)=>a.date.localeCompare(b.date))[0];
+  HIDE_CASE_TAG = true;
+  const body = sections.filter(([,,rows])=>rows.length).map(([title,icn,rows]) => `<div class="sect">${title} · ${rows.length}</div><div class="card">${rows.map(recRow).join('')}</div>`).join('');
+  HIDE_CASE_TAG = false;
+  return `<div class="card casehead">
+    <h3>${ic('folder','style="width:20px;height:20px"')}${esc(c.title)}<span class="sp"></span><span class="pill" style="background:rgba(255,255,255,.22);color:#fff">${c.status==='closed'?'Closed':'Open'}</span></h3>
+    <div class="small">Opened ${fmtD(c.created)}${c.status==='closed'&&c.closedOn?' · closed '+fmtD(c.closedOn):''}${ds.length?' · '+fmtDs(ds[0])+' – '+fmtDs(ds[ds.length-1]):''}</div>
+    ${c.notes?`<div style="margin-top:8px;font-size:14px;white-space:pre-wrap">${esc(c.notes)}</div>`:''}
+    <div class="stats" style="margin-top:10px"><div class="stat"><b>${it.filter(r=>r.kind==='visit').length}</b><span>visits</span></div><div class="stat"><b>${activeMeds}</b><span>meds active</span></div><div class="stat"><b>${it.filter(r=>r.kind==='file').length}</b><span>documents</span></div><div class="stat"><b>${ds.length?daysBetween(ds[0], c.status==='closed'&&c.closedOn?c.closedOn:t)+1:0}</b><span>days</span></div></div>
+  </div>
+  ${next?`<div class="alert info"><b>Next visit: ${fmtD(next.date)}${next.time?' · '+fmtT(next.time):''}</b>${esc(next.doctor||'')}${next.facility?' · '+esc(next.facility):''}</div>`:''}
+  <div class="tiles" style="grid-template-columns:repeat(3,1fr);gap:8px">
+    <div class="tile" data-act="caseAdd|scan"><div class="ic">${ic('scan')}</div>Scan Rx</div>
+    <div class="tile" data-act="caseAdd|file"><div class="ic">${ic('folder')}</div>Upload</div>
+    <div class="tile" data-act="caseAdd|visit"><div class="ic">${ic('doctor')}</div>Visit</div>
+    <div class="tile" data-act="caseAdd|med"><div class="ic">${ic('pill')}</div>Medicine</div>
+    <div class="tile" data-act="caseAdd|sick"><div class="ic">${ic('thermo')}</div>Sick report</div>
+    <div class="tile" data-act="caseLink"><div class="ic">${ic('plus')}</div>Add existing</div>
+  </div>
+  ${body || '<div class="card"><div class="empty">Nothing in this case yet. Use the buttons above to add a prescription, records or visits.</div></div>'}
+  <div class="btns" style="margin:14px 0"><button class="btn sm sec" data-act="caseEdit">${ic('edit','style="width:16px;height:16px"')} Rename / notes</button><button class="btn sm sec" data-act="caseToggle">${c.status==='closed'?'Reopen case':'Close case'}</button><button class="btn sm danger" data-act="caseDel">${ic('trash','style="width:16px;height:16px"')} Delete case</button></div>`;
+};
+ACT.recTab = k => { UI.recTab = k; render(); };
+ACT.recTabGo = k => { UI.recTab = k; go('files'); };
+ACT.openCase = id => openCase(id);
+ACT.newCase = () => caseForm({created: today(), status:'open'});
+ACT.caseEdit = () => caseForm(get(UI.caseId));
+function caseForm(c){
+  openSheet(c.id ? 'Edit case file' : 'New case file', `<form id="cf">${formHtml([{k:'title',label:'Case name',req:true,ph:'e.g. Flu, Back pain, Diabetes care'},{k:'created',label:'Started on',type:'date',req:true},{k:'notes',label:'Notes',type:'textarea',ph:'Diagnosis, treatment plan, anything to remember'}], c)}<button class="btn block" type="submit">Save case</button></form>`, b => b.querySelector('#cf').onsubmit = e => {
+    e.preventDefault(); const v = readForm(e.target); const rec = {...c, ...v, kind:'case', id: c.id || 'case~'+uid()}; save(rec);
+    if (!c.id) openCase(rec.id); else closeSheet();
+  });
+}
+ACT.caseToggle = () => { const c = get(UI.caseId); if (!c) return; save(c.status==='closed' ? {...c, status:'open', closedOn:''} : {...c, status:'closed', closedOn: today()}); };
+ACT.caseDel = () => { const c = get(UI.caseId); if (!c) return; confirmSheet(`Delete the case “${esc(c.title)}”? The visits, prescriptions and records inside it are kept — they just won't be grouped any more.`, () => { caseItems(c.id).forEach(r => save({...r, caseId:''})); remove(c.id); UI.recTab='cases'; go('files'); }); };
+ACT.caseAdd = what => {
+  const c = get(UI.caseId); if (!c) return;
+  const pre = {caseId: c.id};
+  if (what === 'scan') ACT.scanRx(pre);
+  else if (what === 'file') ACT.addFile(pre);
+  else if (what === 'visit') visitForm({date: today(), facilityType:'Clinic', reason: c.title, caseId: c.id});
+  else if (what === 'med') medForm(pre);
+  else if (what === 'sick') sickForm({start: today(), severity: 4, symptoms: [], title: c.title, caseId: c.id});
+};
+ACT.caseLink = () => {
+  const c = get(UI.caseId); if (!c) return;
+  const groups = [['Doctor visits', list('visit'), v => `${v.doctor||'Visit'} · ${fmtDs(v.date)}`, v=>v.date],['Sick reports', list('illness'), i => `${i.title||'Unwell'} · ${fmtDs(i.start)}`, i=>i.start],['Medication', list('med'), m => `${m.name} ${m.dose||''} · ${fmtDs(m.prescribedOn||m.start)}`, m=>m.prescribedOn||m.start],['Records', list('file'), f => `${f.name} · ${f.category} · ${fmtDs(f.date)}`, f=>f.date]];
+  openSheet('Items in “'+c.title+'”', `<div class="small" style="margin-bottom:8px">Tick everything that belongs to this case.</div><form id="lf">${groups.map(([t, rows, lab, dt]) => rows.length ? `<div class="sect">${t}</div>${rows.sort((a,b)=>(dt(b)||'').localeCompare(dt(a)||'')).map(r => { const oc = r.caseId && r.caseId !== c.id && get(r.caseId); return `<label class="switch" style="cursor:pointer"><input type="checkbox" name="${r.id}" ${r.caseId===c.id?'checked':''} style="width:20px;height:20px;accent-color:var(--teal)"><div class="main"><div style="font-weight:700">${esc(lab(r))}</div>${oc?`<div class="small">currently in “${esc(oc.title)}”</div>`:''}</div></label>`; }).join('')}` : '').join('') || '<div class="empty">Nothing recorded yet.</div>'}<button class="btn block" type="submit" style="margin-top:12px">Save</button></form>`, b => b.querySelector('#lf').onsubmit = e => {
+    e.preventDefault();
+    b.querySelectorAll('input[type=checkbox]').forEach(cb => { const r = get(cb.name); if (!r) return; if (cb.checked && r.caseId !== c.id) save({...r, caseId: c.id}); else if (!cb.checked && r.caseId === c.id) save({...r, caseId: ''}); });
+    closeSheet(); toast('Case updated.');
+  });
+};
+function fileRow(f){
+  const isImg = (f.mime||'').startsWith('image/');
+  return `<div class="row click" data-act="viewFile|${f.id}"><div class="thumb">${isImg && fileUrl(f) ? `<img src="${esc(fileUrl(f))}" alt="">` : ic(catIcon(f.category||''))}</div><div class="main"><div class="ttl">${esc(f.name)}</div><div class="sub">${esc(f.category||'')} · ${fmtD(f.date)}</div>${f.reason?`<div class="sub">${esc(f.reason)}</div>`:''}${caseTag(f)}</div></div>`;
+}
+
+/* ---- Health ---- */
+VIEWS.health = () => {
+  const tab = UI.healthTab, t = today(), s = settings();
+  const seg = `<div class="seg">${[['goals','Goals'],['food','Food'],['exercise','Exercise'],['sleep','Sleep']].map(([k,l])=>`<button class="${tab===k?'on':''}" data-act="healthTab|${k}">${l}</button>`).join('')}</div>`;
+  let body = '';
+  if (tab === 'goals') {
+    const gs = list('goal').sort((a,b)=>(a.done?1:0)-(b.done?1:0));
+    body = `<button class="btn block" data-act="addGoal" style="margin-bottom:12px">+ New health goal</button>
+    <div class="card">${gs.length ? gs.map(goalRow).join('') : '<div class="empty">Set a goal, e.g. “Lose 5 kg”, “Walk 10,000 steps”, “Lower blood pressure to 120/80”.</div>'}</div>
+    <div class="card"><h3>Daily targets<span class="sp"></span><button class="link" data-act="nav|reminders">Edit</button></h3><div class="stats"><div class="stat"><b>${s.targets.cal}</b><span>kcal</span></div><div class="stat"><b>${s.targets.water}</b><span>glasses</span></div><div class="stat"><b>${s.targets.exercise}</b><span>min active</span></div><div class="stat"><b>${s.targets.sleep}</b><span>h sleep</span></div></div></div>`;
+  } else if (tab === 'food') {
+    const items = list('food').filter(f => f.date === UI.foodDay || (!UI.foodDay && f.date === t));
+    const d = UI.foodDay || t;
+    const total = items.reduce((a,f)=>a+(+f.cal||0),0);
+    const pct = Math.min(100, Math.round(total / s.targets.cal * 100));
+    const water = day(d).water || 0;
+    const order = ['Breakfast','Lunch','Dinner','Snack','Drink'];
+    body = `<div class="calhead"><button class="iconbtn" data-act="foodDay|-1">${ic('back')}</button><b>${d===t?'Today':fmtD(d)}</b><button class="iconbtn" data-act="foodDay|1" ${d>=t?'disabled style="opacity:.4"':''}>${ic('back','style="transform:rotate(180deg)"')}</button></div>
+    <div class="card"><h3>Calories<span class="sp"></span><span class="small">${total} / ${s.targets.cal} kcal</span></h3><div class="bar"><i style="width:${pct}%"></i></div>
+    <h3 style="margin-top:14px">${ic('water','style="width:18px;height:18px;color:var(--info)"')}Water<span class="sp"></span><span class="small">${water} / ${s.targets.water} glasses</span></h3>
+    <div class="btns"><button class="btn sm sec" data-act="waterD|${d}|-1">−</button><div style="flex:1;display:flex;gap:3px;align-items:center">${Array.from({length:Math.max(s.targets.water, water)},(_,i)=>`<span style="flex:1;height:18px;border-radius:5px;background:${i<water?'var(--info)':'var(--teal-l)'}"></span>`).join('')}</div><button class="btn sm" data-act="waterD|${d}|1">+</button></div></div>
+    <button class="btn block" data-act="addFood|${d}" style="margin-bottom:12px">+ Log food</button>
+    ${order.map(m => { const its = items.filter(f=>f.meal===m); return its.length ? `<div class="card"><h3>${m}<span class="sp"></span><span class="small">${its.reduce((a,f)=>a+(+f.cal||0),0)} kcal</span></h3>${its.map(f=>`<div class="row click" data-act="editFood|${f.id}"><div class="main"><div class="ttl">${esc(f.desc)}</div>${f.notes?`<div class="sub">${esc(f.notes)}</div>`:''}</div><span class="small">${esc(f.cal||'–')} kcal</span></div>`).join('')}</div>` : ''; }).join('') || '<div class="empty">Nothing logged for this day.</div>'}`;
+  } else if (tab === 'exercise') {
+    const items = list('exercise').sort((a,b)=>b.date.localeCompare(a.date));
+    const week = [6,5,4,3,2,1,0].map(i => addDays(t,-i));
+    const vals = week.map(d => items.filter(x=>x.date===d).reduce((a,x)=>a+(+x.minutes||0),0));
+    body = `<button class="btn block" data-act="addEx" style="margin-bottom:12px">+ Log exercise</button>
+    <div class="card"><h3>Active minutes · last 7 days<span class="sp"></span><span class="small">${vals.reduce((a,b)=>a+b,0)} min total</span></h3>${barChart(week, vals, s.targets.exercise, 'min')}</div>
+    <div class="card">${items.length ? items.slice(0,40).map(x=>`<div class="row click" data-act="editEx|${x.id}"><div class="medic">${ic('run')}</div><div class="main"><div class="ttl">${esc(x.type)}</div><div class="sub">${fmtD(x.date)}${x.notes?' · '+esc(x.notes):''}</div></div><span class="pill">${esc(x.minutes)} min</span></div>`).join('') : '<div class="empty">No exercise logged yet.</div>'}</div>`;
+  } else {
+    const items = list('sleep').sort((a,b)=>b.date.localeCompare(a.date));
+    const week = [6,5,4,3,2,1,0].map(i => addDays(t,-i));
+    const vals = week.map(d => { const x = items.find(s=>s.date===d); return x ? +x.hours.toFixed(1) : 0; });
+    const logged = vals.filter(v=>v>0);
+    body = `<button class="btn block" data-act="addSleep" style="margin-bottom:12px">+ Log sleep</button>
+    <div class="card"><h3>Sleep · last 7 nights<span class="sp"></span><span class="small">${logged.length?'avg '+(logged.reduce((a,b)=>a+b,0)/logged.length).toFixed(1)+' h':''}</span></h3>${barChart(week, vals, s.targets.sleep, 'h')}</div>
+    <div class="card">${items.length ? items.slice(0,40).map(x=>`<div class="row click" data-act="editSleep|${x.id}"><div class="medic">${ic('moon')}</div><div class="main"><div class="ttl">${x.hours.toFixed(1)} hours</div><div class="sub">${fmtD(x.date)} · ${fmtT(x.bed)} → ${fmtT(x.wake)}${x.quality?' · '+esc(x.quality):''}</div></div></div>`).join('') : '<div class="empty">No sleep logged yet.</div>'}</div>`;
+  }
+  return seg + body;
+};
+function barChart(days, vals, target, unit){
+  const max = Math.max(target*1.2, ...vals, 1);
+  return `<div class="chart" role="img" aria-label="Bar chart">${target?`<div class="tline" style="bottom:${target/max*100}%"><span>target ${target} ${unit}</span></div>`:''}${days.map((d,i)=>`<div class="col"><span class="tip">${fmtDs(d)}: ${vals[i]||0} ${unit}</span><div class="b" style="height:${vals[i]/max*100}%"></div></div>`).join('')}</div><div class="xl">${days.map(d=>`<span>${parseD(d).toLocaleDateString(undefined,{weekday:'narrow'})}</span>`).join('')}</div>`;
+}
+
+/* ---- Calendar ---- */
+VIEWS.calendar = () => {
+  const [y, m] = UI.calMonth.split('-').map(Number);
+  const first = new Date(y, m-1, 1), startDow = (first.getDay()+6)%7; // Monday first
+  const start = new Date(y, m-1, 1 - startDow);
+  const t = today();
+  const cells = [];
+  for (let i = 0; i < 42; i++) { const d = new Date(start); d.setDate(start.getDate()+i); cells.push(iso(d)); }
+  const visits = list('visit'), ills = list('illness'), files = list('file');
+  const dots = d => {
+    const out = [];
+    if (visits.some(v=>v.date===d)) out.push('var(--info)');
+    if (ills.some(i=>i.start<=d && (i.end||t)>=d && d<=t)) out.push('var(--bad)');
+    if (dosesFor(d).length) out.push('var(--teal)');
+    if (files.some(f=>f.date===d)) out.push('var(--warn)');
+    return out;
+  };
+  const sel = UI.calSel;
+  const dv = visits.filter(v=>v.date===sel), di = ills.filter(i=>i.start<=sel && (i.end||t)>=sel && sel<=t), df = files.filter(f=>f.date===sel), dd = dosesFor(sel);
+  const started = list('med').filter(x=>x.prescribedOn===sel);
+  return `<div class="card">
+    <div class="calhead"><button class="iconbtn" data-act="calMove|-1">${ic('back')}</button><b>${first.toLocaleDateString(undefined,{month:'long',year:'numeric'})}</b><button class="iconbtn" data-act="calMove|1">${ic('back','style="transform:rotate(180deg)"')}</button></div>
+    <div class="cal">${['Mo','Tu','We','Th','Fr','Sa','Su'].map(d=>`<div class="dh">${d}</div>`).join('')}
+    ${cells.map(d => `<div class="d ${d.slice(0,7)!==UI.calMonth?'o':''} ${d===t?'today':''} ${d===sel?'sel':''}" data-act="calSel|${d}">${+d.slice(8)}<span class="dots">${dots(d).slice(0,4).map(c=>`<i style="background:${d===sel?'#fff':c}"></i>`).join('')}</span></div>`).join('')}</div>
+    <div class="legend"><span><i style="background:var(--info)"></i>Doctor visit</span><span><i style="background:var(--teal)"></i>Medication</span><span><i style="background:var(--bad)"></i>Sick</span><span><i style="background:var(--warn)"></i>Record</span></div>
+  </div>
+  <div class="card"><h3>${fmtD(sel)}</h3>
+    ${dv.map(visitRow).join('')}
+    ${di.map(illRow).join('')}
+    ${started.map(x=>`<div class="row click" data-act="viewMed|${x.id}"><div class="medic">${ic('note')}</div><div class="main"><div class="ttl">Prescribed: ${esc(x.name)}</div><div class="sub">${esc([x.doctor,x.facility].filter(Boolean).join(' · '))}</div></div></div>`).join('')}
+    ${dd.length ? doseRows(sel, dd) : ''}
+    ${df.map(fileRow).join('')}
+    ${!dv.length && !di.length && !dd.length && !df.length && !started.length ? '<div class="empty">Nothing on this day.</div>' : ''}
+    <div class="btns" style="margin-top:8px"><button class="btn sm sec" data-act="addVisitOn|${sel}">+ Visit on this day</button></div>
+  </div>`;
+};
+
+/* ---- More / profile / reminders ---- */
+VIEWS.more = () => `
+  <div class="card menu">
+    ${[['sick','sick','Sick reporting','Log illness, symptoms, recovery'],['visits','doctor','Doctor visits','Doctors, hospitals & clinics'],['calendar','cal','Calendar','Visits, meds, illness, records by date'],['reminders','bell','Settings','Dose times, reminders & daily targets'],['profile','user','My profile','Allergies, conditions, emergency contact']].map(([r,i,t,s])=>`<div class="row" data-act="nav|${r}">${ic(i)}<div class="main"><div class="ttl">${t}</div><div class="sub">${s}</div></div>${ic('back','style="transform:rotate(180deg);width:18px;height:18px;color:var(--muted)"')}</div>`).join('')}
+  </div>
+  <div class="card"><h3>${ic('folder','style="width:18px;height:18px;color:var(--teal-d)"')}Your data & backup</h3>
+    <div class="small" style="margin-bottom:8px">Everything — records, photos and documents — is stored <b>only on this phone</b>, inside this app. Nothing is uploaded anywhere. If you delete the app, clear your browser data or lose your phone, it's gone, so keep a backup file somewhere safe (Files, Google Drive, iCloud, email to yourself).</div>
+    <div class="small" id="usage" style="margin-bottom:8px"></div>
+    <div class="small" style="margin-bottom:10px">Last backup: <b>${settings().lastBackup ? new Date(settings().lastBackup).toLocaleString() : 'never'}</b></div>
+    <div class="btns"><button class="btn sm" data-act="backup">${ic('copy','style="width:16px;height:16px"')} Save a backup</button><button class="btn sm sec" data-act="restore">Restore from backup</button></div>
+    <input type="file" id="restoreFile" accept=".json,application/json" class="hidden">
+  </div>
+  <div class="card"><h3>${ic('sparkle','style="width:18px;height:18px;color:var(--teal-d)"')}Using Claude</h3><div class="small">This app has no AI built in. When it needs Claude — reading a prescription, food guidance, “rest at home or see a doctor?” — it copies instructions for you to send to the <b>Claude app</b>, and you paste Claude's reply back.</div></div>
+  <p class="disclaimer">Health Monitor helps you keep track of your own health information. It does not give medical diagnoses. In an emergency, call your local emergency number.</p>`;
+
+VIEWS.profile = () => {
+  const p = profile();
+  return `<div class="card"><form id="profForm">${formHtml(PROFILE_FIELDS, p)}<button class="btn block" type="submit">Save profile</button></form></div>
+  ${p.allergies?`<div class="alert bad"><b>Allergies</b>${esc(p.allergies)}</div>`:''}`;
+};
+const PROFILE_FIELDS = [
+  {k:'name',label:'Full name',req:true},
+  {k:'dob',label:'Date of birth',type:'date',half:true},{k:'sex',label:'Sex',type:'select',opts:['','Female','Male','Other'],half:true},
+  {k:'blood',label:'Blood type',type:'select',opts:['','A+','A−','B+','B−','AB+','AB−','O+','O−'],half:true},{k:'height',label:'Height (cm)',type:'number',half:true},
+  {k:'weight',label:'Weight (kg)',type:'number',step:'0.1'},
+  {k:'allergies',label:'Allergies',type:'textarea',ph:'e.g. Penicillin, peanuts'},
+  {k:'conditions',label:'Long-term conditions',type:'textarea',ph:'e.g. Asthma, type 2 diabetes'},
+  {k:'ecName',label:'Emergency contact',half:true},{k:'ecPhone',label:'Their phone',type:'tel',half:true}
+];
+
+VIEWS.reminders = () => {
+  const s = settings(), r = s.remind;
+  const notif = ('Notification' in window) ? Notification.permission : 'unsupported';
+  const dt = s.doseTimes, fs = s.freqSlots;
+  return `<div class="card"><h3>${ic('pill','style="width:18px;height:18px;color:var(--teal-d)"')}Dose times</h3>
+    <div class="small" style="margin-bottom:10px">Set the times that suit your day. Prescriptions that say “morning”, “at night”, “bedtime”, “1-0-1” and so on are scheduled at these times.</div>
+    <form id="doseForm">
+      <div class="grid2">${SLOTS.map(([k,l]) => `<label class="f">${l}<input type="time" name="${k}" value="${dt[k]}" required></label>`).join('')}</div>
+      <div class="sect" style="margin-top:4px">Default times for “… times a day”</div>
+      ${[1,2,3,4].map(n => `<div style="margin-bottom:10px"><div style="font-weight:800;font-size:13.5px;margin-bottom:4px">${n}× a day <span class="small" data-fsum="${n}"></span></div><div class="chips">${SLOTS.map(([k,l]) => `<button type="button" class="chip ${(fs[n]||[]).includes(k)?'on':''}" data-fs="${n}|${k}">${l.split(' /')[0]}</button>`).join('')}</div></div>`).join('')}
+      <div class="small" style="margin-bottom:10px">“Every 8 hours” and similar start at your morning time.</div>
+      <div class="btns"><button class="btn" type="submit" style="flex:1">Save dose times</button><button class="btn sec" type="button" id="doseReset">Reset</button></div>
+    </form>
+  </div>
+  <div class="card"><h3>${ic('bell','style="width:18px;height:18px;color:var(--teal-d)"')}Alerts</h3>
+    <div class="switch"><div class="main"><div class="ttl" style="font-weight:700">Medication reminders</div><div class="small">At each scheduled dose time</div></div><button class="tog ${r.meds?'on':''}" data-act="tog|meds" aria-label="Medication reminders"></button></div>
+    <div class="switch"><div class="main"><div class="ttl" style="font-weight:700">Drink water</div><div class="small">Every ${r.waterEvery} hours, 8am–10pm</div></div><button class="tog ${r.water?'on':''}" data-act="tog|water" aria-label="Water reminders"></button></div>
+    <div class="switch"><div class="main"><div class="ttl" style="font-weight:700">Bedtime</div><div class="small">At ${fmtT(r.bedtime)}</div></div><button class="tog ${r.sleep?'on':''}" data-act="tog|sleep" aria-label="Bedtime reminder"></button></div>
+    <div class="alert info" style="margin:10px 0 0;font-size:13px">Alerts appear while the app is open${notif==='granted'?' or running in the background':''}. ${notif==='default'?'<button class="link" data-act="askNotif">Allow system notifications</button>':''} Phones pause web apps that are fully closed, so keep it open in the background around dose times — or set a phone alarm for critical doses.</div>
+  </div>
+  <div class="card"><h3>Daily targets</h3><form id="tgtForm">${formHtml([
+    {k:'cal',label:'Calories (kcal)',type:'number',half:true},{k:'water',label:'Water (glasses)',type:'number',half:true},
+    {k:'exercise',label:'Active minutes',type:'number',half:true},{k:'sleep',label:'Sleep (hours)',type:'number',step:'0.5',half:true},
+    {k:'waterEvery',label:'Water reminder every (h)',type:'number',min:1,max:6,half:true},{k:'bedtime',label:'Sleep reminder at',type:'time',half:true}
+  ], {...s.targets, waterEvery:r.waterEvery, bedtime:r.bedtime})}<button class="btn block" type="submit">Save</button></form></div>`;
+};
+
+/* ---------------- actions ---------------- */
+ACT.nav = r => go(r);
+ACT.dose = (d, key) => toggleDose(d, key);
+ACT.undoDose = (d, key) => setDose(d, key, null);
+ACT.medPast = () => { UI.medPast = !UI.medPast; render(); };
+ACT.prnTake = id => {
+  const m = get(id); if (!m) return;
+  const t = today(), r = repOf(m), uses = prnUses(t, id), last = uses[uses.length-1];
+  const record = () => { const rec = day(t); save({...rec, prn: {...(rec.prn||{}), [id]: [...uses, Date.now()]}}); toast(`${esc(m.name)} dose recorded.`, {label:'Undo', fn:() => ACT.prnUndo(id)}); };
+  const warn = [];
+  if (r.max && uses.length >= +r.max) warn.push(`You've already taken the maximum of ${r.max} today.`);
+  if (r.gap && last && (Date.now() - last) < r.gap * 3600e3) warn.push(`It's only been ${((Date.now() - last)/3600e3).toFixed(1)} hours since your last dose — the minimum gap is ${r.gap} hours.`);
+  if (!warn.length) return record();
+  openSheet('Check before taking', `<div class="alert bad"><b>${esc(m.name)}</b>${warn.join('<br>')}</div><div class="small" style="margin-bottom:12px">If your symptoms are bad enough that you need more, contact your doctor or pharmacist.</div><div class="btns"><button class="btn sec" data-close style="flex:1">Don't take it</button><button class="btn danger" id="anyway">I took it anyway</button></div>`, b => b.querySelector('#anyway').onclick = () => { closeSheet(); record(); });
+};
+ACT.prnUndo = id => { const t = today(), rec = day(t), uses = [...prnUses(t, id)]; uses.pop(); save({...rec, prn: {...(rec.prn||{}), [id]: uses}}); };
+ACT.allTaken = d => { const ids = [...new Set(dosesFor(d).filter(x => UI.medCase === 'all' || (UI.medCase === 'none' ? !caseOf(x.med) : x.med.caseId === UI.medCase)).map(x => x.med.id))]; const n = backfillDoses(ids, d, d); toast(`${n} dose${n===1?'':'s'} marked taken.`); };
+const SKIP_REASONS = ['Side effects','Feeling better','Doctor\'s advice','Ran out','Not needed','Other'];
+ACT.skipDose = (d, key) => {
+  const x = dosesFor(d).find(y => y.key === key); if (!x) return;
+  const m = x.med, isToday = d === today();
+  const nextDose = dosesFor(d).concat(dosesFor(addDays(d,1)).map(y => ({...y, nextDay:true}))).find(y => y.med.id === m.id && (y.nextDay || y.time > x.time));
+  let reason = '';
+  openSheet(`${m.name}${m.dose ? ' ' + m.dose : ''} · ${fmtT(x.time)}`, `
+    <div class="small" style="margin-bottom:10px">${d === today() ? 'Today' : fmtD(d)}</div>
+    <div class="optcard"><h4>⏭ Skip this dose on purpose</h4><div class="chips" style="margin-bottom:8px">${SKIP_REASONS.map(r => `<button type="button" class="chip" data-r="${esc(r)}">${esc(r)}</button>`).join('')}</div><button class="btn sm block" id="doSkip">Skip dose</button></div>
+    <div class="optcard"><h4>⚠️ I missed it / forgot</h4><button class="btn sm danger block" id="doMiss">Mark as missed</button>
+      <div class="alert info" style="margin:10px 0 0;font-size:12.5px"><b>If you just remembered</b>Most medicines: take it now${nextDose ? `, unless it's nearly time for your next dose (${nextDose.nextDay ? 'tomorrow ' : ''}${fmtT(nextDose.time)}) — then skip it` : ''}. Never take two doses at once to make up. For antibiotics, birth control, blood thinners, insulin or seizure medicines, check the leaflet or ask your pharmacist.</div></div>
+    <div class="optcard"><h4>✓ I took it at a different time</h4><div style="display:flex;gap:8px"><input type="time" id="lateT" value="${isToday ? nowHM() : x.time}" style="flex:1;border:2px solid var(--line);border-radius:10px;padding:7px 9px;background:var(--teal-ll);font-weight:700"><button class="btn sm" id="doLate">Save</button></div></div>`, b => {
+    b.querySelectorAll('[data-r]').forEach(c => c.onclick = () => { b.querySelectorAll('[data-r]').forEach(z => z.classList.remove('on')); c.classList.add('on'); reason = c.dataset.r; });
+    b.querySelector('#doSkip').onclick = () => { setDose(d, key, {s:'skipped', at: Date.now(), reason}); closeSheet(); toast(`${esc(m.name)} skipped.`, {label:'Undo', fn:() => setDose(d, key, null)}); };
+    b.querySelector('#doMiss').onclick = () => { setDose(d, key, {s:'missed', at: Date.now()}); closeSheet(); toast(`${esc(m.name)} marked as missed.`, {label:'Undo', fn:() => setDose(d, key, null)}); };
+    b.querySelector('#doLate').onclick = () => { const tv = b.querySelector('#lateT').value || x.time; const [hh, mm] = tv.split(':').map(Number); const at = parseD(d); at.setHours(hh, mm, 0, 0); setDose(d, key, {s:'taken', at: at.getTime(), late: true}); closeSheet(); toast(`${esc(m.name)} recorded as taken at ${fmtT(tv)}.`); };
+  });
+};
+ACT.medTab = k => { UI.medTab = k; render(); };
+ACT.medCase = k => { UI.medCase = k; render(); };
+const FOOD_CHOICES = [['Before food','Before food'],['After food','After food'],['With food','With food'],['Empty stomach','Empty stomach'],['Any time','With or without food']];
+async function suggestFoods(meds){
+  const r = await SAMPLE.json(`For each medicine below, give the usual instruction for taking it relative to food, as printed on standard patient information leaflets for that medicine and dose form. Return ONLY JSON {"items":[{"i":number,"food":"Before food"|"After food"|"With food"|"Empty stomach"|"Any time","why":string}]} where "why" is at most 12 plain words.
+${meds.map((m,i)=>`${i}. ${m.name} ${m.dose||''} ${m.form||''}`).join('\n')}`, {modelTier:'quick'});
+  return Array.isArray(r && r.items) ? r.items : [];
+}
+ACT.setFood = id => {
+  const m = get(id); if (!m) return;
+  openSheet(m.name + (m.dose ? ' ' + m.dose : ''), `<div class="small" style="margin-bottom:10px">How should this medicine be taken? Check the label or the pharmacy leaflet if you're not sure.</div>
+    <div class="foodbtns">${FOOD_CHOICES.map(([v,l])=>`<button class="btn ${foodOf(m)===v?'':'sec'}" data-f="${v}">${l}</button>`).join('')}</div>
+    ${SAMPLE?`<button class="btn sm out block" id="sug" style="margin-top:12px">${ic('sparkle','style="width:15px;height:15px"')} What's usual for ${esc(m.name)}?</button><div id="sugOut"></div>`:''}`, b => {
+    b.querySelectorAll('[data-f]').forEach(x => x.onclick = () => { save({...get(id), food: x.dataset.f, foodSource: x.dataset.usual ? 'usual' : 'you'}); closeSheet(); });
+    const sg = b.querySelector('#sug');
+    if (sg) sg.onclick = async () => {
+      sg.disabled = true; sg.innerHTML = '<span class="spinner" style="border-color:rgba(22,94,88,.3);border-top-color:var(--teal-dd)"></span> Checking…';
+      try {
+        const it = (await suggestFoods([m]))[0];
+        const f = it && normFood(it.food);
+        if (!f) throw 0;
+        b.querySelector('#sugOut').innerHTML = `<div class="alert info" style="margin-top:10px"><b>Usually: ${foodText(f)}</b>${esc(it.why||'')}<div class="small" style="margin-top:4px">General guidance — your doctor's or pharmacist's instruction comes first.</div><button class="btn sm" style="margin-top:8px" id="useS">Use this</button></div>`;
+        b.querySelector('#useS').onclick = () => { save({...get(id), food: f, foodSource:'usual'}); closeSheet(); };
+        sg.classList.add('hidden');
+      } catch(e) { sg.innerHTML = 'Couldn\'t check right now'; }
+    };
+  });
+};
+ACT.fixTimes = () => {
+  const t = today();
+  const mm = list('med').filter(m => (medActiveOn(m, t) || m.start > t) && !isPrn(m) && timingMismatch(m));
+  openSheet('Fix dose times', `${mm.map(m => { const w = timingMismatch(m); return `<div class="rxmed"><div style="font-weight:800">${esc(m.name)} <span class="small">${esc(m.dose||'')}</span></div><div class="small">Instructions: “${esc(m.instructions)}”</div><div class="small">Now: ${(m.times||[]).map(fmtT).join(', ')} → <b>${w.map(fmtT).join(', ')}</b></div><label class="small" style="display:flex;gap:6px;align-items:center;margin-top:6px"><input type="checkbox" data-fx="${m.id}" checked style="width:18px;height:18px;accent-color:var(--teal)"> Change to ${w.map(fmtT).join(', ')}</label></div>`; }).join('')}<button class="btn block" id="fxSave">Save</button>`, b => {
+    b.querySelector('#fxSave').onclick = () => { let n = 0; b.querySelectorAll('[data-fx]').forEach(cb => { const m = get(cb.dataset.fx); if (cb.checked && m) { save({...m, times: timingMismatch(m)}); n++; } }); closeSheet(); toast(`${n} schedule${n===1?'':'s'} updated.`); };
+  });
+};
+ACT.fixFoods = () => {
+  const t = today();
+  const miss = list('med').filter(m => (medActiveOn(m, t) || m.start > t) && foodApplies(m) && !foodOf(m));
+  const choice = {};
+  openSheet('Before or after food?', `<div class="small" style="margin-bottom:10px">Pick how each medicine should be taken. Check the label or pharmacy leaflet if you're not sure.</div>
+    ${SAMPLE?`<button class="btn sm out block" id="sugAll" style="margin-bottom:10px">${ic('sparkle','style="width:15px;height:15px"')} Fill in the usual guidance for each</button>`:''}
+    ${miss.map(m => `<div class="rxmed"><div style="font-weight:800">${esc(m.name)} <span class="small">${esc(m.dose||'')}</span></div>${caseBubble(caseOf(m))}<select data-fid="${m.id}" style="margin-top:6px;width:100%;border:2px solid var(--line);border-radius:10px;padding:7px 9px;background:var(--teal-ll);font-weight:700"><option value="">— choose —</option>${FOOD_CHOICES.map(([v,l])=>`<option value="${v}">${l}</option>`).join('')}</select><div class="small" data-why="${m.id}"></div></div>`).join('')}
+    <button class="btn block" id="saveF">Save</button>
+    <p class="disclaimer">Suggestions are general guidance from standard medicine leaflets. Your doctor's or pharmacist's instruction comes first.</p>`, b => {
+    b.querySelectorAll('[data-fid]').forEach(sel => sel.onchange = () => { choice[sel.dataset.fid] = {food: sel.value, foodSource: 'you'}; });
+    const sa = b.querySelector('#sugAll');
+    if (sa) sa.onclick = async () => {
+      sa.disabled = true; sa.innerHTML = '<span class="spinner" style="border-color:rgba(22,94,88,.3);border-top-color:var(--teal-dd)"></span> Checking…';
+      try {
+        const items = await suggestFoods(miss);
+        items.forEach(it => { const m = miss[+it.i], f = normFood(it.food); if (!m || !f) return; const sel = b.querySelector(`[data-fid="${m.id}"]`); if (sel.value) return; sel.value = f; choice[m.id] = {food: f, foodSource: 'usual'}; b.querySelector(`[data-why="${m.id}"]`).textContent = 'Usual: ' + (it.why || ''); });
+        sa.innerHTML = '✓ Filled in — check and save';
+      } catch(e) { sa.innerHTML = 'Couldn\'t check right now'; }
+    };
+    b.querySelector('#saveF').onclick = () => { Object.entries(choice).forEach(([id, c]) => { if (c.food && get(id)) save({...get(id), ...c}); }); closeSheet(); toast('Food timing saved.'); };
+  });
+};
+ACT.visitTab = k => { UI.visitTab = k; render(); };
+ACT.healthTab = k => { UI.healthTab = k; if (route !== 'health') go('health'); else render(); };
+ACT.fileCat = c => { UI.fileCat = c; render(); };
+ACT.fileQ = (el) => { UI.fileQ = el.value; const pos = el.selectionStart; render(); const n = $('#fileQ'); n.focus(); n.setSelectionRange(pos,pos); };
+ACT.calMove = n => { const [y,m] = UI.calMonth.split('-').map(Number); const d = new Date(y, m-1+ +n, 1); UI.calMonth = iso(d).slice(0,7); render(); };
+ACT.calSel = d => { UI.calSel = d; if (d.slice(0,7) !== UI.calMonth) UI.calMonth = d.slice(0,7); render(); };
+ACT.foodDay = n => { const d = addDays(UI.foodDay || today(), +n); if (d <= today()) { UI.foodDay = d === today() ? null : d; render(); } };
+ACT.water = n => { const r = day(today()); r.water = Math.max(0, (r.water||0) + +n); save(r); };
+ACT.waterD = (d, n) => { const r = day(d); r.water = Math.max(0, (r.water||0) + +n); save(r); };
+ACT.tog = k => { const s = settings(); s.remind = {...s.remind, [k]: !s.remind[k]}; save(s); };
+ACT.askNotif = async () => { try { await Notification.requestPermission(); } catch(e) {} render(); };
+ACT.recover = id => recoverSheet(id);
+const blobToDataUrl = b => new Promise((res, rej) => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.onerror = () => rej(fr.error); fr.readAsDataURL(b); });
+const dataUrlToBlob = async u => (await fetch(u)).blob();
+ACT.backup = async (el) => {
+  const btn = el && el.closest ? el.closest('button') : null; if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Preparing…'; }
+  try {
+    const records = [...R.values()], blobs = {};
+    for (const r of records) if (r.blobId) { try { const b = await IDB.getBlob(r.blobId); if (b) blobs[r.blobId] = await blobToDataUrl(b); } catch(e) {} }
+    const out = JSON.stringify({app:'health-monitor', version:1, exportedAt: new Date().toISOString(), records, blobs});
+    const name = `health-monitor-backup-${today()}.json`;
+    const file = new File([out], name, {type:'application/json'});
+    let done = false;
+    if (navigator.canShare && navigator.canShare({files:[file]}) && /iphone|ipad|android/i.test(navigator.userAgent)) { try { await navigator.share({files:[file], title: name}); done = true; } catch(e) { if (e && e.name === 'AbortError') { if (btn) { btn.disabled = false; btn.textContent = 'Save a backup'; } return; } } }
+    if (!done) { const a = document.createElement('a'); a.href = URL.createObjectURL(file); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000); }
+    save({...settings(), lastBackup: Date.now()});
+    toast(`Backup saved (${(out.length/1048576).toFixed(1)} MB). Keep it somewhere safe.`);
+  } catch(e) { toast('Couldn\'t create the backup.'); render(); }
+};
+ACT.restore = () => {
+  const fi = document.getElementById('restoreFile'); fi.value = '';
+  fi.onchange = async () => {
+    const f = fi.files[0]; if (!f) return;
+    let data; try { data = JSON.parse(await f.text()); } catch(e) { toast('That file isn\'t a Health Monitor backup.'); return; }
+    if (!data || data.app !== 'health-monitor' || !Array.isArray(data.records)) { toast('That file isn\'t a Health Monitor backup.'); return; }
+    const n = data.records.filter(r => ['med','visit','illness','file','case'].includes(r.kind)).length;
+    openSheet('Restore backup?', `<div class="alert warn"><b>This replaces everything on this phone</b>Backup from ${esc(new Date(data.exportedAt).toLocaleString())} · ${n} medicines, visits, records and cases.</div><div class="btns"><button class="btn danger" id="doRestore" style="flex:1">Replace with backup</button><button class="btn sec" data-close>Cancel</button></div>`, b => b.querySelector('#doRestore').onclick = async () => {
+      b.querySelector('#doRestore').innerHTML = '<span class="spinner"></span> Restoring…';
+      try {
+        await IDB.clear(); R.clear(); BLOB_URLS.clear();
+        for (const [id, u] of Object.entries(data.blobs || {})) await IDB.putBlob(id, await dataUrlToBlob(u));
+        for (const r of data.records) { await IDB.put(r); R.set(r.id, r); }
+        closeSheet(); render(); toast('Backup restored.');
+      } catch(e) { closeSheet(); toast('Restore failed — your phone may be out of space.'); }
+    });
+  };
+  fi.click();
+};
+ACT.exportData = async () => {
+  const data = JSON.stringify([...R.values()], null, 2);
+  try { await navigator.clipboard.writeText(data); toast('All your data was copied to the clipboard.'); }
+  catch(e) { openSheet('Your data', `<textarea style="width:100%;height:300px;font-family:monospace;font-size:11px" readonly>${esc(data)}</textarea>`); }
+};
+
+function quickAdd(){
+  openSheet('Add', `<div class="tiles">
+    ${[['reportSick','thermo','Report sick'],['scanRx','scan','Scan prescription'],['addMed','pill','Add medication'],['addVisit','doctor','Doctor visit'],['addFile','folder','Upload record'],['addFood','food','Log food'],['addEx','run','Log exercise'],['addSleep','moon','Log sleep'],['addGoal','target','Health goal']].map(([a,i,l])=>`<div class="tile" data-qa="${a}"><div class="ic">${ic(i)}</div>${l}</div>`).join('')}</div>`,
+    b => b.querySelectorAll('[data-qa]').forEach(el => el.onclick = () => { closeSheet(); ACT[el.dataset.qa](); }));
+}
+
+/* ---- medication forms ---- */
+const MED_FIELDS = [
+  {k:'name',label:'Medicine name',req:true,ph:'e.g. Amoxicillin'},
+  {k:'dose',label:'Dose',ph:'e.g. 500 mg, 1 tablet',half:true},{k:'form',label:'Form',type:'select',opts:['Tablet','Capsule','Syrup','Injection','Drops','Inhaler','Cream','Other'],half:true},
+  {k:'food',label:'Food',type:'select',opts:FOOD_OPTS.map(o=>[o,o||'— no instruction —']),half:true},{k:'instructions',label:'Other instructions',ph:'e.g. with water',half:true},
+  {k:'start',label:'Start date',type:'date',req:true,half:true},{k:'end',label:'End date',type:'date',half:true},
+  {k:'doctor',label:'Prescribed by (doctor)',list:'dl-doc',half:true},{k:'facility',label:'Hospital / clinic',list:'dl-fac',half:true},
+  {k:'prescribedOn',label:'Date prescribed',type:'date'},
+  {k:'notes',label:'Notes',type:'textarea'}
+];
+const FREQ = {}; ['1','2','3','4'].forEach(n => Object.defineProperty(FREQ, n, {enumerable:true, get: () => freqTimes(+n)}));
+function timesEditor(times){
+  return `<label class="f">Times per day<div class="times" id="timesBox">${times.map(t=>`<input type="time" value="${t}" class="tm" style="border:2px solid var(--line);border-radius:10px;padding:6px 8px;background:var(--teal-ll)">`).join('')}<button type="button" class="btn sm sec" id="addTime">+ time</button>${times.length?'<button type="button" class="btn sm sec" id="rmTime">−</button>':''}</div>
+  <div class="chips" style="margin-top:6px">${Object.keys(FREQ).map(n=>`<button type="button" class="chip" data-freq="${n}">${n}× daily</button>`).join('')}</div><div class="small" style="margin-top:4px">Default times come from <button type="button" class="link" data-gosettings>Settings → Dose times</button></div></label>`;
+}
+/* Reads dose times from free text such as "at bedtime", "1-0-1", "morning and night", "HS", "q8h". Returns sorted HH:MM list or null. */
+const SLOT_TIME = {}; SLOTS.forEach(([k]) => Object.defineProperty(SLOT_TIME, k, {enumerable:true, get: () => slotTime(k)}));
+function timesFromText(t){
+  const s = ' ' + String(t||'').toLowerCase().replace(/[_]+/g,' ') + ' ';
+  if (!s.trim()) return null;
+  // 1-0-1 / 1-1-1 / 0-0-1 / 1-0-0-1 style
+  const pat = s.match(/\b([0-2](?:\.5)?|½)\s*[-–x+]\s*([0-2](?:\.5)?|½)\s*[-–x+]\s*([0-2](?:\.5)?|½)(?:\s*[-–x+]\s*([0-2](?:\.5)?|½))?\b/);
+  if (pat) {
+    const parts = pat.slice(1).filter(x => x !== undefined);
+    const slots = (parts.length === 4 ? ['morning','noon','evening','bedtime'] : ['morning','afternoon','night']).map(slotTime);
+    const out = parts.map((x,i) => x !== '0' ? slots[i] : null).filter(Boolean);
+    if (out.length) return out;
+  }
+  const every = s.match(/(?:every|q)\s*(\d{1,2})\s*(?:h|hr|hrs|hours?)\b/);
+  if (every) { const h = +every[1]; if ([4,6,8,12,24].includes(h)) { const first = slotTime('morning'); return [...new Set(Array.from({length: 24/h}, (_, i) => addHours(first, i*h)))].sort(); } }
+  const found = [];
+  const add = k => { if (!found.includes(SLOT_TIME[k])) found.push(SLOT_TIME[k]); };
+  if (/\b(morning|breakfast|a\.?m\.?|om|mane|upon waking|wake up)\b/.test(s)) add('morning');
+  if (/\b(noon|midday|lunch)\b/.test(s)) add('noon');
+  if (/\bafternoon\b/.test(s)) add('afternoon');
+  if (/\b(evening|dinner|supper)\b/.test(s)) add('evening');
+  if (/\b(bed ?time|hs|h\.s\.|before (going to )?(sleep|bed)|at bed)\b/.test(s)) add('bedtime');
+  else if (/\b(night|nightly|p\.m\.|pm|nocte)\b/.test(s)) add('night');
+  return found.length ? found.sort() : null;
+}
+function daysFromText(t){
+  const s = String(t||'').toLowerCase();
+  let m = s.match(/(?:for|x|×)\s*(\d{1,3})\s*(?:days?|d)\b/) || s.match(/\b(\d{1,3})\s*days?\b/) || s.match(/\b(\d{1,2})\/7\b/);
+  if (m) return +m[1];
+  m = s.match(/(?:for|x|×)\s*(\d{1,2})\s*(?:weeks?|wks?)\b/) || s.match(/\b(\d{1,2})\s*weeks?\b/);
+  if (m) return +m[1] * 7;
+  m = s.match(/(?:for|x|×)\s*(\d{1,2})\s*months?\b/);
+  if (m) return +m[1] * 30;
+  return null;
+}
+/* the schedule disagrees with the written instructions, e.g. "at bedtime" but 08:00 */
+function timingMismatch(m){
+  const want = timesFromText(m.instructions);
+  if (!want || !(m.times||[]).length) return null;
+  const have = [...m.times].sort();
+  return want.join(',') === have.join(',') ? null : want;
+}
+function repeatEditorHtml(r, start){
+  const days = r.type === 'weekly' && r.days && r.days.length ? r.days.map(Number) : [parseD(start || today()).getDay()];
+  return `<label class="f">Repeats<select name="rtype" data-rtype>${[['daily','Every day'],['interval','Every few days'],['weekly','Certain days of the week'],['monthly','Once a month'],['prn','Only when needed (as needed)']].map(([v,l]) => `<option value="${v}" ${r.type===v?'selected':''}>${l}</option>`).join('')}</select></label>
+  <div data-rsec="interval" class="${r.type==='interval'?'':'hidden'}"><label class="f">Every how many days?<input type="number" name="revery" min="2" max="90" value="${r.every || 2}"></label><div class="small" style="margin:-6px 0 10px">Counted from the start date.</div></div>
+  <div data-rsec="weekly" class="${r.type==='weekly'?'':'hidden'}"><div class="chips" style="margin-bottom:8px">${WD_ORDER.map(i => `<button type="button" class="chip ${days.includes(i)?'on':''}" data-wd="${i}">${WD_SHORT[i]}</button>`).join('')}</div><input type="hidden" name="rdays" value="${days.join(',')}"><label class="f">Repeat<select name="rweeks">${[[1,'Every week'],[2,'Every 2 weeks'],[3,'Every 3 weeks'],[4,'Every 4 weeks']].map(([v,l]) => `<option value="${v}" ${(+r.every||1)===v?'selected':''}>${l}</option>`).join('')}</select></label></div>
+  <div data-rsec="monthly" class="${r.type==='monthly'?'':'hidden'}"><label class="f">Day of the month<input type="number" name="rday" min="1" max="31" value="${r.day || parseD(start || today()).getDate()}"></label><div class="small" style="margin:-6px 0 10px">In shorter months it's scheduled on the last day.</div></div>
+  <div data-rsec="prn" class="${r.type==='prn'?'':'hidden'}"><div class="grid2"><label class="f">Max doses per day<input type="number" name="rmax" min="1" max="12" value="${r.max || ''}" placeholder="optional"></label><label class="f">At least … hours apart<input type="number" name="rgap" min="0" max="72" value="${r.gap || ''}" placeholder="optional"></label></div><div class="small" style="margin:-6px 0 10px">No fixed times or reminders — use “Took a dose” when you need it.</div></div>`;
+}
+function wireRepeat(root){
+  const sel = root.querySelector('[data-rtype]'), api = {touched:false};
+  const show = () => { root.querySelectorAll('[data-rsec]').forEach(x => x.classList.toggle('hidden', x.dataset.rsec !== sel.value)); const tw = root.querySelector('#timesWrap'); if (tw) tw.classList.toggle('hidden', sel.value === 'prn'); root.querySelectorAll('[data-bfrow]').forEach(x => { if (sel.value === 'prn') x.classList.add('hidden'); }); };
+  const hid = root.querySelector('[name=rdays]');
+  const syncDays = () => { hid.value = [...root.querySelectorAll('[data-wd].on')].map(c => c.dataset.wd).join(','); };
+  root.querySelectorAll('[data-wd]').forEach(c => c.onclick = () => { c.classList.toggle('on'); if (!root.querySelector('[data-wd].on')) c.classList.add('on'); syncDays(); api.touched = true; });
+  sel.onchange = () => { api.touched = true; show(); api.onType && api.onType(sel.value); };
+  api.set = r => { sel.value = r.type; api.onType && api.onType(r.type); if (r.every) { const e = root.querySelector(r.type === 'weekly' ? '[name=rweeks]' : '[name=revery]'); if (e) e.value = r.every; } if (r.days) { root.querySelectorAll('[data-wd]').forEach(c => c.classList.toggle('on', r.days.includes(+c.dataset.wd))); syncDays(); } if (r.day) root.querySelector('[name=rday]').value = r.day; show(); };
+  api.read = v => {
+    const t = v.rtype || 'daily', out = {type: t};
+    if (t === 'interval') out.every = Math.max(2, +v.revery || 2);
+    if (t === 'weekly') { out.days = (v.rdays||'').split(',').filter(x => x !== '').map(Number); out.every = Math.max(1, +v.rweeks || 1); }
+    if (t === 'monthly') out.day = Math.max(1, Math.min(31, +v.rday || 1));
+    if (t === 'prn') { out.max = +v.rmax || ''; out.gap = +v.rgap || ''; }
+    ['rtype','revery','rdays','rweeks','rday','rmax','rgap'].forEach(k => delete v[k]);
+    return out;
+  };
+  show();
+  return api;
+}
+function mountTimes(box, getTimes, setTimes){
+  const redraw = () => { box.querySelector('#timesWrap').innerHTML = timesEditor(getTimes()); wire(); };
+  const read = () => [...box.querySelectorAll('.tm')].map(i=>i.value).filter(Boolean);
+  const wire = () => {
+    box.querySelectorAll('.tm').forEach(i => i.onchange = () => setTimes(read()));
+    box.querySelector('#addTime').onclick = () => { setTimes([...read(), '12:00']); redraw(); };
+    const rm = box.querySelector('#rmTime'); if (rm) rm.onclick = () => { setTimes(read().slice(0,-1)); redraw(); };
+    box.querySelectorAll('[data-freq]').forEach(c => c.onclick = () => { setTimes([...FREQ[c.dataset.freq]]); redraw(); });
+    box.querySelectorAll('[data-gosettings]').forEach(c => c.onclick = () => { closeSheet(); go('reminders'); });
+  };
+  redraw();
+}
+ACT.addMed = (prefill) => medForm(typeof prefill === 'object' && prefill && !(prefill instanceof Element) ? prefill : {});
+function medForm(m){
+  const rec = {start: today(), prescribedOn: today(), form:'Tablet', times: FREQ[2], ...m};
+  let times = [...(rec.times||[])];
+  openSheet(rec.id ? 'Edit medication' : 'Add medication', `${datalists()}<form id="mf">${formHtml(MED_FIELDS.slice(0,5), {...rec, food: foodOf(rec)})}${repeatEditorHtml(repOf(rec), rec.start)}<div id="timesWrap"></div>${formHtml(MED_FIELDS.slice(5), rec)}
+    ${backfillRowHtml(!rec.id)}
+    ${caseField(rec)}
+    ${rec.fileId && get(rec.fileId) ? `<div class="small" style="margin-bottom:10px">📎 Linked prescription: ${esc(get(rec.fileId).name)}</div>`:''}
+    <button class="btn block" type="submit">Save medication</button></form>`, b => {
+    mountTimes(b, () => times, t => { times = t; userTimes = true; });
+    let userTimes = !!rec.id;
+    wireStart(b, null);
+    const rep = wireRepeat(b);
+    rep.onType = type => { if (!userTimes && ['weekly','monthly','interval'].includes(type) && times.length > 1) { times = FREQ[1]; mountTimes(b, () => times, t => { times = t; userTimes = true; }); } };
+    const ins = b.querySelector('[name=instructions]');
+    const note = document.createElement('div'); note.className = 'small'; note.style.margin = '-6px 0 10px'; ins.closest('.grid2, label').after(note);
+    const syncT = () => {
+      const tt = timesFromText(ins.value);
+      const cur = [...b.querySelectorAll('.tm')].map(i=>i.value).filter(Boolean).sort();
+      if (tt && tt.join() !== cur.join()) {
+        if (!userTimes) { times = tt; mountTimes(b, () => times, t => { times = t; userTimes = true; }); note.innerHTML = `⏰ Times set from “${esc(ins.value)}”.`; }
+        else { note.innerHTML = `⏰ “${esc(ins.value)}” suggests ${tt.map(fmtT).join(', ')}. <button type="button" class="link" id="useT">Use these times</button>`; note.querySelector('#useT').onclick = () => { times = tt; mountTimes(b, () => times, t => { times = t; userTimes = true; }); note.innerHTML = ''; }; }
+      } else note.innerHTML = '';
+      const rr = repeatFromText(ins.value, b.querySelector('[name=start]').value); if (rr && !rep.touched) rep.set(rr);
+      const en = b.querySelector('[name=end]'), st = b.querySelector('[name=start]'), dd = daysFromText(ins.value);
+      if (dd && en && !en.value && st.value) en.value = addDays(st.value, dd - 1);
+    };
+    ins.addEventListener('input', syncT); syncT();
+    b.querySelector('#mf').onsubmit = e => {
+      e.preventDefault();
+      const v = resolveCase(readForm(e.target), null, rec.prescribedOn);
+      if ((v.food||'') !== (foodOf(rec)||'')) v.foodSource = 'you';
+      times = [...b.querySelectorAll('.tm')].map(i=>i.value).filter(Boolean).sort();
+      v.repeat = rep.read(v);
+      if (v.repeat.type === 'prn') times = [];
+      const bf = v.backfill && v.repeat.type !== 'prn'; delete v.backfill;
+      const id = rec.id || 'med~'+uid();
+      save({...rec, ...v, times, kind:'med', id});
+      const n = bf && v.start < today() ? backfillDoses([id], v.start) : 0;
+      closeSheet(); toast(`${esc(v.name)} saved${n ? ` · ${n} earlier dose${n===1?'':'s'} marked taken` : ''}.`);
+    };
+  });
+}
+ACT.viewMed = id => {
+  const m = get(id); if (!m) return;
+  // adherence over the course so far
+  const t = today(); let due = 0, tk = 0, sk = 0, ms = 0;
+  for (let d = m.start; d && d <= t && (!m.end || d <= m.end); d = addDays(d,1)) { if (!medDueOn(m, d)) continue; (m.times||[]).forEach(tm => { const st = doseState(d, {key: m.id+'@'+tm, time: tm}); if (st === 'upcoming') return; if (st === 'due' && !isRecorded(d, m.id+'@'+tm)) return; due++; if (st === 'taken') tk++; else if (st === 'skipped') sk++; else if (st === 'missed') ms++; }); if (due > 2000) break; }
+  const f = m.fileId && get(m.fileId);
+  openSheet(m.name, `<dl class="kv">
+    <dt>Dose</dt><dd>${esc(m.dose||'–')} ${esc(m.form||'')}</dd>
+    <dt>Schedule</dt><dd>${repeatLabel(m)}${isPrn(m) ? (repOf(m).gap ? ` · at least ${repOf(m).gap} h apart` : '') : ' · ' + ((m.times||[]).map(fmtT).join(', ') || '–')}${!isPrn(m) && repOf(m).type !== 'daily' ? (() => { const n = nextDue(m, today()); return n ? `<br><span class="small">Next dose: ${fmtD(n)}</span>` : ''; })() : ''}</dd><dt>Food</dt><dd>${foodOf(m) ? foodText(foodOf(m)) + (m.foodSource==='usual' ? ' <span class="small">(usual guidance for this medicine — not written on your prescription)</span>' : '') : '<span class="small">Not set</span>'}</dd>
+    ${m.instructions?`<dt>How</dt><dd>${esc(m.instructions)}</dd>`:''}
+    <dt>Course</dt><dd>${fmtD(m.start)} → ${m.end?fmtD(m.end):'ongoing'}</dd>
+    <dt>Prescribed</dt><dd>${fmtD(m.prescribedOn)||'–'}</dd>
+    <dt>Doctor</dt><dd>${esc(m.doctor||'–')}</dd>
+    <dt>Where</dt><dd>${esc(m.facility||'–')}</dd>
+    ${m.notes?`<dt>Notes</dt><dd>${esc(m.notes)}</dd>`:''}
+    ${caseKv(m)}
+    <dt>Doses</dt><dd>${due?`${tk} of ${due} taken (${Math.round(tk/due*100)}%)${sk?` · ${sk} skipped`:''}${ms?` · <span style="color:var(--bad)">${ms} missed</span>`:''}`:'No doses due yet'}</dd>
+  </dl>
+  ${f?`<div style="margin-top:12px">${fileRow(f)}</div>`:''}
+  <div class="btns" style="margin-top:14px"><button class="btn sm" id="ed">${ic('edit','style="width:16px;height:16px"')} Edit</button>${m.stopped||(m.end&&m.end<t)?'':'<button class="btn sm sec" id="st">Stop taking</button>'}<button class="btn sm danger" id="dl">${ic('trash','style="width:16px;height:16px"')} Delete</button></div>`, b => {
+    b.querySelector('#ed').onclick = () => medForm(m);
+    const st = b.querySelector('#st'); if (st) st.onclick = () => { save({...m, end: addDays(today(), -1) < m.start ? m.start : today(), stopped: false}); closeSheet(); toast('Marked as stopped from today.'); };
+    b.querySelector('#dl').onclick = () => confirmSheet(`Delete ${esc(m.name)} and its schedule?`, () => remove(m.id));
+    const fr = b.querySelector('[data-act^="viewFile"]'); if (fr) fr.onclick = () => ACT.viewFile(f.id);
+  });
+};
+
+/* ---- prescription scanning ---- */
+const RX_PROMPT = `You are reading a photo of a doctor's medical prescription. Extract what is written. Return ONLY JSON of this shape:
+{"doctor":string|null,"specialty":string|null,"facility":string|null,"facilityType":"Clinic"|"Hospital"|"Pharmacy"|"Telehealth"|"Other"|null,"date":"YYYY-MM-DD"|null,"diagnosis":string|null,"advice":string|null,"followUpDate":"YYYY-MM-DD"|null,"testsOrdered":[string],"medications":[{"name":string,"dose":string|null,"form":"Tablet"|"Capsule"|"Syrup"|"Injection"|"Drops"|"Inhaler"|"Cream"|"Other","timesPerDay":number|null,"timing":["morning"|"noon"|"evening"|"night"|"bedtime"]|null,"food":"Before food"|"After food"|"With food"|"Empty stomach"|"Any time","foodUsual":boolean,"repeat":{"type":"daily"|"interval"|"weekly"|"monthly"|"prn","everyDays":number|null,"weekdays":["Mon"|"Tue"|"Wed"|"Thu"|"Fri"|"Sat"|"Sun"]|null,"everyWeeks":number|null,"dayOfMonth":number|null,"maxPerDay":number|null,"minHoursApart":number|null},"durationDays":number|null,"instructions":string|null}],"unclear":string|null}
+Rules: "doctor" is the prescribing doctor's name with title (e.g. "Dr. A. Rahman"); "facility" is the hospital/clinic name from the letterhead or stamp; "date" is the date written on the prescription; "diagnosis" is the condition/complaint if written (Dx, C/O, Diagnosis), in plain words; "advice" is any non-medicine advice (rest, diet, review); "followUpDate" if a review/follow-up date or "review after N days" is written (compute it from the prescription date); "testsOrdered" lists lab tests or imaging requested (CBC, X-ray chest…). Copy medicine names exactly as written; interpret common abbreviations (OD=1/day, BD/BID=2, TDS/TID=3, QID=4, HS=at bedtime, x5d=5 days, PC=after food, AC=before food, 1-0-1 = morning and night). "repeat" describes how often the medicine is taken: "daily" unless written otherwise; "interval" for alternate days / every N days; "weekly" for once a week, on named weekdays, N times a week or every N weeks; "monthly" for once a month; "prn" for SOS / as needed / only if / when required (put any maximum per day and minimum hours apart). "timing" MUST list when in the day each dose is taken whenever any time of day is written anywhere for that medicine (morning, noon, evening, night, bedtime/HS, 1-0-1 etc.), and timesPerDay must equal its length (e.g. "at bedtime" → ["bedtime"], 1-0-1 → ["morning","night"]); "food" is the food relation only — if the prescription doesn't state it, use the usual instruction from the standard patient leaflet for that medicine and set "foodUsual": true (otherwise false); "instructions" is anything else (not the food relation, timing or duration). Use null for anything you cannot read and list anything illegible or uncertain in "unclear". If the image is not a prescription, return {"medications":[],"unclear":"This doesn't look like a prescription"}.`;
+ACT.scanRx = (pre) => {
+  const ctx = pre && !(pre instanceof Element) && typeof pre === 'object' ? pre : {};
+  const canAI = !!SAMPLE;
+  openSheet('Scan prescription', `
+    <div class="ocrbox"><div class="small" style="margin-bottom:10px">Take a clear photo of the whole prescription. The doctor, clinic, date, diagnosis and medicines are read from it — you'll get a doctor visit, a medication schedule and a case file in one go.</div>
+    <input type="file" accept="image/*" capture="environment" id="rxFile" class="hidden"><button class="btn" id="pick">${ic('scan','style="width:18px;height:18px"')} Choose photo</button>
+    <img id="rxPrev" class="hidden" style="max-width:100%;max-height:220px;border-radius:10px;margin-top:10px"></div>
+    <div id="rxOut">${canAI?'':'<div class="alert warn">Automatic reading isn\'t available in this view — you can type the details in after choosing the photo.</div>'}</div>`, b => {
+    const fi = b.querySelector('#rxFile');
+    b.querySelector('#pick').onclick = () => fi.click();
+    fi.onchange = async () => {
+      const file = fi.files[0]; if (!file) return;
+      const prev = b.querySelector('#rxPrev'); prev.src = URL.createObjectURL(file); prev.classList.remove('hidden');
+      b.querySelector('#pick').textContent = 'Choose a different photo';
+      const out = b.querySelector('#rxOut');
+      const fileP = storeUpload(file, {name:'Prescription ' + fmtD(today()), category:'Prescription', date: today(), caseId: ctx.caseId||''}, true);
+      if (!canAI) { showRxResult(out, {}, await fileP, ctx, 'Fill in the details from your prescription below.'); return; }
+      out.innerHTML = `<div class="alert info"><span class="spinner" style="border-color:rgba(22,94,88,.3);border-top-color:var(--teal-dd);vertical-align:-3px"></span> Waiting for Claude's reply…</div>`;
+      try {
+        const img = await shrinkImage(file, 1600);
+        const res = await SAMPLE.json(RX_PROMPT, {images:[img], modelTier:'default', title:'Read prescription with Claude'});
+        showRxResult(out, res || {}, await fileP, ctx);
+      } catch(e) {
+        const msg = e && e.code === 'cancelled' ? 'No reply from Claude was pasted.' : e && e.code === 'not_granted' ? 'Reading prescriptions isn\'t allowed in this view.' : e && e.code === 'rate_limited' ? 'Too many requests just now — try again in a minute.' : 'Couldn\'t read this image automatically.';
+        showRxResult(out, {}, await fileP, ctx, msg + ' Fill in the details below.');
+      }
+    };
+  });
+};
+function guessFacType(res){ if (res.facilityType) return res.facilityType; return /hospital|medical college|infirmary/i.test(res.facility||'') ? 'Hospital' : 'Clinic'; }
+function showRxResult(out, res, fileRec, ctx, note){
+  const t = today();
+  const rxDate = res.date && /^\d{4}-\d{2}-\d{2}$/.test(res.date) && res.date <= t ? res.date : t;
+  const SLOT = SLOT_TIME;
+  let meds = (Array.isArray(res.medications) ? res.medications : []).map(m => {
+    let timing = [...new Set((Array.isArray(m.timing) ? m.timing : []).map(x => SLOT[String(x).toLowerCase()]).filter(Boolean))].sort();
+    const fromText = timesFromText(m.instructions);
+    if (!timing.length && fromText) timing = fromText;
+    if (fromText && timing.join() !== fromText.join() && (!m.timesPerDay || fromText.length === +m.timesPerDay)) timing = fromText;
+    const per = Math.max(1, Math.min(4, timing.length || +m.timesPerDay || 1));
+    const f = foodOf({food: m.food, instructions: m.instructions});
+    const fsrc = f ? (m.foodUsual && !normFood(m.instructions) ? 'usual' : 'rx') : '';
+    const rpt = normRepeat(m.repeat, t) || repeatFromText(m.instructions, t) || {type:'daily'};
+    return {on:true, repeat: rpt, name:m.name||'', dose:m.dose||'', form:m.form||'Tablet', per, times: timing.length ? timing : null, days: m.durationDays ? +m.durationDays : (daysFromText(m.instructions) || ''), food: f || '', foodSource: fsrc, instructions: m.instructions||'', autoT: (!(Array.isArray(m.timing) && m.timing.length) && fromText) ? (m.instructions||'') : ''};
+  });
+  // existing visit match: same date and (same doctor or no doctor given)
+  const norm = x => (x||'').toLowerCase().replace(/^dr\.?\s*/,'').replace(/[^a-z]/g,'');
+  const match = list('visit').find(v => v.date === rxDate && (!res.doctor || !v.doctor || norm(v.doctor) === norm(res.doctor)));
+  const ill = activeIllness()[0];
+  const defCase = ctx.caseId || (match && match.caseId) || (ill && ill.caseId) || '__new';
+  const caseName = res.diagnosis || (ill && ill.title) || (res.doctor ? 'Visit to ' + res.doctor : 'Treatment ' + fmtDs(rxDate));
+  const tests = (Array.isArray(res.testsOrdered) ? res.testsOrdered : []).filter(Boolean);
+  const draw = () => {
+    out.innerHTML = `${note?`<div class="alert warn">${esc(note)}</div>`:''}${res.unclear?`<div class="alert warn"><b>Please double-check</b>${esc(res.unclear)}</div>`:''}
+    <form id="rxForm">${datalists()}
+    <div class="sect">Doctor visit</div>
+    ${match ? `<div class="alert good" style="margin-bottom:8px"><b>Matches your visit on ${fmtD(match.date)}</b>${esc(match.doctor||'')} ${match.facility?'· '+esc(match.facility):''} — this prescription will be attached to it.</div><input type="hidden" name="addVisit" value="match">`
+      : `<label class="switch" style="padding-top:0"><input type="checkbox" name="addVisit" value="1" checked style="width:20px;height:20px;accent-color:var(--teal)"><div class="main" style="font-weight:700">Add this doctor visit to my records</div></label>`}
+    ${formHtml([{k:'vdate',label:'Date of visit / prescription',type:'date',req:true,half:true},{k:'vtime',label:'Time (optional)',type:'time',half:true},{k:'vdoctor',label:'Doctor',list:'dl-doc',half:true},{k:'vspecialty',label:'Specialty',half:true},{k:'vfacility',label:'Hospital / clinic',list:'dl-fac',half:true},{k:'vtype',label:'Place type',type:'select',opts:['Clinic','Hospital','Pharmacy','Lab','Telehealth','Other'],half:true},{k:'vreason',label:'Diagnosis / reason'},{k:'vnotes',label:'Doctor\'s advice',type:'textarea'}],
+      {vdate: match ? match.date : rxDate, vtime: match ? match.time : '', vdoctor: match ? match.doctor : (res.doctor||''), vspecialty: match ? match.specialty : (res.specialty||''), vfacility: match ? match.facility : (res.facility||''), vtype: match ? match.facilityType : guessFacType(res), vreason: res.diagnosis || (match && match.reason) || '', vnotes: [res.advice, tests.length ? 'Tests ordered: ' + tests.join(', ') : ''].filter(Boolean).join('\n')})}
+    ${res.followUpDate && res.followUpDate > t ? `<label class="switch"><input type="checkbox" name="followUp" value="${esc(res.followUpDate)}" checked style="width:20px;height:20px;accent-color:var(--teal)"><div class="main"><div style="font-weight:700">Schedule follow-up visit</div><div class="small">${fmtD(res.followUpDate)}</div></div></label>`:''}
+    <div class="sect">Case file</div>
+    ${caseField({caseId: defCase}, {name: caseName})}
+    ${ill ? `<label class="switch" style="padding-top:0"><input type="checkbox" name="linkIll" value="1" ${!ill.caseId || ill.caseId === defCase ? 'checked' : ''} style="width:20px;height:20px;accent-color:var(--teal)"><div class="main"><div style="font-weight:700">Link to your current sick report</div><div class="small">${esc(ill.title||'Unwell')} · since ${fmtD(ill.start)}</div></div></label>`:''}
+    <div class="sect">Medicines</div>
+    <div id="medRows"></div>
+    <button type="button" class="btn sm sec" id="addRow" style="margin-bottom:10px">+ Add a medicine</button>
+    ${startPickerHtml(rxDate < t && daysBetween(rxDate, t) <= 30 ? rxDate : t, rxDate)}
+    <button class="btn block" type="submit">Save visit, medicines & case</button>
+    <p class="disclaimer">Automatic reading can make mistakes. Check every medicine and dose against the paper prescription or with your pharmacist.</p>
+    </form>`;
+    wireCase(out);
+    wireStart(out, rxDate);
+    drawMeds();
+    out.querySelector('#addRow').onclick = () => { meds.push({on:true, repeat:{type:'daily'}, name:'', dose:'', form:'Tablet', per:2, days:'', instructions:''}); drawMeds(); const last = out.querySelectorAll('[data-m$="|name"]'); last[last.length-1]?.focus(); };
+    out.querySelector('#rxForm').onsubmit = e => { e.preventDefault(); saveRx(readForm(e.target)); };
+  };
+  const drawMeds = () => {
+    const box = out.querySelector('#medRows');
+    box.innerHTML = meds.length ? meds.map((m,i) => `<div class="rxmed ${m.on?'':'off'}"><div style="display:flex;gap:8px;align-items:center"><input type="checkbox" data-on="${i}" ${m.on?'checked':''} aria-label="Include" style="width:20px;height:20px;accent-color:var(--teal);flex:none"><input data-m="${i}|name" value="${esc(m.name)}" placeholder="Medicine name" style="flex:1;border:2px solid var(--line);border-radius:10px;padding:6px 8px;font-weight:800;background:var(--teal-ll)"></div>
+      <div class="medgrid"><label class="small" style="font-weight:700">Dose<input data-m="${i}|dose" value="${esc(m.dose)}" placeholder="e.g. 500 mg"></label><label class="small" style="font-weight:700">Repeats<select data-m="${i}|rtype">${[['daily','Every day'],['interval','Every other day'],['weekly','Weekly'],['monthly','Monthly'],['prn','As needed']].map(([v,l]) => `<option value="${v}" ${m.repeat.type===v?'selected':''}>${v===m.repeat.type && v!=='daily' ? repeatLabel({repeat:m.repeat, start: today()}) : l}</option>`).join('')}</select></label><label class="small ${m.repeat.type==='prn'?'hidden':''}" style="font-weight:700">Times a day<select data-m="${i}|per">${[1,2,3,4].map(n=>`<option value="${n}" ${n===m.per?'selected':''}>${n}× a day</option>`).join('')}</select></label><label class="small" style="font-weight:700">For how many days<input data-m="${i}|days" type="number" min="1" value="${esc(m.days)}" placeholder="blank = ongoing"></label><label class="small" style="font-weight:700">Food<select data-m="${i}|food">${FOOD_OPTS.map(o=>`<option value="${o}" ${o===m.food?'selected':''}>${o?foodText(o):'Food: not stated'}</option>`).join('')}</select></label><input data-m="${i}|instructions" value="${esc(m.instructions)}" placeholder="Other instructions (e.g. at bedtime)" style="grid-column:1/-1"><label class="small ${m.repeat.type==='prn'?'hidden':''}" style="grid-column:1/-1;font-weight:700">Dose times<input data-m="${i}|times" type="text" value="${esc((m.times || FREQ[m.per]).join(', '))}" placeholder="e.g. 08:00, 22:00" style="margin-top:3px;display:block;width:100%;border:2px solid var(--line);border-radius:10px;padding:6px 8px;background:var(--teal-ll);font-weight:600;font-size:13.5px;color:var(--ink)"></label></div>${m.repeat.type==='prn'?`<div class="small" style="margin-top:4px">💊 As needed — no fixed times or reminders. You'll get a “Took a dose” button instead.</div>`:''}${m.autoT && m.repeat.type!=='prn'?`<div class="small" style="margin-top:4px">⏰ Times set from “${esc(m.autoT)}”.</div>`:''}${m.foodSource==='usual'?'<div class="small" style="margin-top:4px">🍽 Food timing not written on the prescription — filled in with the usual guidance for this medicine.</div>':''}</div>`).join('') : '<div class="small" style="margin-bottom:8px">No medicines read — add them below if the prescription has any.</div>';
+    box.querySelectorAll('[data-on]').forEach(cb => cb.onchange = () => { meds[+cb.dataset.on].on = cb.checked; cb.closest('.rxmed').classList.toggle('off', !cb.checked); });
+    box.querySelectorAll('[data-m]').forEach(inp => inp.oninput = inp.onchange = () => { const [i,k] = inp.dataset.m.split('|'); const m = meds[+i]; if (k === 'rtype') { const st = (out.querySelector('[name=start]')||{}).value || today(); m.repeat = inp.value === 'interval' ? {type:'interval', every:2} : inp.value === 'weekly' ? {type:'weekly', days:[parseD(st).getDay()], every:1, auto:true} : inp.value === 'monthly' ? {type:'monthly', day: parseD(st).getDate(), auto:true} : {type: inp.value}; drawMeds(); return; } if (k === 'per') { m.per = +inp.value; m.times = null; drawMeds(); } else if (k === 'times') { m.userTimes = true; m.times = inp.value.split(/[,\s]+/).map(x => x.trim()).filter(x => /^\d{1,2}:\d{2}$/.test(x)).map(x => x.padStart(5,'0')).sort(); if (!m.times.length) m.times = null; } else { m[k] = inp.value; if (k === 'food') m.foodSource = 'you'; if (k === 'instructions') { const rr = repeatFromText(inp.value, today()); if (rr && rr.type !== m.repeat.type) { m.repeat = rr; drawMeds(); const n = box.querySelector(`[data-m="${i}|instructions"]`); if (n) { n.focus(); n.setSelectionRange(inp.value.length, inp.value.length); } return; } } if (k === 'instructions' && !m.userTimes) { const tt = timesFromText(inp.value); if (tt && tt.join() !== (m.times||[]).join()) { m.times = tt; m.per = Math.min(4, tt.length); m.autoT = inp.value; const pos = inp.selectionStart; drawMeds(); const n = box.querySelector(`[data-m="${i}|instructions"]`); if (n) { n.focus(); n.setSelectionRange(pos, pos); } } } if (k === 'instructions' && !m.days) { const dd = daysFromText(inp.value); if (dd) { m.days = dd; const n = box.querySelector(`[data-m="${i}|days"]`); if (n) n.value = dd; } } } });
+  };
+  function saveRx(v){
+    resolveCase(v, v.vreason || caseName, v.vdate);
+    const caseId = v.caseId || '';
+    let visitId = '';
+    if (match) {
+      visitId = match.id;
+      save({...match, doctor: v.vdoctor || match.doctor, specialty: v.vspecialty || match.specialty, facility: v.vfacility || match.facility, facilityType: v.vtype || match.facilityType, reason: v.vreason || match.reason, notes: [match.notes, v.vnotes].filter(Boolean).join('\n'), caseId: caseId || match.caseId || '', illnessId: match.illnessId || (v.linkIll && ill ? ill.id : '')});
+    } else if (v.addVisit) {
+      visitId = 'visit~' + uid();
+      save({kind:'visit', id: visitId, date: v.vdate, time: v.vtime, doctor: v.vdoctor, specialty: v.vspecialty, facility: v.vfacility, facilityType: v.vtype, reason: v.vreason, notes: v.vnotes, caseId, illnessId: v.linkIll && ill ? ill.id : '', fromRx: true});
+    }
+    if (v.followUp) save({kind:'visit', id:'visit~'+uid(), date: v.followUp, doctor: v.vdoctor, specialty: v.vspecialty, facility: v.vfacility, facilityType: v.vtype, reason: 'Follow-up' + (v.vreason ? ': ' + v.vreason : ''), caseId, illnessId: v.linkIll && ill ? ill.id : ''});
+    if (v.linkIll && ill && caseId && ill.caseId !== caseId) save({...ill, caseId});
+    if (fileRec && get(fileRec.id)) save({...get(fileRec.id), name: 'Prescription' + (v.vdoctor ? ' – ' + v.vdoctor : '') + ' · ' + fmtD(v.vdate), date: v.vdate, doctor: v.vdoctor, facility: v.vfacility, reason: v.vreason, notes: v.vnotes, caseId, visitId});
+    const start = v.start && v.start <= t ? v.start : t;
+    const chosen = meds.filter(m => m.on && m.name.trim());
+    const newIds = chosen.map(() => 'med~' + uid());
+    chosen.forEach((m, mi) => save({kind:'med', id: newIds[mi], repeat: (() => { const r = {...m.repeat}; if (r.auto) { if (r.type === 'weekly') r.days = [parseD(start).getDay()]; if (r.type === 'monthly') r.day = parseD(start).getDate(); } delete r.auto; return r; })(), name: m.name.trim(), dose: m.dose, form: m.form, food: m.food, foodSource: m.foodSource || '', instructions: m.instructions, times: m.repeat && m.repeat.type === 'prn' ? [] : m.times && m.times.length ? [...m.times] : [...(FREQ[m.per] || FREQ[1])], start, end: m.days ? addDays(start, +m.days - 1) : '', doctor: v.vdoctor, facility: v.vfacility, prescribedOn: v.vdate, fileId: fileRec ? fileRec.id : '', caseId, visitId}));
+    const bfN = v.backfill && start < t ? backfillDoses(newIds.filter((id, mi) => chosen[mi].repeat.type !== 'prn'), start) : 0;
+    closeSheet();
+    const parts = [visitId ? 'doctor visit' : '', bfN ? bfN + ' earlier dose' + (bfN===1?'':'s') + ' marked taken' : '', chosen.length ? chosen.length + ' medicine' + (chosen.length===1?'':'s') : '', 'prescription'].filter(Boolean);
+    toast(`Saved ${parts.join(', ')}${caseId ? ' to “' + esc(get(caseId)?.title || '') + '”' : ''}.`);
+    if (caseId) openCase(caseId); else { UI.medTab = 'active'; go('meds'); }
+  }
+  draw();
+}
+function shrinkImage(file, max, q=0.85){
+  return new Promise((res) => {
+    const img = new Image();
+    img.onload = () => {
+      const s = Math.min(1, max / Math.max(img.width, img.height));
+      if (s === 1 && file.size < 1.5e6 && q >= 0.85) return res(file);
+      const c = document.createElement('canvas'); c.width = Math.round(img.width*s); c.height = Math.round(img.height*s);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      c.toBlob(b => res(b || file), 'image/jpeg', q);
+    };
+    img.onerror = () => res(file);
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+/* ---- files ---- */
+async function storeUpload(file, meta){
+  let blob = file;
+  if (file.type.startsWith('image/') && file.size > 2.5e6) blob = await shrinkImage(file, 2400);
+  const rec = {kind:'file', id:'file~'+uid(), name: meta.name || file.name, category: meta.category||'Other', date: meta.date||today(), reason: meta.reason||'', doctor: meta.doctor||'', facility: meta.facility||'', notes: meta.notes||'', caseId: meta.caseId||'', visitId: meta.visitId||'', mime: blob.type || file.type, size: blob.size, origName: file.name};
+  if (storeMode === 'device') {
+    try { const bid = 'blob~' + uid(); await IDB.putBlob(bid, blob); rec.blobId = bid; BLOB_URLS.set(bid, URL.createObjectURL(blob)); return save(rec); }
+    catch(e) { persistErr(e); }
+  }
+  if (blob.size >= 180000 && (blob.type||'').startsWith('image/')) { for (const px of [1400, 1000, 700]) { blob = await shrinkImage(file, px, 0.7); if (blob.size < 180000) break; } rec.mime = blob.type; rec.size = blob.size; }
+  if (blob.size < 180000) { rec.dataUrl = await new Promise(r => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.readAsDataURL(blob); }); return save(rec); }
+  toast('This file is too large to store here — only its details were saved.');
+  rec.notes = (rec.notes ? rec.notes + '\n' : '') + '(File not stored: too large for this view)';
+  return save(rec);
+}
+const FILE_FIELDS = [
+  {k:'name',label:'Name',req:true,ph:'e.g. Blood test – full panel'},
+  {k:'category',label:'Type',type:'select',opts:FILE_CATS,half:true},{k:'date',label:'Date done',type:'date',req:true,half:true},
+  {k:'reason',label:'Reason / what it was for',ph:'e.g. Follow-up for anemia'},
+  {k:'doctor',label:'Doctor',list:'dl-doc',half:true},{k:'facility',label:'Hospital / clinic / lab',list:'dl-fac',half:true},
+  {k:'notes',label:'Details / results',type:'textarea',ph:'e.g. Hemoglobin 11.2 g/dL (low)'}
+];
+ACT.addFile = (pre) => {
+  const init = {date: today(), category:'Lab report', ...(pre && !(pre instanceof Element) && typeof pre === 'object' ? pre : {})};
+  openSheet('Upload a record', `${datalists()}<form id="ff">
+    <div class="ocrbox" style="padding:10px"><input type="file" id="fFile" accept="image/*,application/pdf,.txt,.csv,.md,.json"><div class="small" style="margin-top:6px">Photo, PDF or text file · up to 20 MB</div></div>
+    ${formHtml(FILE_FIELDS, init)}${caseField(init)}
+    <button class="btn block" type="submit" id="fsub">Save record</button></form>`, b => {
+    const fi = b.querySelector('#fFile');
+    fi.onchange = () => { const f = fi.files[0]; const n = b.querySelector('[name=name]'); if (f && !n.value) n.value = f.name.replace(/\.[^.]+$/,''); };
+    b.querySelector('#ff').onsubmit = async e => {
+      e.preventDefault();
+      const v = resolveCase(readForm(e.target), null, init.date); delete v.fFile;
+      if (init.visitId) v.visitId = init.visitId;
+      const f = fi.files[0];
+      const btn = b.querySelector('#fsub'); btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Saving…';
+      if (f) await storeUpload(f, v); else save({...v, kind:'file', id:'file~'+uid()});
+      closeSheet(); toast('Record saved.'); if (route !== 'files' && route !== 'case') go('files');
+    };
+  });
+};
+ACT.viewFile = id => {
+  const f = get(id); if (!f) return;
+  const url = fileUrl(f), isImg = (f.mime||'').startsWith('image/');
+  openSheet(f.name, `<div class="viewer" data-fid="${f.id}">${url ? (isImg ? `<img src="${esc(url)}" alt="${esc(f.name)}">` : `<div class="ocrbox"><a class="btn" href="${esc(url)}" target="_blank" rel="noopener">${ic('ext','style="width:16px;height:16px"')} Open ${esc((f.mime||'file').split('/').pop().toUpperCase())}</a> <a class="btn out" href="${esc(url)}" download="${esc((f.name||'record').replace(/[^\w\- .]/g,'_'))}${(f.origName||'').match(/\.[a-z0-9]+$/i)?.[0] || ''}">Save to phone</a></div>`) : ''}</div>
+    <dl class="kv"><dt>Type</dt><dd>${esc(f.category)}</dd><dt>Date</dt><dd>${fmtD(f.date)}</dd>${f.reason?`<dt>Reason</dt><dd>${esc(f.reason)}</dd>`:''}${f.doctor?`<dt>Doctor</dt><dd>${esc(f.doctor)}</dd>`:''}${f.facility?`<dt>Where</dt><dd>${esc(f.facility)}</dd>`:''}${f.notes?`<dt>Details</dt><dd style="white-space:pre-wrap">${esc(f.notes)}</dd>`:''}${caseKv(f)}</dl>
+    <div class="btns" style="margin-top:14px"><button class="btn sm" id="ed">${ic('edit','style="width:16px;height:16px"')} Edit details</button><button class="btn sm danger" id="dl">${ic('trash','style="width:16px;height:16px"')} Delete</button></div>`, b => {
+    b.querySelector('#ed').onclick = () => openSheet('Edit record', `${datalists()}<form id="fe">${formHtml(FILE_FIELDS, f)}${caseField(f)}<button class="btn block" type="submit">Save</button></form>`, b2 => b2.querySelector('#fe').onsubmit = e => { e.preventDefault(); save({...f, ...resolveCase(readForm(e.target), f.reason, f.date)}); closeSheet(); });
+    b.querySelector('#dl').onclick = () => confirmSheet(`Delete “${esc(f.name)}”?`, async () => { remove(f.id); });
+  });
+};
+
+/* ---- visits ---- */
+const VISIT_FIELDS = [
+  {k:'date',label:'Date',type:'date',req:true,half:true},{k:'time',label:'Time',type:'time',half:true},
+  {k:'doctor',label:'Doctor',list:'dl-doc',req:true,half:true},{k:'specialty',label:'Specialty',ph:'e.g. GP, Cardiologist',half:true},
+  {k:'facility',label:'Hospital / clinic',list:'dl-fac',half:true},{k:'facilityType',label:'Place type',type:'select',opts:['Clinic','Hospital','Pharmacy','Lab','Telehealth','Other'],half:true},
+  {k:'reason',label:'Reason for visit'},
+  {k:'notes',label:'Notes / outcome',type:'textarea',ph:'Diagnosis, advice, follow-up…'}
+];
+ACT.addVisit = () => visitForm({date: addDays(today(), 1), facilityType:'Clinic'});
+ACT.addVisitOn = d => visitForm({date: d, facilityType:'Clinic'});
+function visitForm(v){
+  const ills = list('illness').sort((a,b)=>b.start.localeCompare(a.start)).slice(0,10);
+  if (!v.id && !v.caseId && v.illnessId && get(v.illnessId)) v = {...v, caseId: get(v.illnessId).caseId || ''};
+  openSheet(v.id ? 'Edit visit' : 'Doctor visit', `${datalists()}<form id="vf">${formHtml(VISIT_FIELDS, v)}
+    ${ills.length?fieldHtml({k:'illnessId',label:'Related illness',type:'select',opts:[['','— none —'],...ills.map(i=>[i.id, (i.title||'Unwell')+' ('+fmtDs(i.start)+')'])]}, v.illnessId):''}
+    ${caseField(v)}
+    <button class="btn block" type="submit">Save visit</button></form>`, b => b.querySelector('#vf').onsubmit = e => {
+    e.preventDefault(); const val = resolveCase(readForm(e.target), null, v.date);
+    if (!val.newCase && val.caseId && val.illnessId) { const il = get(val.illnessId); if (il && !il.caseId) save({...il, caseId: val.caseId}); }
+    save({...v, ...val, kind:'visit', id: v.id || 'visit~'+uid()}); closeSheet(); toast('Visit saved.');
+  });
+}
+ACT.viewVisit = id => {
+  const v = get(id); if (!v) return;
+  const ill = v.illnessId && get(v.illnessId);
+  const related = [...list('file').filter(f => f.visitId === v.id || (!f.visitId && f.date === v.date)), ...list('med').filter(m => m.visitId === v.id)];
+  openSheet(v.doctor || 'Visit', `<dl class="kv"><dt>When</dt><dd>${fmtD(v.date)}${v.time?' · '+fmtT(v.time):''}</dd>${v.specialty?`<dt>Specialty</dt><dd>${esc(v.specialty)}</dd>`:''}<dt>Where</dt><dd>${esc(v.facility||'–')} ${v.facilityType?`<span class="pill">${esc(v.facilityType)}</span>`:''}</dd>${v.reason?`<dt>Reason</dt><dd>${esc(v.reason)}</dd>`:''}${v.notes?`<dt>Notes</dt><dd style="white-space:pre-wrap">${esc(v.notes)}</dd>`:''}${ill?`<dt>Illness</dt><dd>${esc(ill.title)}</dd>`:''}${caseKv(v)}</dl>
+  ${related.length?`<h3 style="font-size:14px;margin:14px 0 4px">Prescriptions & records from this visit</h3>${related.map(recRow).join('')}`:''}
+  <div class="btns" style="margin-top:14px"><button class="btn sm" id="ed">${ic('edit','style="width:16px;height:16px"')} Edit</button><button class="btn sm sec" id="up">+ Upload record</button><button class="btn sm danger" id="dl">${ic('trash','style="width:16px;height:16px"')} Delete</button></div>`, b => {
+    b.querySelector('#ed').onclick = () => visitForm(v);
+    b.querySelector('#up').onclick = () => ACT.addFile({date: v.date, doctor: v.doctor||'', facility: v.facility||'', reason: v.reason||'', caseId: v.caseId||'', visitId: v.id});
+    b.querySelector('#dl').onclick = () => confirmSheet('Delete this visit?', () => remove(v.id));
+    b.querySelectorAll('[data-act]').forEach(el => { const [n, a] = el.dataset.act.split('|'); el.onclick = e => { e.stopPropagation(); ACT[n](a); }; });
+  });
+};
+
+/* ---- sick reporting ---- */
+const SYMPTOMS = ['Fever','Cough','Sore throat','Runny nose','Headache','Body aches','Fatigue','Nausea','Vomiting','Diarrhea','Stomach pain','Dizziness','Rash','Chills','Loss of taste/smell','Shortness of breath','Chest pain','Ear pain','Back pain','Painful urination'];
+const RED_FLAGS = [
+  {s:['Chest pain'], m:'Chest pain'},
+  {s:['Shortness of breath'], m:'Difficulty breathing'},
+];
+const RED_TEXT = /(faint|unconscious|seizure|confus|stiff neck|blood|bleed|can'?t breathe|severe|worst headache|slurred|numb|weak(ness)? on one side|suicid|swelling of (the )?(face|lips|tongue|throat))/i;
+function triage(i){
+  const t = today(), days = daysBetween(i.start, t) + 1;
+  const flags = [];
+  RED_FLAGS.forEach(r => { if (r.s.every(s => (i.symptoms||[]).includes(s))) flags.push(r.m); });
+  const tmp = parseFloat(i.temp);
+  if (tmp >= 39.4) flags.push(`High fever (${tmp} °C)`);
+  if (+i.severity >= 9) flags.push('Very severe symptoms');
+  const tm = (i.notes||'').match(RED_TEXT); if (tm) flags.push(`“${tm[0]}” mentioned`);
+  if (flags.length) return {level:'bad', title:'Seek medical care now', text:`Because of: ${flags.join(', ')}. Contact a doctor or go to urgent care today. If symptoms are severe or getting worse fast, call your local emergency number.`};
+  const see = [];
+  if (tmp >= 38 && days >= 3) see.push('fever lasting 3+ days');
+  if (days >= 7) see.push('symptoms for over a week');
+  if (+i.severity >= 7) see.push('high severity');
+  if ((i.symptoms||[]).some(s => ['Vomiting','Diarrhea'].includes(s)) && days >= 2) see.push('vomiting/diarrhea for 2+ days (dehydration risk)');
+  if ((i.symptoms||[]).includes('Painful urination')) see.push('possible urinary infection');
+  if ((i.symptoms||[]).includes('Ear pain') && days >= 3) see.push('ear pain for 3+ days');
+  const p = profile();
+  if (p.conditions) see.push('you have a long-term condition (' + p.conditions.slice(0,40) + ')');
+  if (see.length) return {level:'warn', title:'Consider seeing a doctor', text:`Book a visit with your doctor soon: ${see.join('; ')}. Rest and stay hydrated meanwhile.`};
+  return {level:'good', title:'Likely OK to recover at home', text:'Rest, drink plenty of fluids and keep logging how you feel. See a doctor if you get worse, develop a high fever, or aren\'t improving after a few days.'};
+}
+ACT.reportSick = () => sickForm({start: today(), severity: 4, symptoms: []});
+function sickForm(i){
+  let sym = new Set(i.symptoms||[]);
+  openSheet(i.id ? 'Update illness' : 'Report feeling sick', `${datalists()}<form id="sf">
+    ${formHtml([{k:'title',label:'What\'s wrong (short)',ph:'e.g. Flu, stomach bug, migraine'},{k:'start',label:'Started on',type:'date',req:true,half:true},{k:'temp',label:'Temperature (°C)',type:'number',step:'0.1',ph:'e.g. 38.2',half:true}], i)}
+    <label class="f">Symptoms<div class="chips" style="margin-top:6px" id="symBox">${SYMPTOMS.map(s=>`<button type="button" class="chip ${sym.has(s)?'on':''}" data-s="${esc(s)}">${esc(s)}</button>`).join('')}</div></label>
+    <label class="f">Other symptoms<input name="other" placeholder="comma-separated" value="${esc((i.symptoms||[]).filter(s=>!SYMPTOMS.includes(s)).join(', '))}"></label>
+    <label class="f">How bad is it? <b id="sevV">${i.severity||4}</b>/10<input type="range" name="severity" min="1" max="10" value="${i.severity||4}" style="accent-color:var(--teal);padding:0;background:none;border:0"></label>
+    ${formHtml([{k:'notes',label:'Notes',type:'textarea',ph:'How it started, what you\'ve taken…'}], i)}
+    ${caseField(i, {defNew: !i.id && !i.caseId})}
+    <button class="btn block" type="submit">${i.id?'Save':'Save & check what to do'}</button></form>`, b => {
+    b.querySelectorAll('[data-s]').forEach(c => c.onclick = () => { const s = c.dataset.s; sym.has(s) ? sym.delete(s) : sym.add(s); c.classList.toggle('on'); });
+    const rng = b.querySelector('[name=severity]'); rng.oninput = () => b.querySelector('#sevV').textContent = rng.value;
+    b.querySelector('#sf').onsubmit = e => {
+      e.preventDefault();
+      const v = readForm(e.target);
+      const other = (v.other||'').split(',').map(s=>s.trim()).filter(Boolean); delete v.other;
+      const symptoms = [...sym, ...other];
+      if (!v.title) v.title = symptoms[0] || 'Unwell';
+      resolveCase(v, v.title, v.start);
+      const rec = save({...i, ...v, symptoms, kind:'illness', id: i.id || 'illness~'+uid()});
+      ACT.viewIll(rec.id);
+    };
+  });
+}
+ACT.viewIll = id => {
+  const i = get(id); if (!i) return;
+  const tr = i.end ? null : triage(i);
+  const q = encodeURIComponent(((i.symptoms||[]).join(' ') || i.title || '') + (i.symptoms?.length ? ' when to see a doctor' : ''));
+  const visits = list('visit').filter(v => v.illnessId === i.id || (i.caseId && v.caseId === i.caseId));
+  const meds = list('med').filter(m => m.start >= i.start && (!i.end || m.start <= i.end));
+  openSheet(i.title || 'Illness', `
+    ${tr ? `<div class="alert ${tr.level}"><b>${tr.title}</b>${tr.text}</div>` : `<div class="alert good"><b>Recovered</b>${fmtD(i.end)} · ${daysBetween(i.start,i.end)+1} days</div>`}
+    <dl class="kv"><dt>Since</dt><dd>${fmtD(i.start)}${!i.end?` · day ${daysBetween(i.start,today())+1}`:''}</dd><dt>Symptoms</dt><dd>${esc((i.symptoms||[]).join(', ')||'–')}</dd><dt>Severity</dt><dd>${esc(i.severity)}/10</dd>${i.temp?`<dt>Temp</dt><dd>${esc(i.temp)} °C</dd>`:''}${i.notes?`<dt>Notes</dt><dd style="white-space:pre-wrap">${esc(i.notes)}</dd>`:''}${i.end&&i.recoveryNote?`<dt>Recovery</dt><dd>${esc(i.recoveryNote)}</dd>`:''}${caseKv(i)}</dl>
+    ${visits.length?`<h3 style="font-size:14px;margin:14px 0 4px">Doctor visits</h3>${visits.map(visitRow).join('')}`:''}
+    ${meds.length?`<h3 style="font-size:14px;margin:14px 0 4px">Medication during this time</h3>${meds.map(medRow).join('')}`:''}
+    <div class="card" style="box-shadow:none;border:2px solid var(--line);margin-top:12px"><h3>${ic('search','style="width:18px;height:18px;color:var(--teal-d)"')}Look it up</h3>
+      <div class="btns"><a class="btn sm out" href="https://www.google.com/search?q=${q}" target="_blank" rel="noopener">Search Google ${ic('ext','style="width:14px;height:14px"')}</a><a class="btn sm out" href="https://www.nhs.uk/conditions/" target="_blank" rel="noopener">NHS conditions A–Z ${ic('ext','style="width:14px;height:14px"')}</a></div>
+      ${SAMPLE && !i.end ? `<button class="btn sm block" id="ask" style="margin-top:8px">${ic('sparkle','style="width:16px;height:16px"')} Ask Claude: rest at home or see a doctor?</button><div id="askOut"></div>`:''}
+    </div>
+    <p class="disclaimer">This check is general guidance only, not a diagnosis. Trust your instincts — if you feel very unwell, get medical help.</p>
+    <div class="btns" style="margin-top:12px">${!i.end?'<button class="btn sm" id="rec">I\'ve recovered</button>':''}<button class="btn sm sec" id="ed">${ic('edit','style="width:16px;height:16px"')} Update</button><button class="btn sm sec" id="vis">+ Doctor visit</button><button class="btn sm danger" id="dl">${ic('trash','style="width:16px;height:16px"')}</button></div>`, b => {
+    const r = b.querySelector('#rec'); if (r) r.onclick = () => recoverSheet(i.id);
+    b.querySelector('#ed').onclick = () => sickForm(i);
+    b.querySelector('#vis').onclick = () => visitForm({date: today(), facilityType:'Clinic', reason: i.title || (i.symptoms||[]).join(', '), illnessId: i.id});
+    b.querySelector('#dl').onclick = () => confirmSheet('Delete this illness record?', () => remove(i.id));
+    b.querySelectorAll('[data-act]').forEach(el => { const [n, a] = el.dataset.act.split('|'); el.onclick = e => { e.stopPropagation(); ACT[n](a); }; });
+    const ask = b.querySelector('#ask');
+    if (ask) ask.onclick = async () => {
+      const out = b.querySelector('#askOut'); ask.disabled = true; ask.innerHTML = '<span class="spinner"></span> Thinking…';
+      const p = profile();
+      const age = p.dob ? Math.floor(daysBetween(p.dob, today())/365.25) : null;
+      const prompt = `A person is logging that they feel sick and wants to know whether to rest at home or see a doctor. Give practical, cautious guidance in plain language. Format: one bold first line that is exactly one of "Rest at home", "See a doctor in the next day or two", "Get medical care today", "Call emergency services now"; then 3-5 short bullet points: what may be going on (no definitive diagnosis), self-care tips, and specific warning signs that should make them seek care. Under 140 words. No markdown headings.
+Details:
+- Symptoms: ${(i.symptoms||[]).join(', ') || 'not specified'}
+- Started: ${daysBetween(i.start, today())+1} day(s) ago
+- Severity: ${i.severity}/10
+- Temperature: ${i.temp ? i.temp+' °C' : 'not measured'}
+- Notes: ${i.notes || 'none'}
+- Age: ${age ?? 'unknown'}; sex: ${p.sex || 'unknown'}
+- Known conditions: ${p.conditions || 'none listed'}; allergies: ${p.allergies || 'none listed'}
+- Current medication: ${list('med').filter(m=>medActiveOn(m,today())).map(m=>m.name).join(', ') || 'none'}`;
+      try {
+        await SAMPLE(prompt, {modelTier:'default', onText: ({text}) => { out.innerHTML = `<div class="alert info" style="margin-top:8px;white-space:pre-wrap">${mdLite(text)}</div>`; }});
+      } catch(e) {
+        out.innerHTML = `<div class="alert warn" style="margin-top:8px">${e && e.code==='rate_limited'?'Too many requests — try again shortly.':'Couldn\'t get an answer right now.'}</div>`;
+      }
+      ask.classList.add('hidden');
+    };
+  });
+};
+function mdLite(t){ return esc(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/^[-•]\s?/gm,'• '); }
+function recoverSheet(id){
+  const i = get(id);
+  openSheet('Mark as recovered', `<form id="rf">${formHtml([{k:'end',label:'Recovered on',type:'date',req:true},{k:'recoveryNote',label:'What helped? (optional)',type:'textarea'}], {end: today()})}<button class="btn block" type="submit">Save</button></form>`, b => b.querySelector('#rf').onsubmit = e => {
+    e.preventDefault(); const v = readForm(e.target); if (v.end < i.start) v.end = i.start;
+    save({...i, ...v}); closeSheet();
+    const c = caseOf(i);
+    if (c && c.status !== 'closed') toast('Glad you\'re feeling better! Close the case file “'+esc(c.title)+'” too?', {label:'Close case', fn:() => save({...get(c.id), status:'closed', closedOn: v.end})}, 10000);
+    else toast('Glad you\'re feeling better!');
+  });
+}
+
+/* ---- goals, food, exercise, sleep ---- */
+const GOAL_FIELDS = [
+  {k:'title',label:'Goal',req:true,ph:'e.g. Lose 5 kg'},
+  {k:'category',label:'Area',type:'select',opts:['Weight','Fitness','Nutrition','Sleep','Blood pressure','Blood sugar','Mental health','Other'],half:true},{k:'deadline',label:'Target date',type:'date',half:true},
+  {k:'current',label:'Current',type:'number',step:'any',half:true},{k:'target',label:'Target',type:'number',step:'any',half:true},
+  {k:'unit',label:'Unit',ph:'kg, steps, mmHg…'},
+  {k:'notes',label:'Notes / plan',type:'textarea'}
+];
+ACT.addGoal = () => goalForm({category:'Fitness'});
+ACT.editGoal = id => goalForm(get(id));
+function goalForm(g){
+  openSheet(g.id ? 'Edit goal' : 'New health goal', `<form id="gf">${formHtml(GOAL_FIELDS, g)}<label class="f" style="display:flex;align-items:center;gap:8px"><input type="checkbox" name="done" ${g.done?'checked':''} style="width:20px;height:20px;accent-color:var(--teal);display:inline;margin:0"> Achieved</label><div class="btns"><button class="btn" type="submit" style="flex:1">Save goal</button>${g.id?'<button class="btn danger" type="button" id="dl">Delete</button>':''}</div></form>`, b => {
+    b.querySelector('#gf').onsubmit = e => { e.preventDefault(); const v = readForm(e.target); v.done = !!v.done; save({...g, ...v, kind:'goal', id: g.id || 'goal~'+uid()}); closeSheet(); };
+    const d = b.querySelector('#dl'); if (d) d.onclick = () => confirmSheet('Delete this goal?', () => remove(g.id));
+  });
+}
+const FOOD_FIELDS = [
+  {k:'meal',label:'Meal',type:'select',opts:['Breakfast','Lunch','Dinner','Snack','Drink'],half:true},{k:'date',label:'Date',type:'date',half:true},
+  {k:'desc',label:'What did you eat?',req:true,ph:'e.g. Oatmeal with banana'},
+  {k:'cal',label:'Calories (kcal, approx.)',type:'number',min:0},
+  {k:'notes',label:'Notes',ph:'portion, how you felt…'}
+];
+const mealNow = () => { const h = new Date().getHours(); return h < 11 ? 'Breakfast' : h < 15 ? 'Lunch' : h < 18 ? 'Snack' : 'Dinner'; };
+ACT.addFood = (d) => foodForm({meal: mealNow(), date: typeof d === 'string' ? d : today()});
+ACT.editFood = id => foodForm(get(id));
+function foodForm(f){
+  openSheet(f.id ? 'Edit food' : 'Log food', `<form id="ff2">${formHtml(FOOD_FIELDS, f)}${SAMPLE?'<button type="button" class="btn sm sec" id="est" style="margin:-4px 0 12px">'+ic('sparkle','style="width:15px;height:15px"')+' Estimate calories</button>':''}<div class="btns"><button class="btn" type="submit" style="flex:1">Save</button>${f.id?'<button class="btn danger" type="button" id="dl">Delete</button>':''}</div></form>`, b => {
+    b.querySelector('#ff2').onsubmit = e => { e.preventDefault(); save({...f, ...readForm(e.target), kind:'food', id: f.id || 'food~'+uid()}); closeSheet(); toast('Logged.'); };
+    const d = b.querySelector('#dl'); if (d) d.onclick = () => confirmSheet('Delete this entry?', () => remove(f.id));
+    const est = b.querySelector('#est');
+    if (est) est.onclick = async () => {
+      const desc = b.querySelector('[name=desc]').value.trim(); if (!desc) { b.querySelector('[name=desc]').focus(); return; }
+      est.disabled = true; est.innerHTML = '<span class="spinner" style="border-color:rgba(22,94,88,.3);border-top-color:var(--teal-dd)"></span> Estimating…';
+      try { const r = await SAMPLE.json(`Estimate the total calories (kcal) of this food for a typical adult portion: "${desc}". Return ONLY JSON {"kcal": number}.`, {modelTier:'quick'}); if (r && r.kcal) b.querySelector('[name=cal]').value = Math.round(r.kcal); est.innerHTML = '≈ estimated'; }
+      catch(e) { est.innerHTML = 'Couldn\'t estimate'; }
+    };
+  });
+}
+const EX_TYPES = ['Walking','Running','Cycling','Swimming','Gym / weights','Yoga','Sports','Stretching','Dancing','Other'];
+ACT.addEx = () => exForm({date: today(), type:'Walking', minutes: 30});
+ACT.editEx = id => exForm(get(id));
+function exForm(x){
+  openSheet(x.id ? 'Edit exercise' : 'Log exercise', `<form id="xf">${formHtml([{k:'type',label:'Activity',type:'select',opts:EX_TYPES,half:true},{k:'date',label:'Date',type:'date',half:true},{k:'minutes',label:'Minutes',type:'number',min:1,req:true},{k:'notes',label:'Notes',ph:'distance, steps, intensity…'}], x)}<div class="btns"><button class="btn" type="submit" style="flex:1">Save</button>${x.id?'<button class="btn danger" type="button" id="dl">Delete</button>':''}</div></form>`, b => {
+    b.querySelector('#xf').onsubmit = e => { e.preventDefault(); save({...x, ...readForm(e.target), kind:'exercise', id: x.id || 'ex~'+uid()}); closeSheet(); toast('Logged.'); };
+    const d = b.querySelector('#dl'); if (d) d.onclick = () => confirmSheet('Delete this entry?', () => remove(x.id));
+  });
+}
+ACT.addSleep = () => { const ex = list('sleep').find(s => s.date === today()); sleepForm(ex || {date: today(), bed: settings().remind.bedtime || '23:00', wake: '07:00'}); };
+ACT.editSleep = id => sleepForm(get(id));
+function sleepForm(x){
+  openSheet(x.id ? 'Edit sleep' : 'Log sleep', `<form id="slf">${formHtml([{k:'date',label:'Woke up on',type:'date',req:true},{k:'bed',label:'Went to bed',type:'time',req:true,half:true},{k:'wake',label:'Woke up',type:'time',req:true,half:true},{k:'quality',label:'Quality',type:'select',opts:['','Great','Good','OK','Poor','Very poor']}], x)}<div class="btns"><button class="btn" type="submit" style="flex:1">Save</button>${x.id?'<button class="btn danger" type="button" id="dl">Delete</button>':''}</div></form>`, b => {
+    b.querySelector('#slf').onsubmit = e => { e.preventDefault(); const v = readForm(e.target); let h = (hmToMin(v.wake) - hmToMin(v.bed)) / 60; if (h <= 0) h += 24; save({...x, ...v, hours: h, kind:'sleep', id: x.id || 'sleep~'+uid()}); closeSheet(); toast(`${h.toFixed(1)} hours logged.`); };
+    const d = b.querySelector('#dl'); if (d) d.onclick = () => confirmSheet('Delete this entry?', () => remove(x.id));
+  });
+}
+
+/* ---- dose time settings ---- */
+function wireDoseForm(root){
+  const f = root.querySelector('#doseForm'); if (!f) return;
+  const sel = JSON.parse(JSON.stringify(settings().freqSlots));
+  const label = k => SLOTS.find(x => x[0] === k)[1].split(' /')[0];
+  const summary = () => [1,2,3,4].forEach(n => {
+    const el = f.querySelector(`[data-fsum="${n}"]`), c = (sel[n]||[]).length;
+    const times = [...new Set((sel[n]||[]).map(k => f.querySelector(`[name=${k}]`).value))].sort().map(fmtT).join(', ');
+    el.innerHTML = c === n ? '· ' + times : `<span style="color:var(--bad)">· pick ${n} (${c} chosen)</span>`;
+  });
+  f.querySelectorAll('[data-fs]').forEach(b => b.onclick = () => {
+    const [n, k] = b.dataset.fs.split('|'); const arr = sel[n] = sel[n] || [];
+    const i = arr.indexOf(k); if (i >= 0) arr.splice(i, 1); else { arr.push(k); if (arr.length > +n) { const drop = arr.shift(); f.querySelector(`[data-fs="${n}|${drop}"]`).classList.remove('on'); } }
+    b.classList.toggle('on', arr.includes(k)); summary();
+  });
+  f.querySelectorAll('input[type=time]').forEach(i => i.oninput = summary);
+  summary();
+  f.querySelector('#doseReset').onclick = () => { SLOTS.forEach(([k,,t]) => f.querySelector(`[name=${k}]`).value = t); Object.keys(sel).forEach(n => delete sel[n]); Object.assign(sel, JSON.parse(JSON.stringify(DEF_FREQ_SLOTS))); f.querySelectorAll('[data-fs]').forEach(b => { const [n, k] = b.dataset.fs.split('|'); b.classList.toggle('on', sel[n].includes(k)); }); summary(); };
+  f.onsubmit = e => {
+    e.preventDefault();
+    const bad = [1,2,3,4].filter(n => (sel[n]||[]).length !== n);
+    if (bad.length) { toast(`Pick exactly ${bad[0]} time${bad[0]>1?'s':''} for “${bad[0]}× a day”.`); return; }
+    const v = readForm(f), s = settings(), oldT = s.doseTimes, newT = {};
+    SLOTS.forEach(([k]) => newT[k] = v[k] || oldT[k]);
+    const oldFreq = [1,2,3,4].map(n => freqTimes(n));
+    save({...s, doseTimes: newT, freqSlots: sel});
+    // offer to move existing schedules that use the old times
+    const map = {};
+    SLOTS.forEach(([k]) => { if (oldT[k] !== newT[k]) map[oldT[k]] = newT[k]; });
+    const newFreq = [1,2,3,4].map(n => freqTimes(n));
+    const t = today();
+    // a schedule that exactly matches an old "N× a day" default follows the new default; otherwise individual slot times are moved
+    const after = m => { const fromIns = timesFromText(m.instructions); if (fromIns) return fromIns; const cur = [...(m.times||[])].sort().join(); const i = oldFreq.findIndex(f => f.join() === cur); if (i >= 0 && (m.times||[]).length === i + 1) return newFreq[i]; return [...new Set((m.times||[]).map(x => map[x] || x))].sort(); };
+    const hit = list('med').filter(m => (medActiveOn(m, t) || m.start > t) && after(m).join() !== [...(m.times||[])].sort().join());
+    if (!hit.length) { toast('Dose times saved.'); return; }
+    openSheet('Update your current medicines?', `<div class="small" style="margin-bottom:10px">These medicines are scheduled at your old times. Move them to the new ones?</div>
+      ${hit.map(m => `<label class="switch" style="cursor:pointer"><input type="checkbox" data-up="${m.id}" checked style="width:20px;height:20px;accent-color:var(--teal)"><div class="main"><div style="font-weight:800">${esc(m.name)} <span class="small">${esc(m.dose||'')}</span></div><div class="small">${m.times.map(fmtT).join(', ')} → <b>${after(m).map(fmtT).join(', ')}</b></div></div></label>`).join('')}
+      <div class="btns" style="margin-top:12px"><button class="btn" id="upYes" style="flex:1">Update selected</button><button class="btn sec" data-close>Keep as is</button></div>`, b => {
+      b.querySelector('#upYes').onclick = () => { let n = 0; b.querySelectorAll('[data-up]').forEach(cb => { const m = get(cb.dataset.up); if (cb.checked && m) { save({...m, times: after(m)}); n++; } }); closeSheet(); toast(`Dose times saved · ${n} medicine${n===1?'':'s'} updated.`); };
+    });
+  };
+}
+
+/* ---- form submits delegated (profile, targets) ---- */
+document.addEventListener('submit', e => {
+  if (e.target.id === 'profForm') { e.preventDefault(); save({...profile(), ...readForm(e.target)}); toast('Profile saved.'); }
+  if (e.target.id === 'tgtForm') { e.preventDefault(); const v = readForm(e.target); const s = settings(); save({...s, targets:{cal:+v.cal||2000, water:+v.water||8, exercise:+v.exercise||30, sleep:+v.sleep||8}, remind:{...s.remind, waterEvery: Math.max(1, +v.waterEvery||2), bedtime: v.bedtime||'22:30'}}); toast('Saved.'); }
+});
+
+/* ---------------- reminders loop ---------------- */
+const fired = new Set();
+function notify(title, body){
+  try { if (!('Notification' in window) || Notification.permission !== 'granted') return; if (navigator.serviceWorker && navigator.serviceWorker.controller) navigator.serviceWorker.ready.then(r => r.showNotification(title, {body, icon:'icon-192.png', badge:'icon-192.png', tag: title + body})); else new Notification(title, {body}); } catch(e) {}
+}
+function checkReminders(){
+  if (storeMode === 'loading') return;
+  const s = settings(), r = s.remind, t = today(), now = new Date(), nm = now.getHours()*60 + now.getMinutes();
+  if (r.meds) dosesFor(t).forEach(d => {
+    const k = 'dose:' + t + d.key, dm = hmToMin(d.time);
+    if (nm >= dm && nm - dm <= 60 && !isRecorded(t, d.key) && !fired.has(k)) {
+      fired.add(k);
+      toast(`💊 Time to take <b>${esc(d.med.name)}</b>${d.med.dose?' '+esc(d.med.dose):''} (${fmtT(d.time)})`, {label:'Taken', fn:() => toggleDose(t, d.key)}, 0);
+      notify('Medication reminder', `${d.med.name} ${d.med.dose||''} — ${fmtT(d.time)}`);
+    }
+  });
+  if (r.water && now.getHours() >= 8 && now.getHours() <= 22) {
+    const slot = Math.floor((now.getHours() - 8) / (r.waterEvery||2)), k = 'water:' + t + ':' + slot;
+    if (slot > 0 && now.getMinutes() < 5 && (now.getHours()-8) % (r.waterEvery||2) === 0 && !fired.has(k)) { fired.add(k); toast('💧 Time for a glass of water', {label:'+1 glass', fn:() => ACT.water(1)}); notify('Drink water', 'Time for a glass of water'); }
+  }
+  if (r.sleep) { const k = 'bed:' + t, bm = hmToMin(r.bedtime); if (nm >= bm && nm - bm <= 10 && !fired.has(k)) { fired.add(k); toast('🌙 It\'s bedtime — time to wind down.'); notify('Bedtime', 'Time to wind down for sleep'); } }
+}
+setInterval(checkReminders, 30000);
+setTimeout(checkReminders, 3000);
+// re-render once a minute so "due" badges stay current (no writes)
+setInterval(() => { if (!$('#sheetRoot').innerHTML && document.activeElement?.tagName !== 'INPUT') render(); }, 60000);
+
+/* ---------------- boot ---------------- */
+route = ROUTES[location.hash.slice(1)] ? location.hash.slice(1) : 'home';
+initStore();
+if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
