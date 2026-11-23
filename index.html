@@ -169,6 +169,35 @@ label.f textarea{min-height:70px;resize:vertical}
 @keyframes spin{to{transform:rotate(360deg)}}
 .ocrbox{border:2px dashed var(--teal);border-radius:14px;padding:14px;text-align:center;background:var(--teal-ll);margin-bottom:12px}
 .hidden{display:none!important}
+:root{--cy:#d4517e}
+.cyhead{display:flex;gap:14px;align-items:center}
+.cyring{width:112px;height:112px;border-radius:50%;display:grid;place-items:center;flex:none}
+.cyring>div{width:88px;height:88px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.cyring b{font-size:19px;color:#8c2343}.cyring span{font-size:11px;color:var(--muted)}
+.cyinfo{display:flex;flex-direction:column;gap:6px;font-size:13px}.cyinfo span{display:block;color:var(--muted);font-size:11.5px;font-weight:700}
+.cybtn{background:var(--cy)}.cybtn:hover{background:#b23d66}
+.cal .d.cy-period{background:var(--cy);color:#fff}
+.cal .d.cy-predicted{background:#fbe3ea;color:#8c2343;outline:1.5px dashed var(--cy);outline-offset:-3px}
+.cal .d.cy-fertile{background:#e3eefc;color:#2b4f8f}
+.cal .d.cy-ovulation{background:#5b7fd6;color:#fff}
+.cal .d.cy-period.today,.cal .d.cy-ovulation.today{outline:2px solid var(--ink)}
+.cyclealert{background:#fbe9ef;border-color:#f3c3d3;color:#7a2141}
+.avatar.sm{width:40px;height:40px;font-size:15px}
+.avatar.xs{width:30px;height:30px;font-size:12px;display:grid;place-items:center;border-radius:50%;color:#fff;font-weight:800}
+.pbanner{display:flex;align-items:center;gap:8px;color:#fff;border-radius:14px;padding:8px 10px;margin-bottom:8px;font-size:14px}
+.pbanner button{background:rgba(255,255,255,.22);color:#fff;border:0;border-radius:99px;padding:5px 10px;font-weight:800;cursor:pointer}
+.rule{display:flex;align-items:center;gap:6px;flex-wrap:wrap;background:var(--teal-ll);border:2px solid var(--line);border-radius:12px;padding:6px 8px;margin-bottom:6px;font-size:13.5px;font-weight:700}
+.rule input,.rule select{border:1.5px solid var(--line);border-radius:8px;padding:4px 6px;background:#fff;font-weight:700;font-size:13px}
+.tmr.ready .ttl{color:var(--good)}
+.tmr.ready .bar i{background:var(--good)}
+.timers{border:2px solid #cfe9e5}
+.grp{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;font-weight:800;color:var(--teal-dd);background:var(--teal-ll);border-radius:10px;padding:6px 10px;margin:10px 0 2px}
+.grp.warn{color:#7d4c08;background:#fdf3e1}
+.grp:first-child{margin-top:0}
+.chip.sm{padding:4px 10px;font-size:12px}
+.scrollchips{flex-wrap:nowrap;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.scrollchips::-webkit-scrollbar{display:none}
+.scrollchips .chip{flex:none}
 ol.steps{padding-left:20px;margin:0 0 14px}ol.steps li{margin-bottom:14px;font-size:14px}
 .pill.rep{background:#ece8f8;color:#4b3a8c}
 .prnrow .btn{white-space:nowrap}
@@ -212,6 +241,19 @@ h3 .pill{white-space:nowrap}
 /* ---------------- icons ---------------- */
 const I = {
   home:'<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>',
+  m_tablet:'<ellipse cx="12" cy="12" rx="9" ry="6.5"/><path d="M12 5.5v13"/>',
+  m_capsule:'<rect x="2.5" y="8.5" width="19" height="7" rx="3.5" transform="rotate(-40 12 12)"/><path d="M9.2 8.6l6.2 7"/>',
+  m_syrup:'<path d="M9.5 2.5h5v3l2 2.5v11.5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2V8l2-2.5z"/><path d="M7.5 12h9M7.5 17h9"/>',
+  m_drops:'<path d="M12 3.5s5.5 6 5.5 10a5.5 5.5 0 0 1-11 0c0-4 5.5-10 5.5-10z"/><path d="M9.5 14.5a2.5 2.5 0 0 0 2.5 2.5"/>',
+  m_spray:'<rect x="7.5" y="10" width="9" height="11" rx="2"/><path d="M10 10V7h4v3M12 7V4.5M15.5 4h3M15.5 2.5l2.5-1M15.5 5.5l2.5 1"/>',
+  m_inhaler:'<path d="M9 3h5v7.5l3.5 2.5v6a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2v-9.5L9 8z"/><path d="M14 14h3.5"/>',
+  m_injection:'<path d="M17 3l4 4M19 5l-3 3M16 8l-8.5 8.5-3-3L13 5M9.5 10.5l1.5 1.5M12 8l1.5 1.5M4.5 16.5L2.5 18.5M6 18l-1 1"/>',
+  m_cream:'<path d="M7 3h10l-1.5 12h-7z"/><path d="M10 15v2.5h4V15M11 17.5V20h2v-2.5"/><path d="M8 7h8"/>',
+  m_soap:'<rect x="3.5" y="11" width="13" height="8" rx="3"/><circle cx="17.5" cy="6.5" r="2.2"/><circle cx="12" cy="6.5" r="1.4"/><circle cx="20.5" cy="11" r="1.2"/>',
+  m_shampoo:'<path d="M8 10.5h8V19a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2z"/><path d="M10 10.5V7.5h4v3M12 7.5V4h4.5"/><path d="M10.5 15h3"/>',
+  m_patch:'<rect x="3.5" y="7.5" width="17" height="9" rx="3" transform="rotate(-25 12 12)"/><circle cx="12" cy="12" r="2"/>',
+  m_powder:'<path d="M6 4l12 0-1 16H7z"/><path d="M6.4 8h11.2M10 12h4"/>',
+  sliders:'<path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/>',
   pill:'<rect x="2.5" y="8.5" width="19" height="7" rx="3.5" transform="rotate(-40 12 12)"/><path d="M9.2 8.6l6.2 7"/>',
   heart:'<path d="M12 20s-7.5-4.6-9.3-9.2C1.4 7.4 3.6 4 7 4c2 0 3.3 1 5 3 1.7-2 3-3 5-3 3.4 0 5.6 3.4 4.3 6.8C19.5 15.4 12 20 12 20z"/><path d="M3.5 12h4l1.6-3 2.6 6 1.8-3.5h7"/>',
   folder:'<path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H9l2 2h8.5A1.5 1.5 0 0 1 21 8.5v9A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/>',
@@ -278,14 +320,21 @@ const IDB = {
   clear(){ return Promise.all([IDB.req('records', 'readwrite', s => s.clear()), IDB.req('blobs', 'readwrite', s => s.clear())]); }
 };
 
-function list(kind){ return [...R.values()].filter(r => r.kind === kind); }
+/* people: 'me' plus anyone in your care. Records of these kinds belong to one person. */
+const PSCOPED = new Set(['med','visit','illness','file','case','goal','food','exercise','sleep','day','period','profile','timers']);
+let CUR = (() => { try { return localStorage.getItem('hm.person') || 'me'; } catch(e) { return 'me'; } })();
+let NO_RENDER = 0;
+function ownerOf(r){ return r.personId || 'me'; }
+function withPerson(pid, fn){ const prev = CUR; CUR = pid; NO_RENDER++; try { return fn(); } finally { CUR = prev; NO_RENDER--; } }
+function list(kind){ return [...R.values()].filter(r => r.kind === kind && (!PSCOPED.has(kind) || ownerOf(r) === CUR)); }
 function get(id){ return R.get(id); }
-function single(kind, defaults){ const id = kind + '~me'; return R.get(id) || {id, kind, ...defaults}; }
-function day(date){ const id = 'day~' + date; return R.get(id) || {id, kind:'day', date, water:0, doses:{}}; }
+function single(kind, defaults){ const id = kind + '~' + (PSCOPED.has(kind) ? CUR : 'me'); return R.get(id) || {id, kind, ...defaults}; }
+function day(date){ const id = CUR === 'me' ? 'day~' + date : 'day~' + CUR + '~' + date; return R.get(id) || {id, kind:'day', date, water:0, doses:{}, personId: CUR}; }
 
 function persistErr(e){ if (e && /quota/i.test(e.name + e.message)) toast('Your phone is out of space for this app — delete some large records or free up storage.'); }
 function save(rec){
   rec.updatedAt = Date.now();
+  if (PSCOPED.has(rec.kind) && !rec.personId && CUR !== 'me') rec.personId = CUR;
   const copy = JSON.parse(JSON.stringify(rec));
   R.set(rec.id, copy);
   if (storeMode === 'device') IDB.put(copy).catch(persistErr);
@@ -383,6 +432,18 @@ function openSheet(title, html, onMount){
   bg.addEventListener('click', e => { if (e.target === bg || e.target.closest('[data-close]')) closeSheet(); });
   onMount && onMount($('#sheetRoot .sbody'));
   wireCase($('#sheetRoot .sbody'));
+  guardForms($('#sheetRoot .sbody'));
+}
+/* Browsers refuse to submit a form with an invalid field even when that field is hidden, and show no message.
+   Check only the fields the person can see, and point at the first problem. */
+function guardForms(root){
+  root.querySelectorAll('form').forEach(f => {
+    if (f.dataset.guarded) return; f.dataset.guarded = '1'; f.noValidate = true;
+    f.addEventListener('submit', e => {
+      const bad = [...f.elements].find(el => el.willValidate && !el.checkValidity() && el.offsetParent !== null);
+      if (bad) { e.preventDefault(); e.stopImmediatePropagation(); bad.reportValidity(); bad.focus(); return; }
+    }, true);
+  });
 }
 function closeSheet(){ $('#sheetRoot').innerHTML = ''; }
 function confirmSheet(msg, yes){
@@ -394,7 +455,7 @@ function fieldHtml(f, v){
   const val = v ?? f.def ?? '';
   const req = f.req ? 'required' : '';
   let inner;
-  if (f.type === 'select') inner = `<select name="${f.k}" ${req}>${f.opts.map(o => { const [ov, ol] = Array.isArray(o) ? o : [o, o]; return `<option value="${esc(ov)}" ${String(ov)===String(val)?'selected':''}>${esc(ol)}</option>`; }).join('')}</select>`;
+  if (f.type === 'select') inner = `<select name="${f.k}" ${req}>${(val !== '' && !f.opts.some(o => String(Array.isArray(o) ? o[0] : o) === String(val)) ? [[val, val]] : []).concat(f.opts).map(o => { const [ov, ol] = Array.isArray(o) ? o : [o, o]; return `<option value="${esc(ov)}" ${String(ov)===String(val)?'selected':''}>${esc(ol)}</option>`; }).join('')}</select>`;
   else if (f.type === 'textarea') inner = `<textarea name="${f.k}" placeholder="${esc(f.ph||'')}">${esc(val)}</textarea>`;
   else inner = `<input name="${f.k}" type="${f.type||'text'}" value="${esc(val)}" placeholder="${esc(f.ph||'')}" ${f.step?`step="${f.step}"`:''} ${f.min!=null?`min="${f.min}"`:''} ${f.max!=null?`max="${f.max}"`:''} ${f.list?`list="${f.list}"`:''} ${req}>`;
   return `<label class="f">${esc(f.label)}${f.req?' *':''}${inner}</label>`;
@@ -495,9 +556,64 @@ function doseState(d, x){
 }
 function setDose(d, key, val){
   const rec = day(d); rec.doses = {...(rec.doses||{})};
+  const wasTaken = isTaken(d, key);
   if (val) rec.doses[key] = val; else delete rec.doses[key];
   save(rec);
+  const src = d + '|' + key;
+  if (val && val.s === 'taken' && !wasTaken && !val.bf) startAfterTimers(key.split('@')[0], val.at || Date.now(), src);
+  else if (!(val && val.s === 'taken')) clearTimersFrom(src);
 }
+/* ---- timers started by taking a medicine ----
+   rule types on a medicine (m.after):
+   {type:'food', minutes, mode:'wait'|'within'}   don't eat for N min / eat within N min
+   {type:'wait', minutes, target:''|medId}         wait N min before any other / a specific medicine
+   {type:'next', minutes, target:medId}            then take another medicine after N min           */
+function timersRec(){ return single('timers', {items: []}); }
+function liveTimers(){ const now = Date.now(); return (timersRec().items || []).filter(x => !x.done && now < x.due + 3 * 3600e3); }
+function saveTimers(items){ const r = timersRec(); const now = Date.now(); save({...r, items: items.filter(x => !x.done && now < x.due + 6 * 3600e3)}); }
+function fmtMins(n){ n = Math.round(+n); return n >= 60 && n % 60 === 0 ? `${n/60} h` : n > 60 ? `${Math.floor(n/60)} h ${n%60} min` : `${n} min`; }
+function ruleText(r, selfName){
+  const tgt = r.target && get(r.target) ? get(r.target).name : '';
+  if (r.type === 'food') return r.mode === 'within' ? `Eat within ${fmtMins(r.minutes)}` : `Don't eat for ${fmtMins(r.minutes)}`;
+  if (r.type === 'wait') return `Wait ${fmtMins(r.minutes)} before ${tgt ? esc(tgt) : 'any other medicine'}`;
+  if (r.type === 'next') return `Then take ${esc(tgt || 'the next medicine')} after ${fmtMins(r.minutes)}`;
+  return '';
+}
+function startAfterTimers(medId, at, src){
+  const m = get(medId); if (!m || !(m.after || []).length) return;
+  const items = [...(timersRec().items || [])].filter(x => x.src !== src);
+  let n = 0;
+  (m.after || []).forEach((r, i) => {
+    const due = at + (+r.minutes || 0) * 60e3; if (due <= Date.now()) return;
+    const tgt = r.target && get(r.target);
+    const base = {id: 'tm' + uid(), src, medId, start: at, due, done: false};
+    if (r.type === 'food') items.push({...base, kind: 'food', mode: r.mode || 'wait', label: r.mode === 'within' ? `Eat by ${new Date(due).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'})}` : 'You can eat', sub: `after ${m.name}`});
+    else if (r.type === 'wait') items.push({...base, kind: 'wait', target: r.target || '', label: `Wait before ${tgt ? tgt.name : 'other medicines'}`, sub: `after ${m.name}`});
+    else if (r.type === 'next' && tgt) items.push({...base, kind: 'next', target: r.target, label: `Take ${tgt.name}`, sub: `${fmtMins(r.minutes)} after ${m.name}`});
+    else return;
+    n++;
+  });
+  if (n) { saveTimers(items); toast(`⏱ ${n} timer${n > 1 ? 's' : ''} started after ${esc(m.name)}.`); }
+}
+function clearTimersFrom(src){ const r = timersRec(); if ((r.items || []).some(x => x.src === src)) saveTimers(r.items.filter(x => x.src !== src)); }
+function blockingWaits(medId){ const now = Date.now(); return liveTimers().filter(x => x.kind === 'wait' && x.due > now && x.medId !== medId && (!x.target || x.target === medId)); }
+function leftText(due){ const ms = due - Date.now(); if (ms <= 0) return 'now'; const mn = Math.ceil(ms / 60e3); return mn >= 60 ? `${Math.floor(mn/60)} h ${mn%60 ? mn%60 + ' min' : ''}`.trim() : `${mn} min`; }
+function timersCard(){
+  const ts = liveTimers().sort((a, b) => a.due - b.due);
+  if (!ts.length) return `<div class="btns" style="justify-content:flex-end;margin:-4px 0 10px"><button class="btn sm sec" data-act="newTimer">⏱ Start a timer</button></div>`;
+  const icon = {food:'🍽', wait:'⏳', next:'💊', custom:'⏱'};
+  return `<div class="card timers"><h3>⏱ Timers<span class="sp"></span><button class="link" data-act="newTimer">+ New</button></h3>${ts.map(x => {
+    const ready = x.due <= Date.now(), total = Math.max(1, x.due - x.start), pct = Math.min(100, Math.max(0, (Date.now() - x.start) / total * 100));
+    const at = new Date(x.due).toLocaleTimeString(undefined, {hour:'numeric', minute:'2-digit'});
+    const status = x.kind === 'food' && x.mode === 'within' ? (ready ? 'Time to eat' : `eat in the next <b data-left="${x.due}">${leftText(x.due)}</b>`) : ready ? (x.kind === 'wait' ? 'Done — you can take it now' : x.kind === 'food' ? 'You can eat now' : x.kind === 'next' ? 'Take it now' : 'Time\'s up') : `at ${at} · <b data-left="${x.due}">${leftText(x.due)}</b> left`;
+    return `<div class="row tmr ${ready ? 'ready' : ''}"><div class="medic" style="font-size:20px">${icon[x.kind] || '⏱'}</div><div class="main"><div class="ttl">${esc(x.label)}</div><div class="sub">${status}${x.sub ? ' · ' + esc(x.sub) : ''}</div><div class="bar" style="margin-top:5px;height:6px"><i data-bar="${x.start}|${x.due}" style="width:${pct}%"></i></div></div>${x.kind === 'next' ? `<button class="btn sm" data-act="timerTake|${x.id}">${ready ? 'Take' : 'Take now'}</button>` : ''}<button class="iconbtn ghost" data-act="timerDone|${x.id}" aria-label="Dismiss" style="width:30px;height:30px">✕</button></div>`;
+  }).join('')}</div>`;
+}
+/* keep countdowns moving without re-rendering the page */
+setInterval(() => {
+  document.querySelectorAll('[data-left]').forEach(el => { el.textContent = leftText(+el.dataset.left); });
+  document.querySelectorAll('[data-bar]').forEach(el => { const [a, b] = el.dataset.bar.split('|').map(Number); el.style.width = Math.min(100, (Date.now() - a) / Math.max(1, b - a) * 100) + '%'; });
+}, 15000);
 function toggleDose(d, key){ setDose(d, key, isRecorded(d, key) ? null : {s:'taken', at: Date.now()}); }
 /* mark every unrecorded dose of these medicines from `from` until now as taken (for prescriptions added after starting) */
 function backfillDoses(medIds, from, to){
@@ -589,12 +705,70 @@ function openCase(id){ UI.caseId = id; try { sessionStorage.setItem('hm.case', i
 document.addEventListener('click', e => { const el = e.target.closest('[data-opencase]'); if (el) { e.preventDefault(); e.stopPropagation(); openCase(el.dataset.opencase); } }, true);
 function caseKv(r){ const c = caseOf(r); return c ? `<dt>Case</dt><dd><button class="link" data-opencase="${c.id}">${ic('folder','style="width:13px;height:13px;vertical-align:-2px"')} ${esc(c.title)}</button></dd>` : ''; }
 
+/* ---------------- people in your care ---------------- */
+const PERSON_COLORS = ['#3bb3a8','#5b7fd6','#c2649a','#d98a2b','#6f9a3a','#8a62c9','#c0574a','#3d8fb0'];
+function people(){ const me = withPerson('me', () => profile()); return [{id:'me', name: me.name || 'Me', relation:'You', color:'#3bb3a8'}, ...[...R.values()].filter(r => r.kind === 'person').sort((a, b) => (a.created||0) - (b.created||0))]; }
+function personOf(pid){ return people().find(x => x.id === pid) || people()[0]; }
+function initials(n){ return (n || '?').split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase(); }
+function setPerson(pid){ CUR = pid; try { localStorage.setItem('hm.person', pid); } catch(e) {} UI.caseId = null; UI.medCase = 'all'; closeSheet(); if (route === 'home') render(); else go('home'); window.scrollTo(0, 0); }
+function personSummary(pid){
+  return withPerson(pid, () => {
+    const t = today(), ds = dosesFor(t), now = nowHM();
+    const taken = ds.filter(x => isTaken(t, x.key)).length;
+    const missed = ds.filter(x => ['missed'].includes(doseState(t, x))).length;
+    const next = ds.find(x => !isRecorded(t, x.key) && x.time >= now) || null;
+    return {taken, total: ds.length, missed, next, ill: activeIllness()[0] || null, visit: upcomingVisits()[0] || null};
+  });
+}
+function peopleCard(){
+  const ps = people().filter(x => x.id !== CUR);
+  if (people().length < 2) return '';
+  return `<div class="card"><h3>👪 ${CUR === 'me' ? 'People in your care' : 'Everyone'}<span class="sp"></span><button class="link" data-act="nav|people">Manage</button></h3>${ps.map(x => {
+    const sm = personSummary(x.id);
+    const status = sm.total ? `${sm.taken}/${sm.total} doses taken today` : 'No medicine today';
+    return `<div class="row click" data-act="switchTo|${x.id}"><div class="avatar sm" style="background:${x.color}">${esc(initials(x.name))}</div><div class="main"><div class="ttl">${esc(x.name)} <span class="small">${esc(x.relation||'')}</span></div><div class="sub">${status}${sm.next ? ` · next ${esc(sm.next.med.name)} ${fmtT(sm.next.time)}` : ''}</div>${sm.ill ? `<div class="sub">🤒 ${esc(sm.ill.title || 'Unwell')} since ${fmtDs(sm.ill.start)}</div>` : ''}${sm.visit ? `<div class="sub">🩺 ${esc(sm.visit.doctor || 'Visit')} ${fmtDs(sm.visit.date)}</div>` : ''}</div>${sm.missed ? `<span class="pill bad">${sm.missed} missed</span>` : sm.total && sm.taken === sm.total ? '<span class="pill good">All done</span>' : ''}</div>`;
+  }).join('')}</div>`;
+}
+const RELATIONS = ['Child','Parent','Spouse / partner','Grandparent','Sibling','Friend','Other'];
+function personForm(pr){
+  const isNew = !pr.id;
+  openSheet(isNew ? 'Add someone in your care' : 'Edit ' + pr.name, `<form id="pf">
+    ${formHtml([{k:'name', label:'Name', req:true, ph:'e.g. Mom, Aisha'}, {k:'relation', label:'They are your…', type:'select', opts:RELATIONS, half:true}, {k:'sex', label:'Sex', type:'select', opts:['','Female','Male','Other'], half:true}, {k:'dob', label:'Date of birth', type:'date'}], pr)}
+    <label class="f">Colour</label><div class="chips" style="margin:-4px 0 12px">${PERSON_COLORS.map(c => `<button type="button" class="chip" data-col="${c}" style="background:${c};border-color:${pr.color === c ? 'var(--ink)' : c};width:34px;height:34px;padding:0"></button>`).join('')}</div><input type="hidden" name="color" value="${pr.color || PERSON_COLORS[(people().length) % PERSON_COLORS.length]}">
+    <div class="small" style="margin-bottom:10px">Their medicines, records, visits and reminders are kept separately from yours, on this phone.</div>
+    <div class="btns"><button class="btn" type="submit" style="flex:1">${isNew ? 'Add' : 'Save'}</button>${isNew ? '' : '<button type="button" class="btn danger" id="pdel">Remove</button>'}</div></form>`, b => {
+    const ci = b.querySelector('[name=color]');
+    b.querySelectorAll('[data-col]').forEach(c => { c.style.borderColor = c.dataset.col === ci.value ? 'var(--ink)' : c.dataset.col; c.onclick = () => { ci.value = c.dataset.col; b.querySelectorAll('[data-col]').forEach(z => z.style.borderColor = z.dataset.col === ci.value ? 'var(--ink)' : z.dataset.col); }; });
+    b.querySelector('#pf').onsubmit = e => {
+      e.preventDefault(); const v = readForm(e.target);
+      const rec = {...pr, ...v, kind:'person', id: pr.id || 'person~' + uid(), created: pr.created || Date.now()};
+      save(rec);
+      withPerson(rec.id, () => save({...profile(), name: v.name, dob: v.dob, sex: v.sex}));
+      closeSheet();
+      if (isNew) toast(`${esc(v.name)} added.`, {label: 'Switch to ' + v.name, fn: () => setPerson(rec.id)}, 8000);
+      render();
+    };
+    const del = b.querySelector('#pdel');
+    if (del) del.onclick = () => confirmSheet(`Remove ${esc(pr.name)} and <b>all of their records</b> from this phone? Save a backup first if you might need them.`, () => {
+      [...R.values()].filter(r => ownerOf(r) === pr.id && PSCOPED.has(r.kind)).forEach(r => remove(r.id));
+      remove(pr.id); if (CUR === pr.id) setPerson('me');
+    });
+  });
+}
+function personSheet(){
+  openSheet('Whose health?', `${people().map(x => { const sm = personSummary(x.id); return `<div class="row click" data-pick="${x.id}"><div class="avatar sm" style="background:${x.color}">${esc(initials(x.name))}</div><div class="main"><div class="ttl">${esc(x.name)} ${x.id === CUR ? '<span class="pill">Viewing</span>' : ''}</div><div class="sub">${esc(x.relation || '')}${sm.total ? ` · ${sm.taken}/${sm.total} doses today` : ''}${sm.missed ? ` · <span style="color:var(--bad)">${sm.missed} missed</span>` : ''}</div></div></div>`; }).join('')}
+    <button class="btn block sec" id="padd" style="margin-top:12px">+ Add someone in your care</button>`, b => {
+    b.querySelectorAll('[data-pick]').forEach(r => r.onclick = () => setPerson(r.dataset.pick));
+    b.querySelector('#padd').onclick = () => personForm({relation:'Child'});
+  });
+}
+
 /* ---------------- routing ---------------- */
 const ROUTES = {
   home:{t:'Health Monitor', nav:'home'}, meds:{t:'Prescriptions', nav:'meds'}, health:{t:'General Health', nav:'health'},
   files:{t:'Records', nav:'files'}, more:{t:'More', nav:'more'}, sick:{t:'Sick Reporting', nav:'more', back:'more'},
   visits:{t:'Doctor Visits', nav:'more', back:'more'}, calendar:{t:'Calendar', nav:'more', back:'more'},
-  profile:{t:'My Profile', nav:'more', back:'more'}, case:{t:'Case File', nav:'files', back:'files'}, reminders:{t:'Settings', nav:'more', back:'more'}
+  profile:{t:'My Profile', nav:'more', back:'more'}, case:{t:'Case File', nav:'files', back:'files'}, people:{t:'People in your care', nav:'more', back:'more'}, reminders:{t:'Settings', nav:'more', back:'more'}
 };
 let route = 'home';
 const UI = { medCase:'all', recTab:'records', caseId: (()=>{ try { return sessionStorage.getItem('hm.case'); } catch(e){ return null; } })(), medTab:'today', healthTab:'goals', fileCat:'All', fileQ:'', calMonth: today().slice(0,7), calSel: today(), visitTab:'upcoming' };
@@ -609,22 +783,29 @@ function renderNav(){
     : `<a href="#${r}" class="${n===r?'on':''}">${ic(i)}${l}</a>`).join('');
 }
 function render(){
+  if (NO_RENDER) return;
   const R0 = ROUTES[route];
   $('#title').textContent = R0.t;
-  const bb = $('#backBtn'); bb.innerHTML = ic('back'); bb.style.visibility = R0.back ? 'visible' : 'hidden'; bb.onclick = () => go(R0.back);
+  const bb = $('#backBtn'), me = personOf(CUR), multi = people().length > 1;
+  if (R0.back) { bb.innerHTML = ic('back'); bb.className = 'iconbtn ghost'; bb.style.visibility = 'visible'; bb.onclick = () => go(R0.back); bb.removeAttribute('style'); }
+  else { bb.innerHTML = `<span class="avatar xs" style="background:${me.color}">${esc(initials(me.name))}</span>`; bb.className = 'iconbtn ghost'; bb.style.visibility = 'visible'; bb.onclick = personSheet; bb.setAttribute('aria-label', 'Switch person'); }
   $('#addBtn').innerHTML = ic('plus'); $('#addBtn').onclick = quickAdd;
   renderNav();
   const v = $('#view');
   const sync = storeMode === 'device' ? `<div class="sync">✓ Saved on this phone only</div>`
     : storeMode === 'loading' ? `<div class="sync">Loading your data…</div>`
     : `<div class="sync warn">⚠ Not saving — this browser blocks storage</div>`;
-  v.innerHTML = sync + (VIEWS[route] || VIEWS.home)();
+  const pban = CUR !== 'me' ? `<div class="pbanner" style="background:${me.color}"><span class="avatar xs" style="background:rgba(255,255,255,.25)">${esc(initials(me.name))}</span><span style="flex:1">Viewing <b>${esc(me.name)}</b>'s health</span><button data-act="switchTo|me">Back to me</button></div>` : '';
+  v.innerHTML = pban + sync + (VIEWS[route] || VIEWS.home)();
   bindView(v);
   if (route === 'reminders') wireDoseForm(v);
   if (route === 'more' && navigator.storage && navigator.storage.estimate) navigator.storage.estimate().then(e => { const u = document.getElementById('usage'); if (u) u.innerHTML = `Using <b>${(e.usage/1048576).toFixed(1)} MB</b> on this phone.`; }).catch(()=>{});
 }
 // event delegation via data-act
 const ACT = {};
+ACT.switchTo = pid => setPerson(pid);
+ACT.addPerson = () => personForm({relation:'Child'});
+ACT.editPerson = id => personForm(get(id));
 function bindView(root){
   root.querySelectorAll('[data-act]').forEach(el => {
     const [name, ...args] = el.dataset.act.split('|');
@@ -648,13 +829,16 @@ VIEWS.home = () => {
   const initials = (p.name||'Me').split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();
   const hr = new Date().getHours();
   return `
-  <div class="hello"><div class="avatar">${esc(initials)}</div><div><div class="t">${hr<12?'Good morning':hr<18?'Good afternoon':'Good evening'}</div><div class="n">${esc(p.name || 'Welcome')}</div></div></div>
+  <div class="hello"><div class="avatar" style="background:${personOf(CUR).color}">${esc(initials)}</div><div><div class="t">${hr<12?'Good morning':hr<18?'Good afternoon':'Good evening'}</div><div class="n">${esc(p.name || 'Welcome')}</div></div></div>
   ${(() => { const lb = s.lastBackup, has = list('med').length + list('file').length + list('visit').length; return has >= 3 && (!lb || Date.now() - lb > 14*864e5) ? `<div class="alert info"><b>Back up your health data</b>It's stored only on this phone${lb ? ' — last backup ' + daysBetween(iso(new Date(lb)), today()) + ' days ago' : ''}. <button class="link" data-act="backup">Save a backup now →</button></div>` : ''; })()}
   ${!p.name ? `<div class="alert info"><b>Set up your profile</b>Add your name, allergies and emergency contact so they're always at hand. <button class="link" data-act="nav|profile">Open profile →</button></div>`:''}
   ${ill.map(i => `<div class="alert warn"><b>${ic('thermo','style="width:16px;height:16px;vertical-align:-3px"')} Currently sick: ${esc(i.title||'Unwell')}</b>Since ${fmtD(i.start)} · day ${daysBetween(i.start,t)+1}${i.symptoms?.length?' · '+esc(i.symptoms.slice(0,4).join(', ')):''}<div class="btns" style="margin-top:8px"><button class="btn sm" data-act="recover|${i.id}">I've recovered</button><button class="btn sm sec" data-act="nav|sick">Details</button></div></div>`).join('')}
+  ${peopleCard()}
+  ${cycleHomeCard()}
+  ${timersCard()}
   <div class="card">
-    <h3>${ic('pill','style="width:18px;height:18px;color:var(--teal-d)"')}Today's medication<span class="sp"></span><span class="pill">${taken}/${doses.length} taken</span>${skippedN?`<span class="pill grey" style="margin-left:4px">${skippedN} not taken</span>`:''}</h3>
-    ${doses.length ? doseRows(t, doses) : `<div class="empty">No medication scheduled today.<br><button class="link" data-act="addMed">+ Add a prescription</button></div>`}
+    <h3>${ic('pill','style="width:18px;height:18px;color:var(--teal-d)"')}Today's medication<span class="sp"></span><button class="iconbtn ghost" data-act="arrange" aria-label="Arrange" style="width:30px;height:30px">${ic('sliders')}</button><span class="pill">${taken}/${doses.length} taken</span>${skippedN?`<span class="pill grey" style="margin-left:4px">${skippedN} not taken</span>`:''}</h3>
+    ${todayCard(t, doses)}
   </div>
   ${prnCard()}
   <div class="card">
@@ -698,7 +882,19 @@ function normFood(t){
 }
 function foodOf(m){ return normFood(m.food) || normFood(m.instructions); }
 function foodText(f){ return f === 'Any time' ? 'With or without food' : f; }
+/* what kind of medicine is it — from the chosen type, or guessed from the name */
+function medKind(m){
+  const known = ['Tablet','Capsule','Syrup','Drops','Spray','Inhaler','Injection','Cream','Soap','Shampoo','Patch','Powder'];
+  if (known.includes(m.form) && m.form !== 'Tablet') return m.form;
+  const t = ((m.name||'') + ' ' + (m.dose||'') + ' ' + (m.instructions||'')).toLowerCase();
+  const rules = [['Shampoo',/shampoo/],['Soap',/\b(soap|body ?wash|face ?wash|cleanser|wash)\b/],['Injection',/\b(inj\.?|injection|insulin|vaccine|syringe|pen)\b/],['Inhaler',/\b(inhaler|puffs?|rotacap|nebuli[sz])/],['Spray',/\bsprays?\b/],['Drops',/\bdrops?\b/],['Cream',/\b(cream|ointment|oint\.?|gel|lotion|balm)\b/],['Patch',/\bpatch(es)?\b/],['Powder',/\b(powder|sachet|granules)\b/],['Syrup',/\b(syrup|syp\.?|suspension|susp\.?|elixir|liquid|oral solution|mixture)\b/],['Capsule',/\b(capsules?|caps?\.?)\b/]];
+  for (const [k, re] of rules) if (re.test(t)) return k;
+  return m.form === 'Tablet' ? 'Tablet' : 'Tablet';
+}
+const KIND_TINT = {Tablet:['#dff4f1','#23867d'],Capsule:['#dff4f1','#23867d'],Syrup:['#fdeedd','#9a5512'],Drops:['#e3ecfb','#2b4f8f'],Spray:['#e3ecfb','#2b4f8f'],Inhaler:['#e8e6f8','#4b3a8c'],Injection:['#fbe3ea','#8c2343'],Cream:['#f6efe0','#7a5a16'],Soap:['#e2f3f6','#1d5a6d'],Shampoo:['#efe6f8','#6d2f82'],Patch:['#f1efe9','#5f5340'],Powder:['#f1efe9','#5f5340']};
+function medIcon(m){ const k = medKind(m), [bg, fg] = KIND_TINT[k] || KIND_TINT.Tablet; return `<div class="medic" style="background:${bg};color:${fg}" title="${k}">${ic('m_' + k.toLowerCase())}</div>`; }
 function foodApplies(m){
+  if (!['Tablet','Capsule','Syrup','Powder'].includes(medKind(m))) return false;
   if (['Injection','Drops','Inhaler','Cream'].includes(m.form)) return false;
   return !/\b(sprays?|nasal|drops?|eye|ear|inhaler|puffs?|injection|inj\.?|cream|ointment|gel|lotion|patch|suppositor(y|ies)|pessar(y|ies)|nebuli[sz]|shampoo|mouthwash|gargle|topical)\b/i.test((m.name||'') + ' ' + (m.dose||'') + ' ' + (m.instructions||''));
 }
@@ -715,8 +911,58 @@ function prnCard(filterFn){
   if (!ms.length) return '';
   return `<div class="card"><h3>${ic('pill','style="width:18px;height:18px;color:var(--teal-d)"')}As needed<span class="sp"></span><span class="small">only when you need them</span></h3>${ms.map(m => {
     const r = repOf(m), uses = prnUses(t, m.id), last = uses[uses.length-1];
-    return `<div class="row prnrow"><div class="medic">${ic('pill')}</div><div class="main"><div class="ttl">${esc(m.name)} ${m.dose?`<span class="small">${esc(m.dose)}</span>`:''}</div><div class="sub">${uses.length ? `Taken ${uses.length}× today${r.max ? ` of max ${r.max}` : ''} · last ${new Date(last).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'})}` : 'Not taken today' + (r.max ? ` · max ${r.max}/day` : '')}</div>${m.instructions?`<div class="sub">${esc(m.instructions)}</div>`:''}<div class="sub" style="margin-top:3px">${foodBadge(m)}</div>${HIDE_CASE_TAG?'':`<div class="sub">${caseBubble(caseOf(m))}</div>`}</div><div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end"><button class="btn sm" data-act="prnTake|${m.id}">+ Took a dose</button>${uses.length?`<button class="link" data-act="prnUndo|${m.id}" style="font-size:12px">Undo last</button>`:''}</div></div>`;
+    return `<div class="row prnrow">${medIcon(m)}<div class="main"><div class="ttl">${esc(m.name)} ${m.dose?`<span class="small">${esc(m.dose)}</span>`:''}</div><div class="sub">${uses.length ? `Taken ${uses.length}× today${r.max ? ` of max ${r.max}` : ''} · last ${new Date(last).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'})}` : 'Not taken today' + (r.max ? ` · max ${r.max}/day` : '')}</div>${m.instructions?`<div class="sub">${esc(m.instructions)}</div>`:''}<div class="sub" style="margin-top:3px">${foodBadge(m)}</div>${HIDE_CASE_TAG?'':`<div class="sub">${caseBubble(caseOf(m))}</div>`}</div><div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end"><button class="btn sm" data-act="prnTake|${m.id}">+ Took a dose</button>${uses.length?`<button class="link" data-act="prnUndo|${m.id}" style="font-size:12px">Undo last</button>`:''}</div></div>`;
   }).join('')}</div>`;
+}
+/* ---- how the schedule is shown ---- */
+const PERIODS = [['morning','Morning','🌅'],['afternoon','Afternoon','☀️'],['evening','Evening','🌇'],['night','Night','🌙']];
+const PERIOD_IDX = {morning:0, afternoon:1, evening:2, night:3};
+function periodOf(t){ const m = hmToMin(t); return m >= 240 && m < 720 ? 'morning' : m >= 720 && m < 1020 ? 'afternoon' : m >= 1020 && m < 1260 ? 'evening' : 'night'; }
+function viewPrefs(){ return {home:'next', group:'period', order:[], hideTaken:false, ...(settings().view||{})}; }
+function setView(patch){ const s = settings(); save({...s, view: {...viewPrefs(), ...patch}}); }
+function orderIdx(id){ const i = viewPrefs().order.indexOf(id); return i < 0 ? 999 : i; }
+function sortDoses(ds){ return ds.sort((a,b) => a.time.localeCompare(b.time) || orderIdx(a.med.id) - orderIdx(b.med.id) || a.med.name.localeCompare(b.med.name)); }
+/* a day's doses, grouped the way the person chose */
+function doseBlock(d, doses, mode){
+  const vp = viewPrefs(); mode = mode || vp.group;
+  let ds = sortDoses([...doses]);
+  const hidden = vp.hideTaken ? ds.filter(x => isTaken(d, x.key)).length : 0;
+  if (vp.hideTaken) ds = ds.filter(x => !isTaken(d, x.key));
+  const tail = hidden ? `<div class="small" style="text-align:center;padding:6px 0">${hidden} taken dose${hidden>1?'s':''} hidden · <button class="link" data-act="arrange">change</button></div>` : '';
+  if (!ds.length) return tail || '';
+  if (mode === 'time') return doseRows(d, ds) + tail;
+  const cnt = arr => { const all = doses.filter(x => arr.some(y => y.med.id === x.med.id && (mode !== 'period' || periodOf(x.time) === periodOf(y.time)))); return `${all.filter(x => isTaken(d, x.key)).length}/${all.length}`; };
+  let groups;
+  if (mode === 'period') groups = PERIODS.map(([k, l, e]) => [`${e} ${l}`, ds.filter(x => periodOf(x.time) === k)]);
+  else if (mode === 'case') { const keys = [...new Set(ds.map(x => caseOf(x.med) ? x.med.caseId : ''))]; groups = keys.map(k => [k ? caseBubble(get(k)) : 'Not in a case', ds.filter(x => (caseOf(x.med) ? x.med.caseId : '') === k)]); }
+  else { const ids = [...new Set(ds.map(x => x.med.id))].sort((a, b) => orderIdx(a) - orderIdx(b) || get(a).name.localeCompare(get(b).name)); groups = ids.map(id => [esc(get(id).name), ds.filter(x => x.med.id === id)]); }
+  return groups.filter(g => g[1].length).map(([l, arr]) => `<div class="grp"><span>${l}</span><span class="small">${cnt(arr)} taken</span></div>${doseRows(d, arr)}`).join('') + tail;
+}
+/* today's card: "Up next" shows only what matters now */
+function todayCard(t, doses, opts = {}){
+  const vp = viewPrefs(), f = vp.home, now = nowHM(), nowP = periodOf(now);
+  const chips = [['next','Up next'], ...PERIODS.map(([k, l]) => [k, l]), ['all','All day']];
+  let body = '', note = '';
+  if (!doses.length) body = `<div class="empty">No medication scheduled today.<br><button class="link" data-act="addMed">+ Add a prescription</button></div>`;
+  else if (f === 'all') body = doseBlock(t, doses);
+  else if (f !== 'next') { const ds = doses.filter(x => periodOf(x.time) === f); body = ds.length ? doseBlock(t, ds, 'time') : `<div class="empty">Nothing in the ${f}.</div>`; }
+  else {
+    const earlier = doses.filter(x => PERIOD_IDX[periodOf(x.time)] < PERIOD_IDX[nowP] && !isRecorded(t, x.key) && !(nowP === 'night' && hmToMin(now) < 240));
+    let showP = nowP, cur = doses.filter(x => periodOf(x.time) === nowP);
+    if (!cur.some(x => !isRecorded(t, x.key))) {
+      const nxt = PERIODS.map(p => p[0]).find(k => PERIOD_IDX[k] > PERIOD_IDX[nowP] && doses.some(x => periodOf(x.time) === k && !isRecorded(t, x.key)));
+      if (nxt) { showP = nxt; cur = doses.filter(x => periodOf(x.time) === nxt); }
+    }
+    const P = PERIODS.find(p => p[0] === showP);
+    const left = doses.filter(x => !isRecorded(t, x.key)).length;
+    if (earlier.length) body += `<div class="grp warn"><span>⚠️ Earlier today — not recorded</span><span class="small">${earlier.length}</span></div>` + doseRows(t, sortDoses(earlier));
+    if (cur.length) body += `<div class="grp"><span>${P[2]} ${showP === nowP ? 'Now · ' : 'Next · '}${P[1]}</span><span class="small">${cur.filter(x => isTaken(t, x.key)).length}/${cur.length} taken</span></div>` + doseRows(t, sortDoses([...cur]));
+    if (!left) body = `<div class="empty" style="font-size:14px">🎉 All of today's doses are recorded.</div>`;
+    else if (!cur.length && !earlier.length) body = `<div class="empty">Nothing due right now.</div>`;
+    const later = doses.filter(x => PERIOD_IDX[periodOf(x.time)] > PERIOD_IDX[showP] && !isRecorded(t, x.key)).length;
+    if (later && left) note = `<button class="link" data-act="homeFilter|all" style="display:block;margin:8px auto 0">+ ${later} more later today</button>`;
+  }
+  return `<div class="chips scrollchips" style="margin:-2px 0 8px">${chips.map(([k, l]) => `<button class="chip sm ${f === k ? 'on' : ''}" data-act="homeFilter|${k}">${l}</button>`).join('')}</div>${body}${note}`;
 }
 function doseRows(d, doses){
   return doses.map(x => {
@@ -728,7 +974,7 @@ function doseRows(d, doses){
     const right = r && r.s !== 'taken'
       ? `<button class="btn sm sec" data-act="undoDose|${d}|${x.key}" aria-label="Undo">Undo</button>`
       : `${on ? '' : `<button class="skipb" data-act="skipDose|${d}|${x.key}" aria-label="Skip or missed">Skip</button>`}<button class="chk ${on?'on':''}" aria-label="${on?'Mark not taken':'Mark taken'}" data-act="dose|${d}|${x.key}">${on?ic('check'):''}</button>`;
-    return `<div class="row ${r && r.s !== 'taken' ? 'dimmed' : ''}"><div class="medic">${ic('pill')}</div><div class="main"><div class="ttl">${esc(x.med.name)} ${x.med.dose?`<span class="small">${esc(x.med.dose)}</span>`:''}</div><div class="sub">${fmtT(x.time)}${repOf(x.med).type !== 'daily' ? ` · <span class="pill rep">${repeatLabel(x.med)}</span>` : ''} ${statusPill}</div><div class="sub" style="margin-top:3px">${foodBadge(x.med)}</div>${HIDE_CASE_TAG?'':`<div class="sub">${caseBubble(caseOf(x.med))}</div>`}</div><div style="display:flex;gap:6px;align-items:center">${right}</div></div>`;
+    return `<div class="row ${r && r.s !== 'taken' ? 'dimmed' : ''}">${medIcon(x.med)}<div class="main"><div class="ttl">${esc(x.med.name)} ${x.med.dose?`<span class="small">${esc(x.med.dose)}</span>`:''}</div><div class="sub">${fmtT(x.time)}${repOf(x.med).type !== 'daily' ? ` · <span class="pill rep">${repeatLabel(x.med)}</span>` : ''} ${statusPill}</div><div class="sub" style="margin-top:3px">${foodBadge(x.med)}</div>${HIDE_CASE_TAG?'':`<div class="sub">${caseBubble(caseOf(x.med))}</div>`}</div><div style="display:flex;gap:6px;align-items:center">${right}</div></div>`;
   }).join('');
 }
 function visitRow(v){
@@ -757,8 +1003,10 @@ VIEWS.meds = () => {
     const days = [0,1,2,3,4,5,6].map(i => addDays(t, i));
     const past = [1,2,3,4,5,6,7].map(i => addDays(t, -i)).filter(d => allMeds.some(m => fit(m) && medDueOn(m, d)));
     const unrec = past.reduce((a, d) => a + dosesFor(d).filter(x => fit(x.med) && !isRecorded(d, x.key)).length, 0);
-    const earlier = past.length ? `<div class="sect" style="display:flex;align-items:center">Earlier days${unrec ? ` · <span style="color:var(--bad);margin-left:4px">${unrec} not recorded</span>` : ''}<span class="sp" style="flex:1"></span><button class="link" data-act="medPast">${UI.medPast ? 'Hide' : 'Show'}</button></div>${UI.medPast ? past.map(d => { const ds = dosesFor(d).filter(x => fit(x.med)); return `<div class="card"><h3>${parseD(d).toLocaleDateString(undefined,{weekday:'long'})}<span class="sp"></span><span class="small">${fmtD(d)}</span></h3>${ds.length ? doseRows(d, ds) : '<div class="empty">Nothing scheduled</div>'}${ds.some(x => !isRecorded(d, x.key)) ? `<button class="btn sm sec" data-act="allTaken|${d}" style="margin-top:6px">Mark all unrecorded as taken</button>` : ''}</div>`; }).join('') : ''}` : '';
-    body = prnCard(fit) + days.map(d => { const ds = dosesFor(d).filter(x => fit(x.med)); return `<div class="card"><h3>${d===t?'Today':parseD(d).toLocaleDateString(undefined,{weekday:'long'})}<span class="sp"></span><span class="small">${fmtD(d)}</span></h3>${ds.length?doseRows(d, ds):'<div class="empty">Nothing scheduled</div>'}</div>`; }).join('') + earlier;
+    const earlier = past.length ? `<div class="sect" style="display:flex;align-items:center">Earlier days${unrec ? ` · <span style="color:var(--bad);margin-left:4px">${unrec} not recorded</span>` : ''}<span class="sp" style="flex:1"></span><button class="link" data-act="medPast">${UI.medPast ? 'Hide' : 'Show'}</button></div>${UI.medPast ? past.map(d => { const ds = dosesFor(d).filter(x => fit(x.med)); return `<div class="card"><h3>${parseD(d).toLocaleDateString(undefined,{weekday:'long'})}<span class="sp"></span><span class="small">${fmtD(d)}</span></h3>${ds.length ? doseBlock(d, ds) : '<div class="empty">Nothing scheduled</div>'}${ds.some(x => !isRecorded(d, x.key)) ? `<button class="btn sm sec" data-act="allTaken|${d}" style="margin-top:6px">Mark all unrecorded as taken</button>` : ''}</div>`; }).join('') : ''}` : '';
+    body = (liveTimers().length ? timersCard() : '') + `<div class="btns" style="margin:-4px 0 10px;justify-content:flex-end">${liveTimers().length ? '' : '<button class="btn sm sec" data-act="newTimer">⏱ Timer</button>'}<button class="btn sm sec" data-act="arrange">${ic('sliders','style="width:15px;height:15px"')} Arrange</button></div>` + prnCard(fit) + days.map(d => { const ds = dosesFor(d).filter(x => fit(x.med)); return `<div class="card"><h3>${d===t?'Today':parseD(d).toLocaleDateString(undefined,{weekday:'long'})}<span class="sp"></span><span class="small">${fmtD(d)}</span></h3>${d === t ? todayCard(t, ds) : ds.length ? doseBlock(d, ds) : '<div class="empty">Nothing scheduled</div>'}</div>`; }).join('') + earlier;
+  } else if (tab === 'cal') {
+    body = medCalendar(fit);
   } else if (tab === 'active') {
     body = `<div class="card">${active.length ? active.map(medRow).join('') : '<div class="empty">No active medication.</div>'}</div>`;
   } else {
@@ -768,14 +1016,45 @@ VIEWS.meds = () => {
   ${(() => { const mm = list('med').filter(m => (medActiveOn(m, t) || m.start > t) && !isPrn(m) && timingMismatch(m)); return mm.length ? `<div class="alert bad"><b>Dose times don't match the instructions</b>${mm.map(m => `${esc(m.name)}: “${esc(m.instructions)}” but scheduled ${(m.times||[]).map(fmtT).join(', ')}`).join('<br>')}<div class="btns" style="margin-top:8px"><button class="btn sm" data-act="fixTimes">Fix times</button></div></div>` : ''; })()}
   ${(() => { const miss = list('med').filter(m => (medActiveOn(m, t) || m.start > t) && foodApplies(m) && !foodOf(m)); return miss.length ? `<div class="alert warn"><b>${miss.length} medicine${miss.length>1?'s don\'t':' doesn\'t'} say whether to take ${miss.length>1?'them':'it'} before or after food</b>${esc(miss.map(m=>m.name).join(', '))}<div class="btns" style="margin-top:8px"><button class="btn sm" data-act="fixFoods">Set food timing</button></div></div>` : ''; })()}
   <div class="ocrbox"><b>Got a new prescription?</b><div class="small" style="margin:4px 0 10px">Snap or upload it and the medicines, doses and schedule are read for you — then you check and confirm.</div><div class="btns" style="justify-content:center"><button class="btn" data-act="scanRx">${ic('scan','style="width:18px;height:18px"')} Scan prescription</button><button class="btn out" data-act="addMed">Add manually</button></div></div>
-  <div class="seg">${[['today','Schedule'],['active','Active ('+active.length+')'],['past','History']].map(([k,l])=>`<button class="${tab===k?'on':''}" data-act="medTab|${k}">${l}</button>`).join('')}</div>
+  <div class="seg">${[['today','Schedule'],['cal','Calendar'],['active','Active ('+active.length+')'],['past','History']].map(([k,l])=>`<button class="${tab===k?'on':''}" data-act="medTab|${k}">${l}</button>`).join('')}</div>
   ${mcases.length ? `<div class="chips" style="margin-bottom:12px"><button class="chip ${UI.medCase==='all'?'on':''}" data-act="medCase|all">All</button>${mcases.map(c => { const [bg, fg] = caseColor(c); const on = UI.medCase===c.id; return `<button class="chip ${on?'on':''}" data-act="medCase|${c.id}" style="${on?'':`background:${bg};color:${fg};border-color:${bg}`}">${esc(c.title)}${c.status==='closed'?' (closed)':''}</button>`; }).join('')}${allMeds.some(m=>!caseOf(m))?`<button class="chip ${UI.medCase==='none'?'on':''}" data-act="medCase|none">No case</button>`:''}</div>` : ''}
   ${body}`;
 };
+function medCalendar(fit){
+  const t = today(), mon = UI.mcMonth || t.slice(0, 7), sel = UI.mcSel || t;
+  const [y, m] = mon.split('-').map(Number);
+  const first = new Date(y, m - 1, 1), start = new Date(y, m - 1, 1 - ((first.getDay() + 6) % 7));
+  const cells = []; for (let i = 0; i < 42; i++) { const d = new Date(start); d.setDate(start.getDate() + i); cells.push(iso(d)); }
+  const stat = d => {
+    const ds = dosesFor(d).filter(x => fit(x.med)), started = list('med').some(x => fit(x) && x.start === d);
+    if (!ds.length) return {c: '', started};
+    if (d > t) return {c: 'var(--teal)', started};
+    const st = ds.map(x => doseState(d, x));
+    if (st.every(s => s === 'taken')) return {c: 'var(--good)', started};
+    if (st.some(s => s === 'missed')) return {c: 'var(--bad)', started};
+    if (st.some(s => s === 'taken' || s === 'skipped')) return {c: 'var(--warn)', started};
+    return {c: d === t ? 'var(--teal)' : 'var(--bad)', started};
+  };
+  const ds = dosesFor(sel).filter(x => fit(x.med));
+  const startedSel = list('med').filter(x => fit(x) && x.start === sel), endedSel = list('med').filter(x => fit(x) && x.end === sel);
+  const prnSel = list('med').filter(x => fit(x) && isPrn(x) && prnUses(sel, x.id).length);
+  return `<div class="card">
+    <div class="calhead"><button class="iconbtn" data-act="mcMove|-1">${ic('back')}</button><b>${first.toLocaleDateString(undefined, {month:'long', year:'numeric'})}</b><button class="iconbtn" data-act="mcMove|1">${ic('back', 'style="transform:rotate(180deg)"')}</button></div>
+    <div class="cal">${['Mo','Tu','We','Th','Fr','Sa','Su'].map(d => `<div class="dh">${d}</div>`).join('')}
+    ${cells.map(d => { const s = stat(d); return `<div class="d ${d.slice(0, 7) !== mon ? 'o' : ''} ${d === t ? 'today' : ''} ${d === sel ? 'sel' : ''}" data-act="mcSel|${d}">${+d.slice(8)}<span class="dots">${s.c ? `<i style="background:${d === sel ? '#fff' : s.c}"></i>` : ''}${s.started ? `<i style="background:${d === sel ? '#fff' : 'var(--info)'}"></i>` : ''}</span></div>`; }).join('')}</div>
+    <div class="legend"><span><i style="background:var(--good)"></i>All taken</span><span><i style="background:var(--warn)"></i>Some not taken</span><span><i style="background:var(--bad)"></i>Missed</span><span><i style="background:var(--teal)"></i>Planned</span><span><i style="background:var(--info)"></i>Started</span></div>
+  </div>
+  <div class="card"><h3>${sel === t ? 'Today' : fmtD(sel)}<span class="sp"></span><span class="small">${ds.length ? `${ds.filter(x => isTaken(sel, x.key)).length}/${ds.length} taken` : ''}</span></h3>
+    ${startedSel.map(x => `<div class="small" style="margin-bottom:6px">▶ Started <b>${esc(x.name)}</b></div>`).join('')}${endedSel.map(x => `<div class="small" style="margin-bottom:6px">■ Last day of <b>${esc(x.name)}</b></div>`).join('')}
+    ${ds.length ? doseBlock(sel, ds) : '<div class="empty">No scheduled doses.</div>'}
+    ${prnSel.map(x => `<div class="small" style="margin-top:6px">💊 ${esc(x.name)} (as needed): taken ${prnUses(sel, x.id).length}×</div>`).join('')}
+    ${sel < t && ds.some(x => !isRecorded(sel, x.key)) ? `<button class="btn sm sec" data-act="allTaken|${sel}" style="margin-top:8px">Mark all unrecorded as taken</button>` : ''}
+  </div>`;
+}
 function medRow(m){
   const t = today();
   const st = m.stopped ? '<span class="pill grey">Stopped</span>' : m.start > t ? '<span class="pill">Starts '+fmtDs(m.start)+'</span>' : medActiveOn(m,t) ? '<span class="pill good">Active</span>' : '<span class="pill grey">Finished</span>';
-  return `<div class="row click" data-act="viewMed|${m.id}"><div class="medic">${ic('pill')}</div><div class="main"><div class="ttl">${esc(m.name)} ${m.dose?`<span class="small">${esc(m.dose)}</span>`:''}</div><div class="sub">${isPrn(m) ? '' : (m.times||[]).map(fmtT).join(', ') + ' · '}${repeatLabel(m)}${!isPrn(m) && repOf(m).type !== 'daily' && medActiveOn(m, t) ? (() => { const n = nextDue(m, t); return n ? ` · next ${n === t ? 'today' : fmtDs(n)}` : ''; })() : ''}</div><div class="sub" style="margin:3px 0">${foodBadge(m)}</div><div class="sub">${fmtDs(m.start)}${m.end?' – '+fmtDs(m.end):' – ongoing'}</div><div class="sub">${esc([m.doctor, m.facility].filter(Boolean).join(' · '))}</div>${caseTag(m)}</div>${st}</div>`;
+  return `<div class="row click" data-act="viewMed|${m.id}">${medIcon(m)}<div class="main"><div class="ttl">${esc(m.name)} ${m.dose?`<span class="small">${esc(m.dose)}</span>`:''}</div><div class="sub">${isPrn(m) ? '' : (m.times||[]).map(fmtT).join(', ') + ' · '}${repeatLabel(m)}${!isPrn(m) && repOf(m).type !== 'daily' && medActiveOn(m, t) ? (() => { const n = nextDue(m, t); return n ? ` · next ${n === t ? 'today' : fmtDs(n)}` : ''; })() : ''}</div><div class="sub" style="margin:3px 0">${foodBadge(m)}</div><div class="sub">${fmtDs(m.start)}${m.end?' – '+fmtDs(m.end):' – ongoing'}</div><div class="sub">${esc([m.doctor, m.facility].filter(Boolean).join(' · '))}</div>${caseTag(m)}</div>${st}</div>`;
 }
 
 /* ---- Visits ---- */
@@ -929,8 +1208,11 @@ function fileRow(f){
 /* ---- Health ---- */
 VIEWS.health = () => {
   const tab = UI.healthTab, t = today(), s = settings();
-  const seg = `<div class="seg">${[['goals','Goals'],['food','Food'],['exercise','Exercise'],['sleep','Sleep']].map(([k,l])=>`<button class="${tab===k?'on':''}" data-act="healthTab|${k}">${l}</button>`).join('')}</div>`;
+  const showCycle = cycleOn();
+  if (tab === 'cycle' && !showCycle) UI.healthTab = 'goals';
+  const seg = `<div class="seg">${[['goals','Goals'],['food','Food'],['exercise','Exercise'],['sleep','Sleep'], ...(showCycle ? [['cycle','Cycle']] : [])].map(([k,l])=>`<button class="${tab===k?'on':''}" data-act="healthTab|${k}">${l}</button>`).join('')}</div>`;
   let body = '';
+  if (tab === 'cycle' && showCycle) return seg + cycleView();
   if (tab === 'goals') {
     const gs = list('goal').sort((a,b)=>(a.done?1:0)-(b.done?1:0));
     body = `<button class="btn block" data-act="addGoal" style="margin-bottom:12px">+ New health goal</button>
@@ -967,6 +1249,90 @@ VIEWS.health = () => {
   }
   return seg + body;
 };
+/* ---------------- period / cycle tracker ---------------- */
+const CYCLE_SYMPTOMS = ['Cramps','Headache','Bloating','Back pain','Tender breasts','Mood changes','Acne','Fatigue','Nausea','Cravings','Spotting'];
+function cycleOn(){ const pr = profile(); return pr.sex !== 'Male' || list('period').length > 0; }
+function periods(){ return list('period').filter(x => x.start).sort((a, b) => a.start.localeCompare(b.start)); }
+function cycleStats(){
+  const ps = periods(), t = today();
+  const lens = []; for (let i = 1; i < ps.length; i++) { const L = daysBetween(ps[i-1].start, ps[i].start); if (L >= 15 && L <= 60) lens.push(L); }
+  const recent = lens.slice(-6);
+  const avgCycle = recent.length ? Math.round(recent.reduce((a, b) => a + b, 0) / recent.length) : 28;
+  const durs = ps.filter(x => x.end).map(x => daysBetween(x.start, x.end) + 1).filter(n => n >= 1 && n <= 15).slice(-6);
+  const avgLen = durs.length ? Math.round(durs.reduce((a, b) => a + b, 0) / durs.length) : 5;
+  const last = ps[ps.length - 1] || null;
+  if (!last) return {avgCycle, avgLen, last: null, n: ps.length};
+  const ongoing = !last.end && daysBetween(last.start, t) < 12;
+  const next = addDays(last.start, avgCycle);
+  const ovu = addDays(next, -14), fertileFrom = addDays(ovu, -5), fertileTo = addDays(ovu, 1);
+  const cycleDay = daysBetween(last.start, t) + 1;
+  const late = t > next && !ongoing ? daysBetween(next, t) : 0;
+  const irregular = recent.length >= 3 && (Math.max(...recent) - Math.min(...recent)) > 9;
+  return {avgCycle, avgLen, last, ongoing, next, ovu, fertileFrom, fertileTo, cycleDay, late, irregular, n: ps.length, lens: recent};
+}
+function cycleDayType(d, st){
+  const ps = periods();
+  for (const x of ps) { const end = x.end || (daysBetween(x.start, today()) < 12 ? today() : addDays(x.start, st.avgLen - 1)); if (d >= x.start && d <= end) return 'period'; }
+  if (!st.last) return '';
+  // predicted: next three cycles
+  for (let k = 0; k < 3; k++) {
+    const ns = addDays(st.next, k * st.avgCycle), ne = addDays(ns, st.avgLen - 1);
+    if (d >= ns && d <= ne && d > today()) return 'predicted';
+    const ov = addDays(ns, -14);
+    if (d === ov) return 'ovulation';
+    if (d >= addDays(ov, -5) && d <= addDays(ov, 1)) return 'fertile';
+  }
+  return '';
+}
+function cycleHomeCard(){
+  if (!cycleOn()) return '';
+  const st = cycleStats(); if (!st.last) return '';
+  const t = today();
+  let msg = '';
+  if (st.ongoing) msg = `🩸 Period day ${st.cycleDay}`;
+  else if (st.late) msg = `⏰ Period is ${st.late} day${st.late > 1 ? 's' : ''} late`;
+  else { const dd = daysBetween(t, st.next); msg = dd === 0 ? '🩸 Period expected today' : dd > 0 && dd <= 7 ? `🩸 Period expected in ${dd} day${dd > 1 ? 's' : ''} (${fmtDs(st.next)})` : t >= st.fertileFrom && t <= st.fertileTo ? '🌸 Fertile window' : ''; }
+  return msg ? `<div class="alert info cyclealert" data-act="healthTab|cycle" style="cursor:pointer"><b>${msg}</b>Cycle day ${st.cycleDay} · tap to open your cycle</div>` : '';
+}
+function cycleView(){
+  const st = cycleStats(), t = today(), s = settings();
+  const mon = UI.cyMonth || t.slice(0, 7);
+  const [y, m] = mon.split('-').map(Number);
+  const first = new Date(y, m - 1, 1), start = new Date(y, m - 1, 1 - ((first.getDay() + 6) % 7));
+  const cells = []; for (let i = 0; i < 42; i++) { const d = new Date(start); d.setDate(start.getDate() + i); cells.push(iso(d)); }
+  const ring = st.last ? Math.min(100, (st.cycleDay / st.avgCycle) * 100) : 0;
+  let head;
+  if (!st.last) head = `<div class="empty" style="font-size:14px">Log your last period to start tracking.<br>Predictions get better after 2–3 cycles.</div>`;
+  else head = `<div class="cyhead"><div class="cyring" style="background:conic-gradient(var(--cy) ${ring}%, #f3e3ea 0)"><div><b>${st.ongoing ? 'Day ' + st.cycleDay : st.late ? st.late + ' d late' : 'Day ' + st.cycleDay}</b><span>${st.ongoing ? 'of period' : 'of ~' + st.avgCycle}</span></div></div>
+    <div class="cyinfo"><div><span>Next period</span><b>${st.late ? 'Late · was due ' + fmtDs(st.next) : fmtD(st.next) + ` · in ${daysBetween(t, st.next)} d`}</b></div><div><span>Fertile window</span><b>${fmtDs(st.fertileFrom)} – ${fmtDs(st.fertileTo)}</b></div><div><span>Average</span><b>${st.avgCycle}-day cycle · ${st.avgLen}-day period</b></div></div></div>
+    ${st.irregular ? `<div class="alert warn" style="margin:10px 0 0;font-size:13px"><b>Your cycles vary a lot</b>Recent cycles were ${Math.min(...st.lens)}–${Math.max(...st.lens)} days, so predictions are less certain. If this is new for you, it's worth mentioning to a doctor.</div>` : ''}
+    ${st.late >= 7 ? `<div class="alert warn" style="margin:10px 0 0;font-size:13px"><b>${st.late} days late</b>Stress, illness, travel and some medicines can delay a period. If you could be pregnant, a home test is reliable from the day your period was due.</div>` : ''}`;
+  return `<div class="card">${head}
+    <div class="btns" style="margin-top:12px">${st.ongoing ? `<button class="btn" data-act="periodEnd" style="flex:1">Period ended today</button>` : `<button class="btn cybtn" data-act="periodStart" style="flex:1">🩸 Period started today</button>`}<button class="btn sec" data-act="periodLog">Log a past period</button></div>
+  </div>
+  <div class="card">
+    <div class="calhead"><button class="iconbtn" data-act="cyMove|-1">${ic('back')}</button><b>${first.toLocaleDateString(undefined, {month:'long', year:'numeric'})}</b><button class="iconbtn" data-act="cyMove|1">${ic('back', 'style="transform:rotate(180deg)"')}</button></div>
+    <div class="cal">${['Mo','Tu','We','Th','Fr','Sa','Su'].map(d => `<div class="dh">${d}</div>`).join('')}
+    ${cells.map(d => { const ty = cycleDayType(d, st); return `<div class="d cy-${ty} ${d.slice(0, 7) !== mon ? 'o' : ''} ${d === t ? 'today' : ''}">${+d.slice(8)}</div>`; }).join('')}</div>
+    <div class="legend"><span><i style="background:var(--cy)"></i>Period</span><span><i style="background:#f7c6d6;border:1.5px dashed var(--cy)"></i>Expected</span><span><i style="background:#cfe3fb"></i>Fertile</span><span><i style="background:#5b7fd6"></i>Ovulation (est.)</span></div>
+  </div>
+  <div class="card"><h3>History<span class="sp"></span><span class="small">${st.n} logged</span></h3>
+    ${periods().reverse().slice(0, 24).map((x, i, arr) => { const nx = arr[i - 1]; const cyc = nx ? daysBetween(x.start, nx.start) : null; return `<div class="row click" data-act="periodEdit|${x.id}"><div class="medic" style="background:#fbe3ea;color:#8c2343">🩸</div><div class="main"><div class="ttl">${fmtD(x.start)}${x.end ? ' – ' + fmtDs(x.end) : ' · ongoing'}</div><div class="sub">${x.end ? (daysBetween(x.start, x.end) + 1) + ' days' : ''}${x.flow ? ' · ' + esc(x.flow) + ' flow' : ''}${cyc ? ` · ${cyc}-day cycle` : ''}</div>${(x.symptoms || []).length ? `<div class="sub">${esc(x.symptoms.join(', '))}</div>` : ''}</div></div>`; }).join('') || '<div class="empty">No periods logged yet.</div>'}
+  </div>
+  <label class="switch card" style="cursor:pointer"><div class="main"><div style="font-weight:700">Remind me before my period</div><div class="small">2 days before it's expected</div></div><button type="button" class="tog ${s.remind.period ? 'on' : ''}" data-act="tog|period" aria-label="Period reminder"></button></label>
+  <p class="disclaimer">Predictions are estimates from your past cycles. Don't rely on them for contraception. See a doctor about very painful, very heavy, or irregular periods.</p>`;
+}
+function periodForm(x){
+  let sym = new Set(x.symptoms || []);
+  openSheet(x.id ? 'Edit period' : 'Log a period', `<form id="cyf">${formHtml([{k:'start', label:'Started', type:'date', req:true, max: today(), half:true}, {k:'end', label:'Ended', type:'date', max: today(), half:true}, {k:'flow', label:'Flow', type:'select', opts:['','Light','Medium','Heavy']}], x)}
+    <label class="f">Symptoms<div class="chips" style="margin-top:6px">${CYCLE_SYMPTOMS.map(c => `<button type="button" class="chip ${sym.has(c) ? 'on' : ''}" data-s="${c}">${c}</button>`).join('')}</div></label>
+    ${formHtml([{k:'notes', label:'Notes', type:'textarea'}], x)}
+    <div class="btns"><button class="btn" type="submit" style="flex:1">Save</button>${x.id ? '<button type="button" class="btn danger" id="cydel">Delete</button>' : ''}</div></form>`, b => {
+    b.querySelectorAll('[data-s]').forEach(c => c.onclick = () => { const k = c.dataset.s; sym.has(k) ? sym.delete(k) : sym.add(k); c.classList.toggle('on'); });
+    b.querySelector('#cyf').onsubmit = e => { e.preventDefault(); const v = readForm(e.target); if (v.end && v.end < v.start) v.end = v.start; save({...x, ...v, symptoms: [...sym], kind: 'period', id: x.id || 'period~' + uid()}); closeSheet(); };
+    const d = b.querySelector('#cydel'); if (d) d.onclick = () => confirmSheet('Delete this period?', () => remove(x.id));
+  });
+}
 function barChart(days, vals, target, unit){
   const max = Math.max(target*1.2, ...vals, 1);
   return `<div class="chart" role="img" aria-label="Bar chart">${target?`<div class="tline" style="bottom:${target/max*100}%"><span>target ${target} ${unit}</span></div>`:''}${days.map((d,i)=>`<div class="col"><span class="tip">${fmtDs(d)}: ${vals[i]||0} ${unit}</span><div class="b" style="height:${vals[i]/max*100}%"></div></div>`).join('')}</div><div class="xl">${days.map(d=>`<span>${parseD(d).toLocaleDateString(undefined,{weekday:'narrow'})}</span>`).join('')}</div>`;
@@ -1010,9 +1376,14 @@ VIEWS.calendar = () => {
 };
 
 /* ---- More / profile / reminders ---- */
+VIEWS.people = () => `
+  <div class="alert info" style="font-size:13px">Keep track of family members or friends you look after — their medicines, doctor visits, records and reminders — separately from your own. Everything stays on this phone. Reminders for everyone appear here.</div>
+  <div class="card">${people().map(x => { const sm = personSummary(x.id); return `<div class="row"><div class="avatar sm" style="background:${x.color}">${esc(initials(x.name))}</div><div class="main"><div class="ttl">${esc(x.name)} <span class="small">${esc(x.relation || '')}</span></div><div class="sub">${sm.total ? `${sm.taken}/${sm.total} doses today` : 'No medicine today'}${x.dob ? ' · born ' + fmtD(x.dob) : ''}</div></div>${x.id === CUR ? '<span class="pill">Viewing</span>' : `<button class="btn sm sec" data-act="switchTo|${x.id}">View</button>`}${x.id !== 'me' ? `<button class="iconbtn ghost" data-act="editPerson|${x.id}" aria-label="Edit">${ic('edit')}</button>` : ''}</div>`; }).join('')}</div>
+  <button class="btn block" data-act="addPerson">+ Add someone in your care</button>
+  <p class="disclaimer">Want to see a family member's doses from their own phone? That needs both phones to sync through a server — this version keeps everything on one phone.</p>`;
 VIEWS.more = () => `
   <div class="card menu">
-    ${[['sick','sick','Sick reporting','Log illness, symptoms, recovery'],['visits','doctor','Doctor visits','Doctors, hospitals & clinics'],['calendar','cal','Calendar','Visits, meds, illness, records by date'],['reminders','bell','Settings','Dose times, reminders & daily targets'],['profile','user','My profile','Allergies, conditions, emergency contact']].map(([r,i,t,s])=>`<div class="row" data-act="nav|${r}">${ic(i)}<div class="main"><div class="ttl">${t}</div><div class="sub">${s}</div></div>${ic('back','style="transform:rotate(180deg);width:18px;height:18px;color:var(--muted)"')}</div>`).join('')}
+    ${[['people','user','People in your care','Family and friends you look after'],['sick','sick','Sick reporting','Log illness, symptoms, recovery'],['visits','doctor','Doctor visits','Doctors, hospitals & clinics'],['calendar','cal','Calendar','Visits, meds, illness, records by date'],['reminders','bell','Settings','Dose times, reminders & daily targets'],['profile','user','My profile','Allergies, conditions, emergency contact']].map(([r,i,t,s])=>`<div class="row" data-act="nav|${r}">${ic(i)}<div class="main"><div class="ttl">${t}</div><div class="sub">${s}</div></div>${ic('back','style="transform:rotate(180deg);width:18px;height:18px;color:var(--muted)"')}</div>`).join('')}
   </div>
   <div class="card"><h3>${ic('folder','style="width:18px;height:18px;color:var(--teal-d)"')}Your data & backup</h3>
     <div class="small" style="margin-bottom:8px">Everything — records, photos and documents — is stored <b>only on this phone</b>, inside this app. Nothing is uploaded anywhere. If you delete the app, clear your browser data or lose your phone, it's gone, so keep a backup file somewhere safe (Files, Google Drive, iCloud, email to yourself).</div>
@@ -1068,20 +1439,54 @@ VIEWS.reminders = () => {
 
 /* ---------------- actions ---------------- */
 ACT.nav = r => go(r);
-ACT.dose = (d, key) => toggleDose(d, key);
+ACT.dose = (d, key) => {
+  const medId = key.split('@')[0], m = get(medId);
+  if (isRecorded(d, key) || d !== today()) return toggleDose(d, key);
+  const w = blockingWaits(medId);
+  if (!w.length) return toggleDose(d, key);
+  const x = w.sort((a, b) => b.due - a.due)[0];
+  openSheet('Wait a little?', `<div class="alert warn"><b>${esc(x.label)}</b>${esc(x.sub)} — ${leftText(x.due)} to go (until ${new Date(x.due).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'})}).</div>
+    <div class="btns"><button class="btn" id="remindMe" style="flex:1">Remind me then</button><button class="btn sec" id="takeAnyway">I took it anyway</button></div>`, b => {
+    b.querySelector('#remindMe').onclick = () => { const items = [...(timersRec().items || [])]; items.push({id: 'tm' + uid(), src: 'manual', medId: x.medId, kind: 'next', target: medId, start: Date.now(), due: x.due, label: `Take ${m.name}`, sub: 'after waiting', done: false}); saveTimers(items); closeSheet(); toast('⏱ I\'ll remind you when it\'s time.'); };
+    b.querySelector('#takeAnyway').onclick = () => { closeSheet(); toggleDose(d, key); };
+  });
+};
+ACT.timerDone = id => { saveTimers((timersRec().items || []).map(x => x.id === id ? {...x, done: true} : x)); };
+ACT.timerTake = id => {
+  const x = (timersRec().items || []).find(y => y.id === id); if (!x) return;
+  const m = get(x.target);
+  ACT.timerDone(id);
+  if (!m) return;
+  if (isPrn(m)) return ACT.prnTake(m.id);
+  const t = today(), due = dosesFor(t).filter(y => y.med.id === m.id && !isRecorded(t, y.key)).sort((a, b) => Math.abs(hmToMin(a.time) - hmToMin(nowHM())) - Math.abs(hmToMin(b.time) - hmToMin(nowHM())))[0];
+  if (due) { setDose(t, due.key, {s:'taken', at: Date.now()}); toast(`${esc(m.name)} marked as taken.`); }
+  else toast(`${esc(m.name)} has no dose scheduled today — nothing to tick.`);
+};
+ACT.newTimer = () => {
+  let mins = 30;
+  openSheet('Start a timer', `<label class="f">What for?<input id="tmLabel" placeholder="e.g. Eat breakfast, Rinse off cream, Next eye drops" value=""></label>
+    <div class="sect" style="margin-top:0">How long</div>
+    <div class="chips" id="tmPre">${[[15,'15 min'],[30,'30 min'],[45,'45 min'],[60,'1 hour'],[120,'2 hours'],[240,'4 hours'],[480,'8 hours'],[720,'12 hours']].map(([v, l]) => `<button type="button" class="chip ${v === 30 ? 'on' : ''}" data-m="${v}">${l}</button>`).join('')}</div>
+    <label class="f" style="margin-top:10px">Or minutes<input id="tmMin" type="number" min="1" max="2880" value="30"></label>
+    <button class="btn block" id="tmGo">Start</button>`, b => {
+    const mi = b.querySelector('#tmMin');
+    b.querySelectorAll('[data-m]').forEach(c => c.onclick = () => { b.querySelectorAll('[data-m]').forEach(z => z.classList.remove('on')); c.classList.add('on'); mi.value = c.dataset.m; });
+    b.querySelector('#tmGo').onclick = () => { mins = Math.max(1, +mi.value || 30); const label = b.querySelector('#tmLabel').value.trim() || 'Timer'; const items = [...(timersRec().items || [])]; items.push({id: 'tm' + uid(), src: 'manual', kind: 'custom', start: Date.now(), due: Date.now() + mins * 60e3, label, sub: '', done: false}); saveTimers(items); closeSheet(); toast(`⏱ ${esc(label)} — ${fmtMins(mins)}.`); };
+  });
+};
 ACT.undoDose = (d, key) => setDose(d, key, null);
 ACT.medPast = () => { UI.medPast = !UI.medPast; render(); };
 ACT.prnTake = id => {
   const m = get(id); if (!m) return;
   const t = today(), r = repOf(m), uses = prnUses(t, id), last = uses[uses.length-1];
-  const record = () => { const rec = day(t); save({...rec, prn: {...(rec.prn||{}), [id]: [...uses, Date.now()]}}); toast(`${esc(m.name)} dose recorded.`, {label:'Undo', fn:() => ACT.prnUndo(id)}); };
+  const record = () => { const rec = day(t), now = Date.now(); save({...rec, prn: {...(rec.prn||{}), [id]: [...uses, now]}}); startAfterTimers(id, now, `prn|${t}|${id}|${now}`); toast(`${esc(m.name)} dose recorded.`, {label:'Undo', fn:() => ACT.prnUndo(id)}); };
   const warn = [];
   if (r.max && uses.length >= +r.max) warn.push(`You've already taken the maximum of ${r.max} today.`);
   if (r.gap && last && (Date.now() - last) < r.gap * 3600e3) warn.push(`It's only been ${((Date.now() - last)/3600e3).toFixed(1)} hours since your last dose — the minimum gap is ${r.gap} hours.`);
   if (!warn.length) return record();
   openSheet('Check before taking', `<div class="alert bad"><b>${esc(m.name)}</b>${warn.join('<br>')}</div><div class="small" style="margin-bottom:12px">If your symptoms are bad enough that you need more, contact your doctor or pharmacist.</div><div class="btns"><button class="btn sec" data-close style="flex:1">Don't take it</button><button class="btn danger" id="anyway">I took it anyway</button></div>`, b => b.querySelector('#anyway').onclick = () => { closeSheet(); record(); });
 };
-ACT.prnUndo = id => { const t = today(), rec = day(t), uses = [...prnUses(t, id)]; uses.pop(); save({...rec, prn: {...(rec.prn||{}), [id]: uses}}); };
+ACT.prnUndo = id => { const t = today(), rec = day(t), uses = [...prnUses(t, id)]; const last = uses.pop(); clearTimersFrom(`prn|${t}|${id}|${last}`); save({...rec, prn: {...(rec.prn||{}), [id]: uses}}); };
 ACT.allTaken = d => { const ids = [...new Set(dosesFor(d).filter(x => UI.medCase === 'all' || (UI.medCase === 'none' ? !caseOf(x.med) : x.med.caseId === UI.medCase)).map(x => x.med.id))]; const n = backfillDoses(ids, d, d); toast(`${n} dose${n===1?'':'s'} marked taken.`); };
 const SKIP_REASONS = ['Side effects','Feeling better','Doctor\'s advice','Ran out','Not needed','Other'];
 ACT.skipDose = (d, key) => {
@@ -1102,6 +1507,35 @@ ACT.skipDose = (d, key) => {
   });
 };
 ACT.medTab = k => { UI.medTab = k; render(); };
+ACT.cyMove = n => { const [y, m] = (UI.cyMonth || today().slice(0, 7)).split('-').map(Number); UI.cyMonth = iso(new Date(y, m - 1 + +n, 1)).slice(0, 7); render(); };
+ACT.periodStart = () => { const t = today(); if (periods().some(x => x.start === t)) return; save({kind: 'period', id: 'period~' + uid(), start: t, end: '', flow: 'Medium', symptoms: []}); toast('🩸 Period logged. Tap it in History to add flow or symptoms.'); };
+ACT.periodEnd = () => { const st = cycleStats(); if (st.last) save({...st.last, end: today()}); };
+ACT.periodLog = () => periodForm({flow: 'Medium'});
+ACT.periodEdit = id => periodForm(get(id));
+ACT.mcMove = n => { const [y, m] = (UI.mcMonth || today().slice(0, 7)).split('-').map(Number); UI.mcMonth = iso(new Date(y, m - 1 + +n, 1)).slice(0, 7); render(); };
+ACT.mcSel = d => { UI.mcSel = d; UI.mcMonth = d.slice(0, 7); render(); };
+ACT.homeFilter = k => setView({home: k});
+ACT.arrange = () => {
+  const draw = b => {
+    const vp = viewPrefs(), t = today();
+    const meds = list('med').filter(m => (medActiveOn(m, t) || m.start > t)).sort((a, b) => orderIdx(a.id) - orderIdx(b.id) || a.name.localeCompare(b.name));
+    b.innerHTML = `<div class="sect" style="margin-top:0">Group doses by</div>
+      <div class="chips" style="margin-bottom:10px">${[['period','Time of day'],['time','Exact time'],['med','Medicine'],['case','Case']].map(([k, l]) => `<button class="chip ${vp.group === k ? 'on' : ''}" data-g="${k}">${l}</button>`).join('')}</div>
+      <div class="sect">Home & today shows</div>
+      <div class="chips" style="margin-bottom:10px">${[['next','Up next'], ...PERIODS.map(p => [p[0], p[1]]), ['all','All day']].map(([k, l]) => `<button class="chip ${vp.home === k ? 'on' : ''}" data-h="${k}">${l}</button>`).join('')}</div>
+      <label class="switch" style="cursor:pointer"><div class="main"><div style="font-weight:700">Hide doses I've already taken</div><div class="small">Keeps the list short — skipped and missed doses still show</div></div><button type="button" class="tog ${vp.hideTaken ? 'on' : ''}" data-ht></button></label>
+      <div class="sect">Medicine order <span style="text-transform:none;font-weight:600">(when two are at the same time)</span></div>
+      ${meds.length ? meds.map((m, i) => `<div class="row" style="padding:6px 0">${medIcon(m)}<div class="main"><div class="ttl">${esc(m.name)}</div><div class="sub">${repeatLabel(m)}${isPrn(m) ? '' : ' · ' + (m.times || []).map(fmtT).join(', ')}</div></div><button class="iconbtn" data-up="${i}" ${i === 0 ? 'disabled style="opacity:.3"' : ''} aria-label="Move up">▲</button><button class="iconbtn" data-dn="${i}" ${i === meds.length - 1 ? 'disabled style="opacity:.3"' : ''} aria-label="Move down">▼</button></div>`).join('') : '<div class="empty">No current medicines.</div>'}
+      <button class="btn block" data-close style="margin-top:12px">Done</button>`;
+    b.querySelectorAll('[data-g]').forEach(c => c.onclick = () => { setView({group: c.dataset.g}); draw(b); });
+    b.querySelectorAll('[data-h]').forEach(c => c.onclick = () => { setView({home: c.dataset.h}); draw(b); });
+    b.querySelector('[data-ht]').onclick = () => { setView({hideTaken: !viewPrefs().hideTaken}); draw(b); };
+    const move = (i, dir) => { const ids = meds.map(m => m.id); const j = i + dir; [ids[i], ids[j]] = [ids[j], ids[i]]; const rest = viewPrefs().order.filter(id => !ids.includes(id)); setView({order: [...ids, ...rest]}); draw(b); };
+    b.querySelectorAll('[data-up]').forEach(x => x.onclick = () => move(+x.dataset.up, -1));
+    b.querySelectorAll('[data-dn]').forEach(x => x.onclick = () => move(+x.dataset.dn, 1));
+  };
+  openSheet('Arrange your schedule', '', draw);
+};
 ACT.medCase = k => { UI.medCase = k; render(); };
 const FOOD_CHOICES = [['Before food','Before food'],['After food','After food'],['With food','With food'],['Empty stomach','Empty stomach'],['Any time','With or without food']];
 async function suggestFoods(meds){
@@ -1219,9 +1653,10 @@ function quickAdd(){
 }
 
 /* ---- medication forms ---- */
+const MED_FORMS = [['Tablet','Tablet'],['Capsule','Capsule'],['Syrup','Syrup / liquid'],['Drops','Drops (eye, ear, nose)'],['Spray','Spray'],['Inhaler','Inhaler'],['Injection','Injection'],['Cream','Cream / ointment / gel'],['Soap','Soap / body wash'],['Shampoo','Shampoo'],['Patch','Patch'],['Powder','Powder / sachet'],['Other','Other']];
 const MED_FIELDS = [
   {k:'name',label:'Medicine name',req:true,ph:'e.g. Amoxicillin'},
-  {k:'dose',label:'Dose',ph:'e.g. 500 mg, 1 tablet',half:true},{k:'form',label:'Form',type:'select',opts:['Tablet','Capsule','Syrup','Injection','Drops','Inhaler','Cream','Other'],half:true},
+  {k:'dose',label:'Dose',ph:'e.g. 500 mg, 1 tablet',half:true},{k:'form',label:'Type',type:'select',opts:MED_FORMS,half:true},
   {k:'food',label:'Food',type:'select',opts:FOOD_OPTS.map(o=>[o,o||'— no instruction —']),half:true},{k:'instructions',label:'Other instructions',ph:'e.g. with water',half:true},
   {k:'start',label:'Start date',type:'date',req:true,half:true},{k:'end',label:'End date',type:'date',half:true},
   {k:'doctor',label:'Prescribed by (doctor)',list:'dl-doc',half:true},{k:'facility',label:'Hospital / clinic',list:'dl-fac',half:true},
@@ -1278,7 +1713,7 @@ function timingMismatch(m){
 function repeatEditorHtml(r, start){
   const days = r.type === 'weekly' && r.days && r.days.length ? r.days.map(Number) : [parseD(start || today()).getDay()];
   return `<label class="f">Repeats<select name="rtype" data-rtype>${[['daily','Every day'],['interval','Every few days'],['weekly','Certain days of the week'],['monthly','Once a month'],['prn','Only when needed (as needed)']].map(([v,l]) => `<option value="${v}" ${r.type===v?'selected':''}>${l}</option>`).join('')}</select></label>
-  <div data-rsec="interval" class="${r.type==='interval'?'':'hidden'}"><label class="f">Every how many days?<input type="number" name="revery" min="2" max="90" value="${r.every || 2}"></label><div class="small" style="margin:-6px 0 10px">Counted from the start date.</div></div>
+  <div data-rsec="interval" class="${r.type==='interval'?'':'hidden'}"><label class="f">Every how many days?<input type="number" name="revery" min="2" max="90" value="${r.type === 'interval' && +r.every >= 2 ? r.every : 2}"></label><div class="small" style="margin:-6px 0 10px">Counted from the start date.</div></div>
   <div data-rsec="weekly" class="${r.type==='weekly'?'':'hidden'}"><div class="chips" style="margin-bottom:8px">${WD_ORDER.map(i => `<button type="button" class="chip ${days.includes(i)?'on':''}" data-wd="${i}">${WD_SHORT[i]}</button>`).join('')}</div><input type="hidden" name="rdays" value="${days.join(',')}"><label class="f">Repeat<select name="rweeks">${[[1,'Every week'],[2,'Every 2 weeks'],[3,'Every 3 weeks'],[4,'Every 4 weeks']].map(([v,l]) => `<option value="${v}" ${(+r.every||1)===v?'selected':''}>${l}</option>`).join('')}</select></label></div>
   <div data-rsec="monthly" class="${r.type==='monthly'?'':'hidden'}"><label class="f">Day of the month<input type="number" name="rday" min="1" max="31" value="${r.day || parseD(start || today()).getDate()}"></label><div class="small" style="margin:-6px 0 10px">In shorter months it's scheduled on the last day.</div></div>
   <div data-rsec="prn" class="${r.type==='prn'?'':'hidden'}"><div class="grid2"><label class="f">Max doses per day<input type="number" name="rmax" min="1" max="12" value="${r.max || ''}" placeholder="optional"></label><label class="f">At least … hours apart<input type="number" name="rgap" min="0" max="72" value="${r.gap || ''}" placeholder="optional"></label></div><div class="small" style="margin:-6px 0 10px">No fixed times or reminders — use “Took a dose” when you need it.</div></div>`;
@@ -1303,6 +1738,39 @@ function wireRepeat(root){
   show();
   return api;
 }
+function mountAfter(root, rec){
+  let rules = JSON.parse(JSON.stringify(rec.after || []));
+  const box = root.querySelector('#afterWrap');
+  const others = () => list('med').filter(m => m.id !== rec.id && (medActiveOn(m, today()) || m.start > today()));
+  const unitOf = n => n >= 60 && n % 60 === 0 ? 'h' : 'min';
+  const draw = () => {
+    const f = foodOf({food: (root.querySelector('[name=food]') || {}).value});
+    const hint = !rules.some(r => r.type === 'food') && (f === 'Before food' || f === 'Empty stomach') ? `<div class="small" style="margin:4px 0">💡 Taken ${f.toLowerCase()} — add a food timer so you know when you can eat.</div>` : '';
+    box.innerHTML = `<div class="sect">After taking it <span style="text-transform:none;font-weight:600">(optional timers)</span></div>
+      ${rules.map((r, i) => {
+        const n = +r.minutes || 30, u = unitOf(n), val = u === 'h' ? n / 60 : n;
+        const num = `<input type="number" min="1" max="${u === 'h' ? 48 : 600}" data-ri="${i}|num" value="${val}" style="width:64px">`;
+        const unit = `<select data-ri="${i}|unit"><option value="min" ${u === 'min' ? 'selected' : ''}>min</option><option value="h" ${u === 'h' ? 'selected' : ''}>hours</option></select>`;
+        const tsel = any => `<select data-ri="${i}|target" style="flex:1;min-width:120px">${any ? `<option value="">any other medicine</option>` : ''}${others().map(m => `<option value="${m.id}" ${r.target === m.id ? 'selected' : ''}>${esc(m.name)}</option>`).join('')}</select>`;
+        let body = '';
+        if (r.type === 'food') body = `🍽 <select data-ri="${i}|mode"><option value="wait" ${r.mode !== 'within' ? 'selected' : ''}>Don't eat for</option><option value="within" ${r.mode === 'within' ? 'selected' : ''}>Eat within</option></select>${num}${unit}`;
+        if (r.type === 'wait') body = `⏳ Wait ${num}${unit} before ${tsel(true)}`;
+        if (r.type === 'next') body = `💊 Then take ${tsel(false)} after ${num}${unit}`;
+        return `<div class="rule">${body}<button type="button" class="iconbtn ghost" data-rdel="${i}" aria-label="Remove" style="width:28px;height:28px">✕</button></div>`;
+      }).join('')}${hint}
+      <div class="chips" style="margin:6px 0 12px"><button type="button" class="chip sm" data-radd="food">+ Food timer</button><button type="button" class="chip sm" data-radd="wait">+ Wait before other medicines</button>${others().length ? '<button type="button" class="chip sm" data-radd="next">+ Remind me to take another</button>' : ''}</div>`;
+    box.querySelectorAll('[data-rdel]').forEach(x => x.onclick = () => { rules.splice(+x.dataset.rdel, 1); draw(); });
+    box.querySelectorAll('[data-radd]').forEach(x => x.onclick = () => { const t = x.dataset.radd; rules.push(t === 'food' ? {type:'food', mode:'wait', minutes:30} : t === 'wait' ? {type:'wait', minutes:30, target:''} : {type:'next', minutes:30, target: (others()[0] || {}).id || ''}); draw(); });
+    box.querySelectorAll('[data-ri]').forEach(el => el.onchange = el.oninput = () => {
+      const [i, k] = el.dataset.ri.split('|'), r = rules[+i];
+      if (k === 'num' || k === 'unit') { const nv = +box.querySelector(`[data-ri="${i}|num"]`).value || 1, uv = box.querySelector(`[data-ri="${i}|unit"]`).value; r.minutes = uv === 'h' ? nv * 60 : nv; }
+      else r[k] = el.value;
+    });
+  };
+  const fsel = root.querySelector('[name=food]'); if (fsel) fsel.addEventListener('change', draw);
+  draw();
+  return {read: () => rules.filter(r => r.type !== 'next' || r.target).map(r => ({...r, minutes: Math.max(1, +r.minutes || 1)}))};
+}
 function mountTimes(box, getTimes, setTimes){
   const redraw = () => { box.querySelector('#timesWrap').innerHTML = timesEditor(getTimes()); wire(); };
   const read = () => [...box.querySelectorAll('.tm')].map(i=>i.value).filter(Boolean);
@@ -1319,7 +1787,7 @@ ACT.addMed = (prefill) => medForm(typeof prefill === 'object' && prefill && !(pr
 function medForm(m){
   const rec = {start: today(), prescribedOn: today(), form:'Tablet', times: FREQ[2], ...m};
   let times = [...(rec.times||[])];
-  openSheet(rec.id ? 'Edit medication' : 'Add medication', `${datalists()}<form id="mf">${formHtml(MED_FIELDS.slice(0,5), {...rec, food: foodOf(rec)})}${repeatEditorHtml(repOf(rec), rec.start)}<div id="timesWrap"></div>${formHtml(MED_FIELDS.slice(5), rec)}
+  openSheet(rec.id ? 'Edit medication' : 'Add medication', `${datalists()}<form id="mf">${formHtml(MED_FIELDS.slice(0,5), {...rec, food: foodOf(rec)})}${repeatEditorHtml(repOf(rec), rec.start)}<div id="timesWrap"></div><div id="afterWrap"></div>${formHtml(MED_FIELDS.slice(5), rec)}
     ${backfillRowHtml(!rec.id)}
     ${caseField(rec)}
     ${rec.fileId && get(rec.fileId) ? `<div class="small" style="margin-bottom:10px">📎 Linked prescription: ${esc(get(rec.fileId).name)}</div>`:''}
@@ -1328,6 +1796,7 @@ function medForm(m){
     let userTimes = !!rec.id;
     wireStart(b, null);
     const rep = wireRepeat(b);
+    const after = mountAfter(b, rec);
     rep.onType = type => { if (!userTimes && ['weekly','monthly','interval'].includes(type) && times.length > 1) { times = FREQ[1]; mountTimes(b, () => times, t => { times = t; userTimes = true; }); } };
     const ins = b.querySelector('[name=instructions]');
     const note = document.createElement('div'); note.className = 'small'; note.style.margin = '-6px 0 10px'; ins.closest('.grid2, label').after(note);
@@ -1349,6 +1818,8 @@ function medForm(m){
       if ((v.food||'') !== (foodOf(rec)||'')) v.foodSource = 'you';
       times = [...b.querySelectorAll('.tm')].map(i=>i.value).filter(Boolean).sort();
       v.repeat = rep.read(v);
+      v.after = after.read();
+      Object.keys(v).filter(k => k.startsWith('ar_')).forEach(k => delete v[k]);
       if (v.repeat.type === 'prn') times = [];
       const bf = v.backfill && v.repeat.type !== 'prn'; delete v.backfill;
       const id = rec.id || 'med~'+uid();
@@ -1366,7 +1837,7 @@ ACT.viewMed = id => {
   const f = m.fileId && get(m.fileId);
   openSheet(m.name, `<dl class="kv">
     <dt>Dose</dt><dd>${esc(m.dose||'–')} ${esc(m.form||'')}</dd>
-    <dt>Schedule</dt><dd>${repeatLabel(m)}${isPrn(m) ? (repOf(m).gap ? ` · at least ${repOf(m).gap} h apart` : '') : ' · ' + ((m.times||[]).map(fmtT).join(', ') || '–')}${!isPrn(m) && repOf(m).type !== 'daily' ? (() => { const n = nextDue(m, today()); return n ? `<br><span class="small">Next dose: ${fmtD(n)}</span>` : ''; })() : ''}</dd><dt>Food</dt><dd>${foodOf(m) ? foodText(foodOf(m)) + (m.foodSource==='usual' ? ' <span class="small">(usual guidance for this medicine — not written on your prescription)</span>' : '') : '<span class="small">Not set</span>'}</dd>
+    <dt>Schedule</dt><dd>${repeatLabel(m)}${isPrn(m) ? (repOf(m).gap ? ` · at least ${repOf(m).gap} h apart` : '') : ' · ' + ((m.times||[]).map(fmtT).join(', ') || '–')}${!isPrn(m) && repOf(m).type !== 'daily' ? (() => { const n = nextDue(m, today()); return n ? `<br><span class="small">Next dose: ${fmtD(n)}</span>` : ''; })() : ''}</dd>${(m.after || []).length ? `<dt>After</dt><dd>${m.after.map(r => ruleText(r)).join('<br>')}</dd>` : ''}<dt>Food</dt><dd>${foodOf(m) ? foodText(foodOf(m)) + (m.foodSource==='usual' ? ' <span class="small">(usual guidance for this medicine — not written on your prescription)</span>' : '') : '<span class="small">Not set</span>'}</dd>
     ${m.instructions?`<dt>How</dt><dd>${esc(m.instructions)}</dd>`:''}
     <dt>Course</dt><dd>${fmtD(m.start)} → ${m.end?fmtD(m.end):'ongoing'}</dd>
     <dt>Prescribed</dt><dd>${fmtD(m.prescribedOn)||'–'}</dd>
@@ -1387,7 +1858,7 @@ ACT.viewMed = id => {
 
 /* ---- prescription scanning ---- */
 const RX_PROMPT = `You are reading a photo of a doctor's medical prescription. Extract what is written. Return ONLY JSON of this shape:
-{"doctor":string|null,"specialty":string|null,"facility":string|null,"facilityType":"Clinic"|"Hospital"|"Pharmacy"|"Telehealth"|"Other"|null,"date":"YYYY-MM-DD"|null,"diagnosis":string|null,"advice":string|null,"followUpDate":"YYYY-MM-DD"|null,"testsOrdered":[string],"medications":[{"name":string,"dose":string|null,"form":"Tablet"|"Capsule"|"Syrup"|"Injection"|"Drops"|"Inhaler"|"Cream"|"Other","timesPerDay":number|null,"timing":["morning"|"noon"|"evening"|"night"|"bedtime"]|null,"food":"Before food"|"After food"|"With food"|"Empty stomach"|"Any time","foodUsual":boolean,"repeat":{"type":"daily"|"interval"|"weekly"|"monthly"|"prn","everyDays":number|null,"weekdays":["Mon"|"Tue"|"Wed"|"Thu"|"Fri"|"Sat"|"Sun"]|null,"everyWeeks":number|null,"dayOfMonth":number|null,"maxPerDay":number|null,"minHoursApart":number|null},"durationDays":number|null,"instructions":string|null}],"unclear":string|null}
+{"doctor":string|null,"specialty":string|null,"facility":string|null,"facilityType":"Clinic"|"Hospital"|"Pharmacy"|"Telehealth"|"Other"|null,"date":"YYYY-MM-DD"|null,"diagnosis":string|null,"advice":string|null,"followUpDate":"YYYY-MM-DD"|null,"testsOrdered":[string],"medications":[{"name":string,"dose":string|null,"form":"Tablet"|"Capsule"|"Syrup"|"Drops"|"Spray"|"Inhaler"|"Injection"|"Cream"|"Soap"|"Shampoo"|"Patch"|"Powder"|"Other","timesPerDay":number|null,"timing":["morning"|"noon"|"evening"|"night"|"bedtime"]|null,"food":"Before food"|"After food"|"With food"|"Empty stomach"|"Any time","foodUsual":boolean,"repeat":{"type":"daily"|"interval"|"weekly"|"monthly"|"prn","everyDays":number|null,"weekdays":["Mon"|"Tue"|"Wed"|"Thu"|"Fri"|"Sat"|"Sun"]|null,"everyWeeks":number|null,"dayOfMonth":number|null,"maxPerDay":number|null,"minHoursApart":number|null},"durationDays":number|null,"instructions":string|null}],"unclear":string|null}
 Rules: "doctor" is the prescribing doctor's name with title (e.g. "Dr. A. Rahman"); "facility" is the hospital/clinic name from the letterhead or stamp; "date" is the date written on the prescription; "diagnosis" is the condition/complaint if written (Dx, C/O, Diagnosis), in plain words; "advice" is any non-medicine advice (rest, diet, review); "followUpDate" if a review/follow-up date or "review after N days" is written (compute it from the prescription date); "testsOrdered" lists lab tests or imaging requested (CBC, X-ray chest…). Copy medicine names exactly as written; interpret common abbreviations (OD=1/day, BD/BID=2, TDS/TID=3, QID=4, HS=at bedtime, x5d=5 days, PC=after food, AC=before food, 1-0-1 = morning and night). "repeat" describes how often the medicine is taken: "daily" unless written otherwise; "interval" for alternate days / every N days; "weekly" for once a week, on named weekdays, N times a week or every N weeks; "monthly" for once a month; "prn" for SOS / as needed / only if / when required (put any maximum per day and minimum hours apart). "timing" MUST list when in the day each dose is taken whenever any time of day is written anywhere for that medicine (morning, noon, evening, night, bedtime/HS, 1-0-1 etc.), and timesPerDay must equal its length (e.g. "at bedtime" → ["bedtime"], 1-0-1 → ["morning","night"]); "food" is the food relation only — if the prescription doesn't state it, use the usual instruction from the standard patient leaflet for that medicine and set "foodUsual": true (otherwise false); "instructions" is anything else (not the food relation, timing or duration). Use null for anything you cannot read and list anything illegible or uncertain in "unclear". If the image is not a prescription, return {"medications":[],"unclear":"This doesn't look like a prescription"}.`;
 ACT.scanRx = (pre) => {
   const ctx = pre && !(pre instanceof Element) && typeof pre === 'object' ? pre : {};
@@ -1826,21 +2297,43 @@ function notify(title, body){
 function checkReminders(){
   if (storeMode === 'loading') return;
   const s = settings(), r = s.remind, t = today(), now = new Date(), nm = now.getHours()*60 + now.getMinutes();
+  const everyone = people();
+  everyone.forEach(P => {
+  const who = P.id === 'me' ? '' : P.name + ': ', whoH = P.id === 'me' ? '' : `<b>${esc(P.name)}</b> — `;
+  const pid = P.id, inP = fn => () => { withPerson(pid, fn); render(); };
+  withPerson(pid, () => {
   if (r.meds) dosesFor(t).forEach(d => {
-    const k = 'dose:' + t + d.key, dm = hmToMin(d.time);
+    const k = 'dose:' + pid + t + d.key, dm = hmToMin(d.time);
     if (nm >= dm && nm - dm <= 60 && !isRecorded(t, d.key) && !fired.has(k)) {
       fired.add(k);
-      toast(`💊 Time to take <b>${esc(d.med.name)}</b>${d.med.dose?' '+esc(d.med.dose):''} (${fmtT(d.time)})`, {label:'Taken', fn:() => toggleDose(t, d.key)}, 0);
-      notify('Medication reminder', `${d.med.name} ${d.med.dose||''} — ${fmtT(d.time)}`);
+      toast(`💊 ${whoH}Time to take <b>${esc(d.med.name)}</b>${d.med.dose?' '+esc(d.med.dose):''} (${fmtT(d.time)})`, {label:'Taken', fn: inP(() => toggleDose(t, d.key))}, 0);
+      notify('Medication reminder', `${who}${d.med.name} ${d.med.dose||''} — ${fmtT(d.time)}`);
     }
+  });
+  const due = liveTimers().filter(x => !x.fired && x.due <= Date.now());
+  if (due.length) {
+    due.forEach(x => {
+      const msg = x.kind === 'food' ? (x.mode === 'within' ? `🍽 Time to eat (${x.sub})` : `🍽 You can eat now (${x.sub})`) : x.kind === 'wait' ? `⏳ Waiting time is over (${x.sub})` : x.kind === 'next' ? `💊 Time to take <b>${esc(x.label.replace(/^Take /, ''))}</b>` : `⏱ ${esc(x.label)} — time's up`;
+      toast(whoH + msg, x.kind === 'next' ? {label: 'Taken', fn: inP(() => ACT.timerTake(x.id))} : null, 0);
+      notify('Health Monitor', who + msg.replace(/<[^>]+>/g, ''));
+    });
+    saveTimers((timersRec().items || []).map(x => due.some(y => y.id === x.id) ? {...x, fired: true} : x));
+  }
+  });
   });
   if (r.water && now.getHours() >= 8 && now.getHours() <= 22) {
     const slot = Math.floor((now.getHours() - 8) / (r.waterEvery||2)), k = 'water:' + t + ':' + slot;
     if (slot > 0 && now.getMinutes() < 5 && (now.getHours()-8) % (r.waterEvery||2) === 0 && !fired.has(k)) { fired.add(k); toast('💧 Time for a glass of water', {label:'+1 glass', fn:() => ACT.water(1)}); notify('Drink water', 'Time for a glass of water'); }
   }
+  people().forEach(P => withPerson(P.id, () => {
+    if (!settings().remind.period || !cycleOn()) return;
+    const st = cycleStats(); if (!st.last || st.ongoing) return;
+    const dd = daysBetween(t, st.next), k = 'cy:' + P.id + t;
+    if ((dd === 2 || dd === 0) && now.getHours() >= 9 && !fired.has(k)) { fired.add(k); const who = P.id === 'me' ? '' : P.name + ': '; toast(`🩸 ${esc(who)}Period expected ${dd ? 'in 2 days' : 'today'}`); notify('Cycle', `${who}Period expected ${dd ? 'in 2 days' : 'today'}`); }
+  }));
   if (r.sleep) { const k = 'bed:' + t, bm = hmToMin(r.bedtime); if (nm >= bm && nm - bm <= 10 && !fired.has(k)) { fired.add(k); toast('🌙 It\'s bedtime — time to wind down.'); notify('Bedtime', 'Time to wind down for sleep'); } }
 }
-setInterval(checkReminders, 30000);
+setInterval(checkReminders, 20000);
 setTimeout(checkReminders, 3000);
 // re-render once a minute so "due" badges stay current (no writes)
 setInterval(() => { if (!$('#sheetRoot').innerHTML && document.activeElement?.tagName !== 'INPUT') render(); }, 60000);
