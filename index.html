@@ -222,8 +222,51 @@ h3 .pill{white-space:nowrap}
 .rxmed{border:2px solid var(--line);border-radius:14px;padding:10px;margin-bottom:8px}
 .rxmed.off{opacity:.5}
 /* Timer + Hide taken, under the Meds calendar */
-.caltools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:-2px 0 12px}
-.caltools .chip{min-height:34px}
+.daytools{display:flex;align-items:center;gap:6px}
+.takentog{border:0;cursor:pointer;font:inherit;font-size:12px;font-weight:800;padding:5px 10px;min-height:30px}
+.takentog:focus-visible,.timerbtn:focus-visible{outline:2px solid #2e7d70;outline-offset:2px}
+.timerbtn{width:34px;height:34px;border-radius:50%;font-size:17px;line-height:1;background:var(--teal-ll);box-shadow:none}
+.timerbtn:hover{background:var(--teal-l)}
+[data-csum] b{display:block;margin-bottom:2px}
+/* Settings → Dose times: each part of the day as start – end */
+.slots{display:flex;flex-direction:column;gap:12px;margin-bottom:14px}
+.slotname{font-size:13.5px;font-weight:800;color:var(--ink);margin-bottom:5px}
+.slotin{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px}
+.slotin span{font-weight:800;color:var(--muted)}
+.slotin input{width:100%;min-width:0;height:46px;border:2px solid var(--line);border-radius:12px;padding:0 10px;background:var(--teal-ll);font-weight:700;font-size:14.5px;outline:0}
+.slotin input:focus{border-color:var(--teal);background:#fff}
+.slotin input[aria-invalid=true]{border-color:var(--bad);background:#fff}
+.slotnote{margin-top:4px}
+.slotnote.bad{color:var(--bad);font-weight:700}
+.slotnote:empty{display:none}
+/* Home calendar */
+.homecal .calhead{margin-top:2px}
+.cal .d.sel.cy-period,.cal .d.sel.cy-predicted{background:var(--teal);color:#fff;outline:0}
+.hcday{border-top:1px solid var(--line);margin-top:10px;padding-top:10px}
+.hchd{display:flex;align-items:center;gap:8px;margin-bottom:2px}
+.hchd b{font-size:14.5px}
+.hchd .sp{flex:1}
+/* Meds title dropdown */
+.modebtn{display:inline-flex;align-items:center;gap:6px;border:0;background:transparent;font:inherit;font-size:18px;font-weight:800;letter-spacing:.2px;color:var(--ink);padding:6px 10px 6px 14px;border-radius:999px;cursor:pointer;max-width:100%}
+.modebtn svg{width:16px;height:16px;color:var(--teal-d);transform:rotate(-90deg);transition:transform .15s}
+.modebtn[aria-expanded=true] svg{transform:rotate(90deg)}
+.modebtn:hover,.modebtn[aria-expanded=true]{background:rgba(255,255,255,.75)}
+.modebtn:focus-visible{outline:2px solid #2e7d70;outline-offset:2px}
+.modemenu{position:absolute;top:calc(100% - 4px);left:50%;transform:translateX(-50%);width:min(290px,calc(100% - 32px));background:#fff;border-radius:18px;box-shadow:0 14px 36px rgba(20,45,45,.22),0 0 0 1px rgba(20,45,45,.05);padding:6px;z-index:40;animation:menuin .14s ease-out}
+@keyframes menuin{from{opacity:0;transform:translate(-50%,-6px)}}
+.modeitem{display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;padding:10px;border-radius:13px;cursor:pointer;text-align:left;color:var(--ink)}
+.modeitem+.modeitem{margin-top:2px}
+.modeitem:hover,.modeitem:focus-visible{background:var(--teal-ll);outline:0}
+.modeitem:focus-visible{box-shadow:inset 0 0 0 2px #2e7d70}
+.modeitem[aria-checked=true]{background:var(--teal-l)}
+.mi-ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--teal-l);color:var(--teal-d);flex:none}
+.mi-ic svg{width:22px;height:22px}
+.modeitem[aria-checked=true] .mi-ic{background:#2e7d70;color:#fff}
+.mi-t{flex:1;min-width:0}
+.mi-t b{display:block;font-size:15px;font-weight:800}
+.mi-t span{display:block;font-size:12.5px;color:var(--ink2);margin-top:1px}
+.mi-ck{width:20px;height:20px;color:#2e7d70;flex:none}
+.mi-ck svg{width:20px;height:20px}
 /* Meds tabs + add button */
 .segrow{display:flex;align-items:center;gap:8px;margin-bottom:12px}
 .segrow .seg{flex:1;min-width:0;margin-bottom:0}
@@ -303,6 +346,8 @@ const I = {
   m_drops:'<path d="M12 3.5s5.5 6 5.5 10a5.5 5.5 0 0 1-11 0c0-4 5.5-10 5.5-10z"/><path d="M9.5 14.5a2.5 2.5 0 0 0 2.5 2.5"/>',
   m_spray:'<rect x="7.5" y="10" width="9" height="11" rx="2"/><path d="M10 10V7h4v3M12 7V4.5M15.5 4h3M15.5 2.5l2.5-1M15.5 5.5l2.5 1"/>',
   m_inhaler:'<path d="M9 3h5v7.5l3.5 2.5v6a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2v-9.5L9 8z"/><path d="M14 14h3.5"/>',
+  tooth:'<path d="M7.5 3.5C5.3 3.5 3.8 5.2 3.8 7.6c0 3 1.5 4.5 2 8 .3 2.5 1 5 2.3 5 1.6 0 1.4-5 3.9-5s2.3 5 3.9 5c1.3 0 2-2.5 2.3-5 .5-3.5 2-5 2-8 0-2.4-1.5-4.1-3.7-4.1-1.8 0-2.8 1-4.5 1s-2.7-1-4.5-1z"/>',
+  eye:'<path d="M2.5 12s3.5-6.5 9.5-6.5S21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>',
   m_injection:'<path d="M17 3l4 4M19 5l-3 3M16 8l-8.5 8.5-3-3L13 5M9.5 10.5l1.5 1.5M12 8l1.5 1.5M4.5 16.5L2.5 18.5M6 18l-1 1"/>',
   m_cream:'<path d="M7 3h10l-1.5 12h-7z"/><path d="M10 15v2.5h4V15M11 17.5V20h2v-2.5"/><path d="M8 7h8"/>',
   m_soap:'<rect x="3.5" y="11" width="13" height="8" rx="3"/><circle cx="17.5" cy="6.5" r="2.2"/><circle cx="12" cy="6.5" r="1.4"/><circle cx="20.5" cy="11" r="1.2"/>',
@@ -378,7 +423,7 @@ const IDB = {
 };
 
 /* people: 'me' plus anyone in your care. Records of these kinds belong to one person. */
-const PSCOPED = new Set(['med','visit','illness','file','case','goal','food','exercise','sleep','day','period','profile','timers']);
+const PSCOPED = new Set(['med','visit','course','illness','file','case','goal','food','exercise','sleep','day','period','profile','timers']);
 let CUR = (() => { try { return localStorage.getItem('hm.person') || 'me'; } catch(e) { return 'me'; } })();
 let NO_RENDER = 0;
 function ownerOf(r){ return r.personId || 'me'; }
@@ -609,7 +654,7 @@ function doseState(d, x){
   if (d < t) return 'missed';
   if (d > t) return 'upcoming';
   const late = hmToMin(nowHM()) - hmToMin(x.time);
-  return late >= MISSED_AFTER_MIN ? 'missed' : late >= 0 ? 'due' : 'upcoming';
+  return late >= doseWindow(x.time).mins ? 'missed' : late >= 0 ? 'due' : 'upcoming';
 }
 function setDose(d, key, val){
   const rec = day(d); rec.doses = {...(rec.doses||{})};
@@ -721,9 +766,17 @@ function settings(){
     targets: {cal:2000, water:8, sleep:8, exercise:30, ...(s.targets||{})},
     remind: {meds:true, water:false, waterEvery:2, sleep:false, bedtime:'22:30', ...(s.remind||{})},
     doseTimes: {...DEF_SLOT_TIMES, ...(s.doseTimes||{})},
+    // the end of each part of the day: a dose not ticked by then counts as missed (default: start + 3 h, as before)
+    doseEnds: {...Object.fromEntries(SLOTS.map(([k]) => [k, addHours({...DEF_SLOT_TIMES, ...(s.doseTimes||{})}[k], MISSED_AFTER_MIN / 60)])), ...(s.doseEnds||{})},
     freqSlots: {...DEF_FREQ_SLOTS, ...(s.freqSlots||{})}};
 }
 function slotTime(k){ return settings().doseTimes[k] || DEF_SLOT_TIMES[k]; }
+/* how long a dose at this time stays "due": up to the end of the part of the day that starts then, else 3 h */
+function doseWindow(time){
+  const s = settings(); let best = 0, end = '';
+  SLOTS.forEach(([k]) => { if (s.doseTimes[k] === time) { const w = (hmToMin(s.doseEnds[k]) - hmToMin(time) + 1440) % 1440; if (w > best) { best = w; end = s.doseEnds[k]; } } });
+  return best ? {mins: best, end} : {mins: MISSED_AFTER_MIN, end: ''};
+}
 function freqTimes(n){ return [...new Set((settings().freqSlots[n] || DEF_FREQ_SLOTS[n] || ['morning']).map(slotTime))].sort(); }
 function addHours(hm, h){ const m = (hmToMin(hm) + h*60) % 1440; return `${pad(Math.floor(m/60))}:${pad(m%60)}`; }
 function profile(){ return single('profile', {name:'', dob:'', sex:'', blood:'', height:'', weight:'', allergies:'', conditions:'', ecName:'', ecPhone:''}); }
@@ -732,7 +785,7 @@ function pastVisits(){ const t = today(); return list('visit').filter(v => v.dat
 function activeIllness(){ return list('illness').filter(i => !i.end).sort((a,b)=>b.start.localeCompare(a.start)); }
 
 /* ---------------- cases ---------------- */
-const CASE_KINDS = ['visit','illness','file','med'];
+const CASE_KINDS = ['visit','course','illness','file','med'];
 function caseItems(cid){ return [...R.values()].filter(r => r.caseId === cid && CASE_KINDS.includes(r.kind)); }
 function sortedCases(){ return list('case').sort((a,b) => ((a.status==='closed')-(b.status==='closed')) || (b.created||'').localeCompare(a.created||'')); }
 function caseOf(r){ return r && r.caseId ? get(r.caseId) : null; }
@@ -828,7 +881,7 @@ const ROUTES = {
   profile:{t:'My Profile', nav:'more', back:'more'}, case:{t:'Case File', nav:'files', back:'files'}, people:{t:'People in your care', nav:'more', back:'more'}, reminders:{t:'Settings', nav:'more', back:'more'}
 };
 let route = 'home';
-const UI = { medCase:'all', recTab:'records', caseId: (()=>{ try { return sessionStorage.getItem('hm.case'); } catch(e){ return null; } })(), medTab:'cal', healthTab:'goals', fileCat:'All', fileQ:'', calMonth: today().slice(0,7), calSel: today(), visitTab:'upcoming' };
+const UI = { medCase:'all', recTab:'records', caseId: (()=>{ try { return sessionStorage.getItem('hm.case'); } catch(e){ return null; } })(), medTab:'cal', medMode: (()=>{ try { return sessionStorage.getItem('hm.medMode') === 'appt' ? 'appt' : 'rx'; } catch(e){ return 'rx'; } })(), apptTab:'cal', apptCase:'all', healthTab:'goals', fileCat:'All', fileQ:'', calMonth: today().slice(0,7), calSel: today(), visitTab:'upcoming' };
 function go(r){ if (location.hash.slice(1) !== r) location.hash = r; else { route = r; render(); } window.scrollTo(0,0); }
 window.addEventListener('hashchange', () => { const r = location.hash.slice(1); route = ROUTES[r] ? r : 'home'; render(); window.scrollTo(0,0); });
 
@@ -842,7 +895,12 @@ function renderNav(){
 function render(){
   if (NO_RENDER) return;
   const R0 = ROUTES[route];
-  $('#title').textContent = R0.t;
+  const h1 = $('#title');
+  closeModeMenu(false);
+  if (route === 'meds') {   // the Meds title opens a menu: Prescriptions / Appointments
+    h1.innerHTML = `<button type="button" class="modebtn" id="modeBtn" aria-haspopup="menu" aria-expanded="false" aria-label="${UI.medMode === 'appt' ? 'Appointments' : 'Prescriptions'} — switch view">${UI.medMode === 'appt' ? 'Appointments' : 'Prescriptions'}${ic('back')}</button>`;
+    $('#modeBtn').onclick = () => $('.modemenu') ? closeModeMenu(true) : openModeMenu();
+  } else h1.textContent = R0.t;
   const bb = $('#backBtn'), me = personOf(CUR), multi = people().length > 1;
   if (R0.back) { bb.innerHTML = ic('back'); bb.className = 'iconbtn ghost'; bb.style.visibility = 'visible'; bb.onclick = () => go(R0.back); bb.removeAttribute('style'); }
   else { bb.innerHTML = `<span class="avatar xs" style="background:${me.color}">${esc(initials(me.name))}</span>`; bb.className = 'iconbtn ghost'; bb.style.visibility = 'visible'; bb.onclick = personSheet; bb.setAttribute('aria-label', 'Switch person'); }
@@ -877,53 +935,30 @@ const VIEWS = {};
 VIEWS.home = () => {
   const p = profile(), t = today(), s = settings();
   const doses = dosesFor(t), taken = doses.filter(d => isTaken(t, d.key)).length, skippedN = doses.filter(d => ['skipped','missed'].includes((doseRec(t, d.key)||{}).s)).length;
-  const nextV = upcomingVisits()[0];
   const ill = activeIllness();
-  const dRec = day(t);
-  const cal = list('food').filter(f => f.date === t).reduce((a,f)=>a+(+f.cal||0),0);
-  const sl = list('sleep').filter(x => x.date === t)[0];
-  const ex = list('exercise').filter(x => x.date === t).reduce((a,x)=>a+(+x.minutes||0),0);
-  const goals = list('goal').filter(g => !g.done).slice(0,3);
   const initials = (p.name||'Me').split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();
   const hr = new Date().getHours();
   return `
   <div class="hello"><div class="avatar" style="background:${personOf(CUR).color}">${esc(initials)}</div><div><div class="t">${hr<12?'Good morning':hr<18?'Good afternoon':'Good evening'}</div><div class="n">${esc(p.name || 'Welcome')}</div></div></div>
-  ${(() => { const lb = s.lastBackup, has = list('med').length + list('file').length + list('visit').length; return has >= 3 && (!lb || Date.now() - lb > 14*864e5) ? `<div class="alert info"><b>Back up your health data</b>It's stored only on this phone${lb ? ' — last backup ' + daysBetween(iso(new Date(lb)), today()) + ' days ago' : ''}. <button class="link" data-act="backup">Save a backup now →</button></div>` : ''; })()}
-  ${!p.name ? `<div class="alert info"><b>Set up your profile</b>Add your name, allergies and emergency contact so they're always at hand. <button class="link" data-act="nav|profile">Open profile →</button></div>`:''}
+  ${(() => { const goals = list('goal').filter(g => !g.done).slice(0, 3); return `<div class="card">
+    <h3>${ic('target','style="width:18px;height:18px;color:var(--teal-d)"')}Health goals<span class="sp"></span><button class="link" data-act="healthTab|goals">All</button></h3>
+    ${goals.length ? goals.map(goalRow).join('') : `<div class="empty">No goals yet. <button class="link" data-act="addGoal">+ Add a goal</button></div>`}
+  </div>`; })()}
   ${ill.map(i => `<div class="alert warn"><b>${ic('thermo','style="width:16px;height:16px;vertical-align:-3px"')} Currently sick: ${esc(i.title||'Unwell')}</b>Since ${fmtD(i.start)} · day ${daysBetween(i.start,t)+1}${i.symptoms?.length?' · '+esc(i.symptoms.slice(0,4).join(', ')):''}<div class="btns" style="margin-top:8px"><button class="btn sm" data-act="recover|${i.id}">I've recovered</button><button class="btn sm sec" data-act="nav|sick">Details</button></div></div>`).join('')}
   ${peopleCard()}
   ${cycleHomeCard()}
-  ${timersCard()}
+  ${liveTimers().length ? timersCard() : ''}
+  ${homeCalendar()}
   <div class="card">
-    <h3>${ic('pill','style="width:18px;height:18px;color:var(--teal-d)"')}Today's medication<span class="sp"></span><button class="iconbtn ghost" data-act="arrange" aria-label="Arrange" style="width:30px;height:30px">${ic('sliders')}</button><span class="pill">${taken}/${doses.length} taken</span>${skippedN?`<span class="pill grey" style="margin-left:4px">${skippedN} not taken</span>`:''}</h3>
+    <h3>${ic('pill','style="width:18px;height:18px;color:var(--teal-d)"')}Today's medication<span class="sp"></span>${skippedN?`<span class="pill grey">${skippedN} not taken</span>`:''}${doseTools(taken, doses.length)}</h3>
     ${todayCard(t, doses)}
   </div>
   ${prnCard()}
   <div class="card">
-    <h3>${ic('doctor','style="width:18px;height:18px;color:var(--teal-d)"')}Next doctor visit<span class="sp"></span><button class="link" data-act="nav|visits">All</button></h3>
-    ${nextV ? visitRow(nextV) : `<div class="empty">No visit scheduled. <button class="link" data-act="addVisit">+ Schedule one</button></div>`}
+    <h3>${ic('cal','style="width:18px;height:18px;color:var(--teal-d)"')}Next appointment<span class="sp"></span><button class="link" data-act="openAppts">All</button></h3>
+    ${(() => { const nx = nextAppt(); return nx ? (nx.o ? sessionRow(nx.o) : visitRow(nx.v)) : `<div class="empty">No appointment scheduled. <button class="link" data-act="addAppt">+ Schedule one</button></div>`; })()}
   </div>
-  ${(() => { const oc = sortedCases().filter(c => c.status !== 'closed').slice(0,3); return oc.length ? `<div class="card"><h3>${ic('folder','style="width:18px;height:18px;color:var(--teal-d)"')}Open case files<span class="sp"></span><button class="link" data-act="recTabGo|cases">All</button></h3>${oc.map(caseRow).join('')}</div>` : ''; })()}
-  <div class="card">
-    <h3>${ic('heart','style="width:18px;height:18px;color:var(--teal-d)"')}Today<span class="sp"></span><button class="link" data-act="nav|health">Log</button></h3>
-    <div class="stats">
-      <div class="stat"><b>${cal}</b><span>of ${s.targets.cal} kcal</span></div>
-      <div class="stat"><b>${dRec.water||0}</b><span>of ${s.targets.water} glasses</span></div>
-      <div class="stat"><b>${ex}</b><span>of ${s.targets.exercise} min</span></div>
-      <div class="stat"><b>${sl ? sl.hours.toFixed(1) : '–'}</b><span>h sleep</span></div>
-    </div>
-    <div class="btns" style="margin-top:10px"><button class="btn sm sec" data-act="water|1">+ Glass of water</button><button class="btn sm sec" data-act="addFood">+ Meal</button><button class="btn sm sec" data-act="addSleep">+ Sleep</button></div>
-  </div>
-  <div class="card">
-    <h3>${ic('target','style="width:18px;height:18px;color:var(--teal-d)"')}Health goals<span class="sp"></span><button class="link" data-act="healthTab|goals">All</button></h3>
-    ${goals.length ? goals.map(goalRow).join('') : `<div class="empty">No goals yet. <button class="link" data-act="addGoal">+ Add a goal</button></div>`}
-  </div>
-  <div class="tiles">
-    <div class="tile hot" data-act="reportSick"><div class="ic">${ic('thermo')}</div>Report sick</div>
-    <div class="tile" data-act="scanRx"><div class="ic">${ic('scan')}</div>Scan prescription</div>
-    <div class="tile" data-act="addFile"><div class="ic">${ic('folder')}</div>Upload record</div>
-    <div class="tile" data-act="nav|calendar"><div class="ic">${ic('cal')}</div>Calendar</div>
-  </div>`;
+  ${(() => { const oc = sortedCases().filter(c => c.status !== 'closed').slice(0,3); return oc.length ? `<div class="card"><h3>${ic('folder','style="width:18px;height:18px;color:var(--teal-d)"')}Open case files<span class="sp"></span><button class="link" data-act="recTabGo|cases">All</button></h3>${oc.map(caseRow).join('')}</div>` : ''; })()}`;
 };
 
 const FOOD_OPTS = ['','Before food','After food','With food','Empty stomach','Any time'];
@@ -1029,7 +1064,7 @@ function doseRows(d, doses){
     const statusPill = st === 'taken' ? `<button type="button" class="pill good pill-edit" data-act="editTaken|${d}|${x.key}" aria-label="Taken${takenAt ? ' at ' + takenAt : ''}. Change the time">✓ Taken${takenAt ? ' ' + takenAt : ''}${ic('edit')}</button>`
       : st === 'skipped' ? `<span class="pill grey">Skipped${r.reason ? ' · ' + esc(r.reason) : ''}</span>`
       : st === 'missed' ? (r ? `<span class="pill bad">Missed</span>` : `<span class="pill bad">Missed?</span>`)
-      : st === 'due' ? '<span class="pill warn">due</span>' : '';
+      : st === 'due' ? `<span class="pill warn">due${doseWindow(x.time).end ? ' · until ' + fmtT(doseWindow(x.time).end) : ''}</span>` : '';
     const right = r && r.s !== 'taken'
       ? `<button class="btn sm sec" data-act="undoDose|${d}|${x.key}" aria-label="Undo">Undo</button>`
       : `${on ? '' : `<button class="skipb" data-act="skipDose|${d}|${x.key}" aria-label="Skip or missed">Skip</button>`}<button class="chk ${on?'on':''}" aria-label="${on?'Mark not taken':'Mark taken'}" data-act="dose|${d}|${x.key}">${on?ic('check'):''}</button>`;
@@ -1039,7 +1074,8 @@ function doseRows(d, doses){
 function visitRow(v){
   const up = v.date >= today();
   const dd = daysBetween(today(), v.date);
-  return `<div class="row click" data-act="viewVisit|${v.id}"><div class="medic">${ic(v.facilityType==='Hospital'?'hospital':'doctor')}</div><div class="main"><div class="ttl">${esc(v.doctor||'Doctor')}${v.specialty?` <span class="small">· ${esc(v.specialty)}</span>`:''}</div><div class="sub">${fmtD(v.date)}${v.time?' · '+fmtT(v.time):''} · ${esc(v.facility||'')}</div>${v.reason?`<div class="sub">${esc(v.reason)}</div>`:''}${caseTag(v)}</div>${up?`<span class="pill">${dd===0?'Today':dd===1?'Tomorrow':'in '+dd+' d'}</span>`:''}</div>`;
+  const kind = v.specialty || (apptShort(v) !== 'Doctor' ? apptShort(v) : '');
+  return `<div class="row click" data-act="viewVisit|${v.id}">${apptIcon(v)}<div class="main"><div class="ttl">${esc(v.doctor||apptShort(v))}${kind && kind !== v.doctor ?` <span class="small">· ${esc(kind)}</span>`:''}</div><div class="sub">${fmtD(v.date)}${v.time?' · '+fmtT(v.time):''} · ${esc(v.facility||'')}</div>${v.reason?`<div class="sub">${esc(v.reason)}</div>`:''}${caseTag(v)}</div>${up?`<span class="pill">${dd===0?'Today':dd===1?'Tomorrow':'in '+dd+' d'}</span>`:''}</div>`;
 }
 function goalRow(g){
   const pct = g.target ? Math.max(0, Math.min(100, Math.round((+g.current||0) / +g.target * 100))) : 0;
@@ -1048,6 +1084,7 @@ function goalRow(g){
 
 /* ---- Meds ---- */
 VIEWS.meds = () => {
+  if (UI.medMode === 'appt') return apptView();
   const t = today();
   const allMeds = list('med');
   const mcases = sortedCases().filter(c => allMeds.some(m => m.caseId === c.id));
@@ -1058,16 +1095,16 @@ VIEWS.meds = () => {
   const past = meds.filter(m => !active.includes(m)).sort((a,b)=>(b.prescribedOn||'').localeCompare(a.prescribedOn||''));
   const tab = UI.medTab === 'today' ? 'cal' : UI.medTab;   // the old Schedule tab now lives inside Calendar
   let body = '';
+  // case filter: under the calendar on the Calendar tab, under the tabs elsewhere
+  const caseChips = mcases.length ? `<div class="chips" style="margin-bottom:12px"><button class="chip ${UI.medCase==='all'?'on':''}" data-act="medCase|all">All</button>${mcases.map(c => { const [bg, fg] = caseColor(c); const on = UI.medCase===c.id; return `<button class="chip ${on?'on':''}" data-act="medCase|${c.id}" style="${on?'':`background:${bg};color:${fg};border-color:${bg}`}">${esc(c.title)}${c.status==='closed'?' (closed)':''}</button>`; }).join('')}${allMeds.some(m=>!caseOf(m))?`<button class="chip ${UI.medCase==='none'?'on':''}" data-act="medCase|none">No case</button>`:''}</div>` : '';
   if (tab === 'cal') {
     const dayCard = d => { const ds = dosesFor(d).filter(x => fit(x.med)); return `<div class="card"><h3>${d===t?'Today':parseD(d).toLocaleDateString(undefined,{weekday:'long'})}<span class="sp"></span><span class="small">${fmtD(d)}</span></h3>${ds.length ? doseBlock(d, ds) : '<div class="empty">Nothing scheduled</div>'}${d < t && ds.some(x => !isRecorded(d, x.key)) ? `<button class="btn sm sec" data-act="allTaken|${d}" style="margin-top:6px">Mark all unrecorded as taken</button>` : ''}</div>`; };
     const next = [1,2,3,4,5,6,7].map(i => addDays(t, i)).filter(d => allMeds.some(m => fit(m) && medDueOn(m, d)));
     const past = [1,2,3,4,5,6,7].map(i => addDays(t, -i)).filter(d => allMeds.some(m => fit(m) && medDueOn(m, d)));
     const unrec = past.reduce((a, d) => a + dosesFor(d).filter(x => fit(x.med) && !isRecorded(d, x.key)).length, 0);
     const fold = (label, extra, open, act, days) => `<div class="sect" style="display:flex;align-items:center">${label}${extra}<span class="sp" style="flex:1"></span><button class="link" data-act="${act}" aria-expanded="${open}">${open ? 'Hide' : 'Show'}</button></div>${open ? days.map(dayCard).join('') : ''}`;
-    const ht = viewPrefs().hideTaken;
-    const tools = `<div class="caltools"><button class="btn sm sec" data-act="newTimer">⏱ Timer</button><button class="chip sm ${ht ? 'on' : ''}" data-act="toggleHideTaken" aria-pressed="${ht}">${ht ? '✓ ' : ''}Hide taken doses</button></div>`;
     body = (liveTimers().length ? timersCard() : '')
-      + prnCard(fit) + medCalendar(fit, tools)
+      + prnCard(fit) + medCalendar(fit, caseChips)
       + (next.length ? fold('Next 7 days', '', !!UI.medNext, 'medNext', next) : '')
       + (past.length ? fold('Earlier days', unrec ? ` · <span style="color:var(--bad);margin-left:4px">${unrec} not recorded</span>` : '', !!UI.medPast, 'medPast', past) : '');
   } else if (tab === 'active') {
@@ -1081,14 +1118,31 @@ VIEWS.meds = () => {
   ${(() => { const mm = list('med').filter(m => (medActiveOn(m, t) || m.start > t) && !isPrn(m) && timingMismatch(m)); return mm.length ? `<div class="alert bad"><b>Dose times don't match the instructions</b>${mm.map(m => `${esc(m.name)}: “${esc(m.instructions)}” but scheduled ${(m.times||[]).map(fmtT).join(', ')}`).join('<br>')}<div class="btns" style="margin-top:8px"><button class="btn sm" data-act="fixTimes">Fix times</button></div></div>` : ''; })()}
   ${(() => { const miss = list('med').filter(m => (medActiveOn(m, t) || m.start > t) && foodApplies(m) && !foodOf(m)); return miss.length ? `<div class="alert warn"><b>${miss.length} medicine${miss.length>1?'s don\'t':' doesn\'t'} say whether to take ${miss.length>1?'them':'it'} before or after food</b>${esc(miss.map(m=>m.name).join(', '))}<div class="btns" style="margin-top:8px"><button class="btn sm" data-act="fixFoods">Set food timing</button></div></div>` : ''; })()}
   <div class="segrow"><div class="seg">${[['cal','Calendar'],['active','Active ('+active.length+')'],['past','History']].map(([k,l])=>`<button class="${tab===k?'on':''}" data-act="medTab|${k}">${l}</button>`).join('')}</div><button class="segadd" data-act="newRx" aria-label="Add a prescription" title="Add a prescription">${ic('plus')}</button></div>
-  ${mcases.length ? `<div class="chips" style="margin-bottom:12px"><button class="chip ${UI.medCase==='all'?'on':''}" data-act="medCase|all">All</button>${mcases.map(c => { const [bg, fg] = caseColor(c); const on = UI.medCase===c.id; return `<button class="chip ${on?'on':''}" data-act="medCase|${c.id}" style="${on?'':`background:${bg};color:${fg};border-color:${bg}`}">${esc(c.title)}${c.status==='closed'?' (closed)':''}</button>`; }).join('')}${allMeds.some(m=>!caseOf(m))?`<button class="chip ${UI.medCase==='none'?'on':''}" data-act="medCase|none">No case</button>`:''}</div>` : ''}
+  ${tab === 'cal' ? '' : caseChips}
   ${body}`;
 };
-function medCalendar(fit, between = ''){
-  const t = today(), mon = UI.mcMonth || t.slice(0, 7), sel = UI.mcSel || t;
+/* month grid shared by the prescriptions and appointments calendars; dots(d) returns a list of dot colours for a day */
+function calGrid(dots, legend, o = {}){
+  const t = today(), mon = o.month || UI.mcMonth || t.slice(0, 7), sel = o.sel || UI.mcSel || t;
+  const move = o.move || 'mcMove', pick = o.pick || 'mcSel', cls = o.cls || (() => '');
   const [y, m] = mon.split('-').map(Number);
   const first = new Date(y, m - 1, 1), start = new Date(y, m - 1, 1 - ((first.getDay() + 6) % 7));
   const cells = []; for (let i = 0; i < 42; i++) { const d = new Date(start); d.setDate(start.getDate() + i); cells.push(iso(d)); }
+  const inner = `<div class="calhead"><button class="iconbtn" data-act="${move}|-1" aria-label="Previous month">${ic('back')}</button><b>${first.toLocaleDateString(undefined, {month:'long', year:'numeric'})}</b><button class="iconbtn" data-act="${move}|1" aria-label="Next month">${ic('back', 'style="transform:rotate(180deg)"')}</button></div>
+    <div class="cal">${['Mo','Tu','We','Th','Fr','Sa','Su'].map(d => `<div class="dh">${d}</div>`).join('')}
+    ${cells.map(d => `<div class="d ${d.slice(0, 7) !== mon ? 'o' : ''} ${d === t ? 'today' : ''} ${d === sel ? 'sel' : cls(d)}" data-act="${pick}|${d}">${+d.slice(8)}<span class="dots">${dots(d).map(c => `<i style="background:${d === sel ? '#fff' : c}"></i>`).join('')}</span></div>`).join('')}</div>
+    <div class="legend">${legend.map(([c, l, st]) => `<span><i style="background:${c};${st || ''}"></i>${l}</span>`).join('')}</div>`;
+  return o.bare ? inner : `<div class="card">${inner}</div>`;
+}
+/* "x/y taken" (doubles as the hide-taken switch: green = hiding taken doses, grey = showing all) + ⏱ timer button.
+   Used on Home's "Today's medication" and the Meds calendar day card. */
+function doseTools(taken, total){
+  const ht = viewPrefs().hideTaken;
+  const cnt = total ? `<button class="pill takentog ${ht ? 'good' : 'grey'}" data-act="toggleHideTaken" aria-pressed="${ht}" aria-label="${taken} of ${total} taken. ${ht ? 'Taken doses hidden — tap to show them' : 'Tap to hide taken doses'}" title="${ht ? 'Showing doses still to take — tap to show all' : 'Tap to hide taken doses'}">${taken}/${total} taken</button>` : '';
+  return `<span class="daytools">${cnt}<button class="iconbtn timerbtn" data-act="newTimer" aria-label="Start a timer" title="Start a timer">⏱</button></span>`;
+}
+function medCalendar(fit, between = ''){
+  const t = today(), sel = UI.mcSel || t;
   const stat = d => {
     const ds = dosesFor(d).filter(x => fit(x.med)), started = list('med').some(x => fit(x) && x.start === d);
     if (!ds.length) return {c: '', started};
@@ -1102,14 +1156,9 @@ function medCalendar(fit, between = ''){
   const ds = dosesFor(sel).filter(x => fit(x.med));
   const startedSel = list('med').filter(x => fit(x) && x.start === sel), endedSel = list('med').filter(x => fit(x) && x.end === sel);
   const prnSel = list('med').filter(x => fit(x) && isPrn(x) && prnUses(sel, x.id).length);
-  return `<div class="card">
-    <div class="calhead"><button class="iconbtn" data-act="mcMove|-1">${ic('back')}</button><b>${first.toLocaleDateString(undefined, {month:'long', year:'numeric'})}</b><button class="iconbtn" data-act="mcMove|1">${ic('back', 'style="transform:rotate(180deg)"')}</button></div>
-    <div class="cal">${['Mo','Tu','We','Th','Fr','Sa','Su'].map(d => `<div class="dh">${d}</div>`).join('')}
-    ${cells.map(d => { const s = stat(d); return `<div class="d ${d.slice(0, 7) !== mon ? 'o' : ''} ${d === t ? 'today' : ''} ${d === sel ? 'sel' : ''}" data-act="mcSel|${d}">${+d.slice(8)}<span class="dots">${s.c ? `<i style="background:${d === sel ? '#fff' : s.c}"></i>` : ''}${s.started ? `<i style="background:${d === sel ? '#fff' : 'var(--info)'}"></i>` : ''}</span></div>`; }).join('')}</div>
-    <div class="legend"><span><i style="background:var(--good)"></i>All taken</span><span><i style="background:var(--warn)"></i>Some not taken</span><span><i style="background:var(--bad)"></i>Missed</span><span><i style="background:var(--teal)"></i>Planned</span><span><i style="background:var(--info)"></i>Started</span></div>
-  </div>
+  return `${calGrid(d => { const s = stat(d); return [s.c, s.started ? 'var(--info)' : ''].filter(Boolean); }, [['var(--good)','All taken'],['var(--warn)','Some not taken'],['var(--bad)','Missed'],['var(--teal)','Planned'],['var(--info)','Started']])}
   ${between}
-  <div class="card"><h3>${sel === t ? 'Today' : fmtD(sel)}<span class="sp"></span><span class="small">${ds.length ? `${ds.filter(x => isTaken(sel, x.key)).length}/${ds.length} taken` : ''}</span></h3>
+  <div class="card"><h3>${sel === t ? 'Today' : fmtD(sel)}<span class="sp"></span>${doseTools(ds.filter(x => isTaken(sel, x.key)).length, ds.length)}</h3>
     ${startedSel.map(x => `<div class="small" style="margin-bottom:6px">▶ Started <b>${esc(x.name)}</b></div>`).join('')}${endedSel.map(x => `<div class="small" style="margin-bottom:6px">■ Last day of <b>${esc(x.name)}</b></div>`).join('')}
     ${sel === t ? todayCard(t, ds) : ds.length ? doseBlock(sel, ds) : '<div class="empty">No scheduled doses.</div>'}
     ${prnSel.map(x => `<div class="small" style="margin-top:6px">💊 ${esc(x.name)} (as needed): taken ${prnUses(sel, x.id).length}×</div>`).join('')}
@@ -1122,6 +1171,214 @@ function medRow(m, sortable){
   const st = m.stopped ? '<span class="pill grey">Stopped</span>' : m.start > t ? '<span class="pill">Starts '+fmtDs(m.start)+'</span>' : medActiveOn(m,t) ? '<span class="pill good">Active</span>' : '<span class="pill grey">Finished</span>';
   return `<div class="row click" data-act="viewMed|${m.id}">${medIcon(m)}<div class="main"><div class="ttl">${esc(m.name)} ${m.dose?`<span class="small">${esc(m.dose)}</span>`:''}</div><div class="sub">${isPrn(m) ? '' : (m.times||[]).map(fmtT).join(', ') + ' · '}${repeatLabel(m)}${!isPrn(m) && repOf(m).type !== 'daily' && medActiveOn(m, t) ? (() => { const n = nextDue(m, t); return n ? ` · next ${n === t ? 'today' : fmtDs(n)}` : ''; })() : ''}</div><div class="sub" style="margin:3px 0">${foodBadge(m)}</div><div class="sub">${fmtDs(m.start)}${m.end?' – '+fmtDs(m.end):' – ongoing'}</div><div class="sub">${esc([m.doctor, m.facility].filter(Boolean).join(' · '))}</div>${caseTag(m)}</div>${st}</div>`;
 }
+
+/* ---- appointment types ---- */
+const APPT_TYPES = [   // [name, icon, background, colour]
+  ['Doctor','doctor','#e3ecfb','#2b4f8f'],
+  ['Specialist','hospital','#e8e6f8','#4b3a8c'],
+  ['Physiotherapy / physical therapy','run','#dff3e6','#1d6b3c'],
+  ['Occupational therapy','target','#fdeedd','#9a5512'],
+  ['Therapy / counselling','heart','#fbe3ea','#8c2343'],
+  ['Dentist','tooth','#e2f3f6','#1d5a6d'],
+  ['Eye care','eye','#efe6f8','#6d2f82'],
+  ['Tests / scan','scan','#f6efe0','#7a5a16'],
+  ['Vaccination','m_injection','#fbe3e1','#9b2c23'],
+  ['Other','cal','#eef1f2','#4b5b60']
+];
+function apptType(r){ const t = (r && r.apptType) || 'Doctor'; return APPT_TYPES.find(x => x[0] === t) || APPT_TYPES[APPT_TYPES.length - 1]; }
+function apptShort(r){ return apptType(r)[0].split(' / ')[0]; }
+function apptIcon(r){ const [, icn, bg, fg] = apptType(r); return `<div class="medic" style="background:${bg};color:${fg}" title="${esc(apptType(r)[0])}">${ic(icn)}</div>`; }
+
+/* ---- courses of sessions (physio, therapy…): one record, sessions worked out from the pattern like medicine doses ----
+   {kind:'course', apptType, doctor, facility, start, time, len, repeat:{type:'daily'|'weekly'|'monthly', days, every, day},
+    ends:{mode:'count'|'date'|'ongoing', count, until, extend}, remind, stoppedFrom, sessions:{origDate: {s, date, time, pain, note}}} */
+function courseRep(c){ return c.repeat && c.repeat.type ? c.repeat : {type:'weekly', days:[parseD(c.start).getDay()], every:1}; }
+function courseSessions(c, upto){
+  const out = [], S = c.sessions || {}, e = c.ends || {mode:'count', count:10, extend:true};
+  const want = e.mode === 'count' ? Math.max(1, +e.count || 1) : Infinity;
+  const horizon = upto || addDays(today(), 60), pat = {start: c.start, end: '', repeat: courseRep(c)};
+  let used = 0, n = 0;
+  for (let d = c.start, i = 0; d && i < 2500; d = addDays(d, 1), i++) {
+    if (e.mode === 'date' && e.until && d > e.until) break;
+    if (c.stoppedFrom && d >= c.stoppedFrom) break;
+    if (e.mode !== 'count' && d > horizon) break;
+    if (!medDueOn(pat, d)) continue;
+    const st = S[d] || {}, cancelled = st.s === 'cancelled';
+    if (!cancelled) n++;
+    if (!cancelled || e.extend === false) used++;   // a cancelled session is added back at the end unless turned off
+    out.push({c, orig: d, date: st.date || d, time: st.time || c.time || '', s: st.s || '', n: cancelled ? 0 : n, rec: st});
+    if (used >= want) break;
+  }
+  const total = e.mode === 'count' && !c.stoppedFrom ? out.filter(o => o.s !== 'cancelled').length : 0;
+  out.forEach(o => o.total = total);
+  return out;
+}
+function allSessions(upto){ return list('course').flatMap(c => courseSessions(c, upto)); }
+function sessionLabel(o){ return o.s === 'cancelled' ? 'Cancelled session' : o.total ? `Session ${o.n} of ${o.total}` : `Session ${o.n}`; }
+function courseSchedule(c){ return `${repeatLabel({start: c.start, repeat: courseRep(c)})}${c.time ? ' at ' + fmtT(c.time) : ''}${+c.len ? ' · ' + c.len + ' min' : ''}`; }
+const byWhen = (a, b) => ((a.date || '') + (a.time || '')).localeCompare((b.date || '') + (b.time || ''));
+/* the next thing on the calendar: a one-off appointment or a session */
+function nextAppt(){
+  const t = today(), v = upcomingVisits()[0];
+  const o = allSessions(addDays(t, 60)).filter(x => x.date >= t && !x.s).sort(byWhen)[0];
+  if (!v && !o) return null;
+  if (!o || (v && byWhen(v, o) <= 0)) return {v};
+  return {o};
+}
+function sessionRow(o){
+  const t = today(), c = o.c, dd = daysBetween(t, o.date);
+  const pill = o.s === 'attended' ? '<span class="pill good">✓ Attended</span>' : o.s === 'missed' ? '<span class="pill bad">Missed</span>' : o.s === 'cancelled' ? '<span class="pill grey">Cancelled</span>'
+    : o.date >= t ? `<span class="pill">${dd === 0 ? 'Today' : dd === 1 ? 'Tomorrow' : 'in ' + dd + ' d'}</span>` : '<span class="pill warn">Not marked</span>';
+  const chk = o.date <= t && o.s !== 'cancelled' ? `<button class="chk ${o.s === 'attended' ? 'on' : ''}" data-act="sessAttend|${c.id}|${o.orig}" aria-label="${o.s === 'attended' ? 'Mark not attended' : 'Mark attended'}">${o.s === 'attended' ? ic('check') : ''}</button>` : '';
+  const pain = o.rec.pain !== undefined && o.rec.pain !== '' ? ` · pain ${o.rec.pain}/10` : '';
+  return `<div class="row click ${o.s === 'cancelled' ? 'dimmed' : ''}" data-act="viewSession|${c.id}|${o.orig}">${apptIcon(c)}<div class="main"><div class="ttl">${esc(c.doctor || apptShort(c))}</div><div class="sub">${sessionLabel(o)} · ${fmtD(o.date)}${o.time ? ' · ' + fmtT(o.time) : ''}${o.date !== o.orig ? ' · moved' : ''}</div><div class="sub">${esc([c.doctor ? apptShort(c) : '', c.facility].filter(Boolean).join(' · '))}${pain}</div>${caseTag(c)}</div><div style="display:flex;gap:6px;align-items:center">${pill}${chk}</div></div>`;
+}
+function courseRow(c){
+  const ss = courseSessions(c, addDays(today(), 60)), t = today();
+  const done = ss.filter(o => o.s === 'attended').length, nx = ss.find(o => o.date >= t && !o.s);
+  return `<div class="row click" data-act="viewCourse|${c.id}">${apptIcon(c)}<div class="main"><div class="ttl">${esc(c.doctor || apptShort(c))} <span class="small">· ${esc(apptShort(c))} sessions</span></div><div class="sub">${esc(courseSchedule(c))}</div><div class="sub">${done} attended${ss[0] && ss[0].total ? ' of ' + ss[0].total : ''}${nx ? ' · next ' + fmtDs(nx.date) : ''}</div>${caseTag(c)}</div><span class="pill ${nx ? 'good' : 'grey'}">${nx ? 'Active' : 'Finished'}</span></div>`;
+}
+/* mark a session attended / clear it (the round tick) */
+ACT.sessAttend = (cid, orig) => {
+  const c = get(cid); if (!c) return;
+  const S = {...(c.sessions || {})}, cur = {...(S[orig] || {})};
+  if (cur.s === 'attended') delete cur.s; else cur.s = 'attended';
+  if (Object.keys(cur).length) S[orig] = cur; else delete S[orig];
+  save({...c, sessions: S});
+};
+ACT.viewSession = (cid, orig) => {
+  const c = get(cid); if (!c) return;
+  const o = courseSessions(c, orig > addDays(today(), 60) ? orig : undefined).find(x => x.orig === orig); if (!o) return;
+  const e = c.ends || {};
+  openSheet(`${c.doctor || apptShort(c)} · ${sessionLabel(o)}`, `
+    <div class="small" style="margin:-4px 0 12px">${esc([apptType(c)[0], c.facility, +c.len ? c.len + ' min' : ''].filter(Boolean).join(' · '))}</div>
+    <form id="ssf">
+      <div class="sect" style="margin-top:0">How did it go?</div>
+      <div class="chips" style="margin-bottom:12px">${[['attended','✓ Attended'],['missed','Missed'],['cancelled','Cancelled']].map(([k, l]) => `<button type="button" class="chip ${o.s === k ? 'on' : ''}" data-ss="${k}" aria-pressed="${o.s === k}">${l}</button>`).join('')}</div>
+      ${e.mode === 'count' && e.extend !== false ? '<div class="small" data-cxnote style="margin:-6px 0 10px" hidden>A cancelled session is added back at the end, so you still get all of them.</div>' : ''}
+      <div class="grid2"><label class="f">Date<input type="date" name="date" value="${o.date}" required></label><label class="f">Time<input type="time" name="time" value="${esc(o.time)}"></label></div>
+      <div class="small" style="margin:-4px 0 12px">Change the date or time to move just this session.</div>
+      <label class="f">Pain or symptoms (0–10)<select name="pain"><option value="">— not recorded —</option>${[...Array(11).keys()].map(i => `<option value="${i}" ${String(o.rec.pain) === String(i) ? 'selected' : ''}>${i}${i === 0 ? ' – none' : i === 10 ? ' – worst' : ''}</option>`).join('')}</select></label>
+      <label class="f">Session notes<textarea name="note" placeholder="e.g. new exercises: wall squats">${esc(o.rec.note || '')}</textarea></label>
+      <button class="btn block" type="submit">Save session</button>
+      <div style="text-align:center;margin-top:10px"><button type="button" class="link" id="ssCourse" style="padding:8px">View whole course →</button></div>
+    </form>`, b => {
+    let s = o.s;
+    const note = b.querySelector('[data-cxnote]');
+    const sync = () => { b.querySelectorAll('[data-ss]').forEach(x => { x.classList.toggle('on', x.dataset.ss === s); x.setAttribute('aria-pressed', x.dataset.ss === s); }); if (note) note.hidden = s !== 'cancelled'; };
+    b.querySelectorAll('[data-ss]').forEach(x => x.onclick = () => { s = s === x.dataset.ss ? '' : x.dataset.ss; sync(); });
+    sync();
+    b.querySelector('#ssCourse').onclick = () => ACT.viewCourse(cid);
+    b.querySelector('#ssf').onsubmit = ev => {
+      ev.preventDefault();
+      const v = readForm(ev.target), rec = {};
+      if (s) rec.s = s;
+      if (v.date && v.date !== orig) rec.date = v.date;
+      if (v.time && v.time !== (c.time || '')) rec.time = v.time;
+      if (v.pain !== '') rec.pain = +v.pain;
+      if (v.note) rec.note = v.note;
+      const cur = get(cid), S = {...(cur.sessions || {})};
+      if (Object.keys(rec).length) S[orig] = rec; else delete S[orig];
+      save({...cur, sessions: S}); closeSheet(); toast('Session saved.');
+    };
+  });
+};
+ACT.viewCourse = id => {
+  const c = get(id); if (!c) return;
+  const t = today(), e = c.ends || {}, ss = courseSessions(c, addDays(t, 120));
+  const past = ss.filter(o => o.date < t || o.s), up = ss.filter(o => o.date >= t && !o.s);
+  const att = ss.filter(o => o.s === 'attended').length, mis = ss.filter(o => o.s === 'missed').length, cx = ss.filter(o => o.s === 'cancelled').length;
+  const total = ss[0] ? ss[0].total : 0, last = e.mode === 'ongoing' || c.stoppedFrom ? '' : (ss.filter(o => o.s !== 'cancelled').slice(-1)[0] || {}).date;
+  const pains = ss.filter(o => o.rec.pain !== undefined && o.rec.pain !== '').map(o => `${fmtDs(o.date)}: ${o.rec.pain}`);
+  const finished = !up.length;
+  openSheet(`${c.doctor || apptShort(c)} · sessions`, `<dl class="kv">
+    <dt>Type</dt><dd>${esc(apptType(c)[0])}</dd>
+    <dt>Schedule</dt><dd>${esc(courseSchedule(c))}</dd>
+    <dt>Course</dt><dd>${total ? `${total} sessions · ` : ''}from ${fmtD(c.start)}${c.stoppedFrom ? ' · stopped ' + fmtD(c.stoppedFrom) : last ? ' to ' + fmtD(last) : e.mode === 'ongoing' ? ' · ongoing' : ''}</dd>
+    <dt>Progress</dt><dd>${att} attended${mis ? ` · <span style="color:var(--bad)">${mis} missed</span>` : ''}${cx ? ` · ${cx} cancelled` : ''}${total ? `<div class="bar" style="margin-top:5px"><i style="width:${Math.round(att / total * 100)}%"></i></div>` : ''}</dd>
+    ${c.facility ? `<dt>Where</dt><dd>${esc(c.facility)}</dd>` : ''}${c.reason ? `<dt>Reason</dt><dd>${esc(c.reason)}</dd>` : ''}
+    ${pains.length ? `<dt>Pain</dt><dd>${esc(pains.slice(-6).join(' · '))}</dd>` : ''}
+    ${c.notes ? `<dt>Notes</dt><dd style="white-space:pre-wrap">${esc(c.notes)}</dd>` : ''}${caseKv(c)}
+  </dl>
+  ${up.length ? `<div class="sect">Coming up</div>${up.slice(0, 4).map(sessionRow).join('')}` : ''}
+  ${past.length ? `<div class="sect">So far</div>${past.slice().reverse().slice(0, 30).map(sessionRow).join('')}` : ''}
+  <div class="btns" style="margin-top:14px"><button class="btn sm" id="ced">${ic('edit','style="width:16px;height:16px"')} Edit</button>${finished ? '' : '<button class="btn sm sec" id="cst">Stop sessions</button>'}<button class="btn sm danger" id="cdl">${ic('trash','style="width:16px;height:16px"')} Delete</button></div>`, b => {
+    b.querySelectorAll('[data-act]').forEach(el => { const [n, ...a] = el.dataset.act.split('|'); el.onclick = ev => { ev.stopPropagation(); if (n === 'sessAttend') { ACT[n](...a); ACT.viewCourse(id); } else ACT[n](...a); }; });
+    b.querySelector('#ced').onclick = () => visitForm(get(id));
+    const st = b.querySelector('#cst'); if (st) st.onclick = () => confirmSheet(`Stop the remaining sessions with ${esc(c.doctor || apptShort(c))}? Past sessions are kept.`, () => { save({...get(id), stoppedFrom: addDays(t, 1)}); toast('Sessions stopped from tomorrow.'); });
+    b.querySelector('#cdl').onclick = () => confirmSheet(`Delete this course and all its session records?`, () => remove(id));
+  });
+};
+
+/* ---- Meds page in "Appointments" mode: same layout as prescriptions, for appointments and sessions ---- */
+function apptView(){
+  const t = today(), all = list('visit'), courses = list('course');
+  const vcases = sortedCases().filter(c => all.some(v => v.caseId === c.id) || courses.some(x => x.caseId === c.id));
+  if (UI.apptCase !== 'all' && UI.apptCase !== 'none' && !vcases.some(c => c.id === UI.apptCase)) UI.apptCase = 'all';
+  const fit = v => UI.apptCase === 'all' || (UI.apptCase === 'none' ? !caseOf(v) : v.caseId === UI.apptCase);
+  const vs = all.filter(fit);
+  const gridEnd = addDays((UI.mcMonth || t.slice(0, 7)) + '-01', 45), horizon = gridEnd > addDays(t, 60) ? gridEnd : addDays(t, 60);
+  const ss = courses.filter(fit).flatMap(c => courseSessions(c, horizon));
+  // every item as {date, time, html}
+  const items = [...vs.map(v => ({date: v.date, time: v.time || '', html: visitRow(v), r: v})), ...ss.map(o => ({date: o.date, time: o.time, html: sessionRow(o), r: o.c, o}))];
+  const upItems = [...vs.filter(v => v.date >= t).map(v => ({date: v.date, time: v.time || '', html: visitRow(v)})),
+    ...courses.filter(fit).map(c => ss.filter(o => o.c === c && o.date >= t && !o.s).sort(byWhen)[0]).filter(Boolean).map(o => ({date: o.date, time: o.time, html: sessionRow(o)}))].sort(byWhen);
+  const pastItems = items.filter(x => x.date < t).sort((a, b) => byWhen(b, a));
+  const tab = UI.apptTab || 'cal';
+  const caseChips = vcases.length ? `<div class="chips" style="margin-bottom:12px"><button class="chip ${UI.apptCase==='all'?'on':''}" data-act="apptCase|all">All</button>${vcases.map(c => { const [bg, fg] = caseColor(c); const on = UI.apptCase===c.id; return `<button class="chip ${on?'on':''}" data-act="apptCase|${c.id}" style="${on?'':`background:${bg};color:${fg};border-color:${bg}`}">${esc(c.title)}${c.status==='closed'?' (closed)':''}</button>`; }).join('')}${[...all, ...courses].some(v=>!caseOf(v))?`<button class="chip ${UI.apptCase==='none'?'on':''}" data-act="apptCase|none">No case</button>`:''}</div>` : '';
+  let body;
+  if (tab === 'cal') {
+    const sel = UI.mcSel || t, day = items.filter(x => x.date === sel).sort(byWhen);
+    const usedTypes = [...new Set(items.map(x => apptType(x.r)[0]))];
+    body = calGrid(d => [...new Set(items.filter(x => x.date === d && !(x.o && x.o.s === 'cancelled')).map(x => apptType(x.r)[3]))].slice(0, 3),
+        usedTypes.map(n => { const ty = APPT_TYPES.find(x => x[0] === n); return [ty[3], n.split(' / ')[0]]; }))
+      + caseChips
+      + `<div class="card"><h3>${sel === t ? 'Today' : fmtD(sel)}<span class="sp"></span>${day.length ? `<span class="pill">${day.length} appointment${day.length > 1 ? 's' : ''}</span>` : ''}</h3>${day.length ? day.map(x => x.html).join('') : '<div class="empty">No appointments on this day.</div>'}</div>`;
+  } else {
+    const rows = tab === 'up' ? upItems : pastItems;
+    body = `<div class="card">${rows.length ? rows.map(x => x.html).join('') : `<div class="empty">${tab === 'up' ? 'No upcoming appointments.' : 'No past appointments.'}</div>`}</div>`;
+  }
+  return `<div class="segrow"><div class="seg">${[['cal','Calendar'],['up','Upcoming ('+upItems.length+')'],['past','History']].map(([k,l])=>`<button class="${tab===k?'on':''}" data-act="apptTab|${k}">${l}</button>`).join('')}</div><button class="segadd" data-act="addAppt" aria-label="Add an appointment" title="Add an appointment">${ic('plus')}</button></div>
+  ${tab === 'cal' ? '' : caseChips}
+  ${body}`;
+}
+ACT.openAppts = () => { UI.medMode = 'appt'; try { sessionStorage.setItem('hm.medMode', 'appt'); } catch(e) {} UI.apptTab = 'up'; go('meds'); };
+/* the Prescriptions / Appointments menu under the Meds title */
+const MODES = [['rx','pill','Prescriptions','Medicines & doses'],['appt','cal','Appointments','Visits & sessions']];
+function openModeMenu(){
+  const btn = $('#modeBtn'); if (!btn) return;
+  const m = document.createElement('div');
+  m.className = 'modemenu'; m.setAttribute('role', 'menu'); m.setAttribute('aria-label', 'Show');
+  m.innerHTML = MODES.map(([k, icn, t, d]) => { const on = (UI.medMode === 'appt' ? 'appt' : 'rx') === k; return `<button type="button" class="modeitem" role="menuitemradio" aria-checked="${on}" data-mode="${k}"><span class="mi-ic">${ic(icn)}</span><span class="mi-t"><b>${t}</b><span>${d}</span></span><span class="mi-ck">${on ? ic('check') : ''}</span></button>`; }).join('');
+  btn.closest('header').appendChild(m);
+  btn.setAttribute('aria-expanded', 'true');
+  const items = [...m.querySelectorAll('.modeitem')];
+  items.forEach((it, i) => {
+    it.onclick = () => { const k = it.dataset.mode; closeModeMenu(false); if (k !== (UI.medMode === 'appt' ? 'appt' : 'rx')) ACT.medMode(k); };
+    it.onkeydown = e => {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); items[(i + (e.key === 'ArrowDown' ? 1 : items.length - 1)) % items.length].focus(); }
+      else if (e.key === 'Escape' || e.key === 'Tab') { e.preventDefault(); closeModeMenu(true); }
+    };
+  });
+  (m.querySelector('[aria-checked=true]') || items[0]).focus();
+  document.addEventListener('pointerdown', modeOutside, true);   // the opening tap's pointerdown is already over
+}
+function modeOutside(e){ if (!e.target.closest('.modemenu, #modeBtn')) closeModeMenu(false); }
+function closeModeMenu(refocus){
+  const m = $('.modemenu'); document.removeEventListener('pointerdown', modeOutside, true);
+  if (!m) return;
+  m.remove();
+  const btn = $('#modeBtn'); if (btn) { btn.setAttribute('aria-expanded', 'false'); if (refocus) btn.focus(); }
+}
+ACT.medMode = v => { UI.medMode = v === 'appt' ? 'appt' : 'rx'; try { sessionStorage.setItem('hm.medMode', UI.medMode); } catch(e) {} render(); window.scrollTo(0, 0); };
+ACT.apptTab = k => { UI.apptTab = k; render(); };
+ACT.apptCase = k => { UI.apptCase = k; render(); };
+/* + in Appointments mode: straight to the visit form, on the day picked in the calendar if it's today or later */
+ACT.addAppt = () => {
+  const t = today(), sel = UI.mcSel || t;
+  const cid = UI.apptCase !== 'all' && UI.apptCase !== 'none' ? UI.apptCase : '';
+  visitForm({date: (UI.apptTab || 'cal') === 'cal' && sel >= t ? sel : addDays(t, 1), facilityType:'Clinic', ...(cid ? {caseId: cid} : {})});
+};
 
 /* ---- Visits ---- */
 VIEWS.visits = () => {
@@ -1161,11 +1418,11 @@ const REC_CATS = ['Doctor visit','Sick report', ...FILE_CATS];
 function recordItems(){
   return [
     ...list('file').map(f => ({r:f, cat:f.category||'Other', date:f.date||'', text:[f.name,f.reason,f.doctor,f.facility,f.notes,f.category]})),
-    ...list('visit').map(v => ({r:v, cat:'Doctor visit', date:v.date||'', text:[v.doctor,v.facility,v.specialty,v.reason,v.notes,'doctor visit']})),
+    ...list('visit').map(v => ({r:v, cat:'Doctor visit', date:v.date||'', text:[v.doctor,v.facility,v.specialty,v.reason,v.notes,v.apptType,'doctor visit appointment']})),
     ...list('illness').map(i => ({r:i, cat:'Sick report', date:i.start||'', text:[i.title,...(i.symptoms||[]),i.notes,'sick']}))
   ].map(x => { const c = caseOf(x.r); if (c) x.text.push(c.title); return x; });
 }
-function recRow(r){ return r.kind === 'visit' ? visitRow(r) : r.kind === 'illness' ? illRow(r) : r.kind === 'med' ? medRow(r) : fileRow(r); }
+function recRow(r){ return r.kind === 'visit' ? visitRow(r) : r.kind === 'course' ? courseRow(r) : r.kind === 'illness' ? illRow(r) : r.kind === 'med' ? medRow(r) : fileRow(r); }
 VIEWS.files = () => {
   const tab = UI.recTab;
   const seg = `<div class="seg">${[['records','Records'],['cases','Case files ('+list('case').length+')']].map(([k,l])=>`<button class="${tab===k?'on':''}" data-act="recTab|${k}">${l}</button>`).join('')}</div>`;
@@ -1200,10 +1457,11 @@ VIEWS.case = () => {
   const c = get(UI.caseId);
   if (!c) { UI.recTab = 'cases'; return `<div class="empty">This case file no longer exists. <button class="link" data-act="nav|files">Back to records</button></div>`; }
   const it = caseItems(c.id);
-  const by = f => it.filter(f).sort((a,b)=>{ const d = r => r.kind==='illness'?r.start:r.kind==='med'?(r.prescribedOn||r.start):r.date; return (d(b)||'').localeCompare(d(a)||''); });
+  const by = f => it.filter(f).sort((a,b)=>{ const d = r => r.kind==='illness'||r.kind==='course'?r.start:r.kind==='med'?(r.prescribedOn||r.start):r.date; return (d(b)||'').localeCompare(d(a)||''); });
   const sections = [
     ['Sick reports', 'thermo', by(r=>r.kind==='illness')],
-    ['Doctor visits', 'doctor', by(r=>r.kind==='visit')],
+    ['Appointments', 'doctor', by(r=>r.kind==='visit')],
+    ['Courses of sessions', 'cal', by(r=>r.kind==='course')],
     ['Prescriptions', 'note', by(r=>r.kind==='file'&&r.category==='Prescription')],
     ['Medication', 'pill', by(r=>r.kind==='med')],
     ['Lab reports', 'lab', by(r=>r.kind==='file'&&r.category==='Lab report')],
@@ -1350,6 +1608,35 @@ function cycleDayType(d, st){
   }
   return '';
 }
+/* Home: one calendar for medicines, appointments/sessions and the period cycle; tap a day for its details */
+function homeCalendar(){
+  const t = today(), mon = UI.hcMonth || t.slice(0, 7), sel = UI.hcSel || t;
+  const cyc = cycleOn() ? cycleStats() : null, hasCy = !!(cyc && cyc.last);
+  const end = addDays(mon + '-01', 45), visits = list('visit');
+  const sess = allSessions(end > addDays(t, 60) ? end : addDays(t, 60)).filter(o => o.s !== 'cancelled');
+  const medDot = d => {   // same colours as the Meds calendar
+    const ds = dosesFor(d); if (!ds.length) return '';
+    if (d >= t) return 'var(--teal)';
+    const st = ds.map(x => doseState(d, x));
+    return st.every(s => s === 'taken') ? 'var(--good)' : st.some(s => s === 'missed') ? 'var(--bad)' : 'var(--warn)';
+  };
+  const apptOn = d => visits.some(v => v.date === d) || sess.some(o => o.date === d);
+  const cyOf = d => hasCy ? cycleDayType(d, cyc) : '';
+  const grid = calGrid(d => [medDot(d), apptOn(d) ? 'var(--info)' : ''].filter(Boolean),
+    [['var(--teal)','Meds'],['var(--info)','Appointment'], ...(hasCy ? [['var(--cy)','Period'],['#fbe3ea','Predicted','outline:1.5px dashed var(--cy);outline-offset:-1px']] : [])],
+    {month: mon, sel, move: 'hcMove', pick: 'hcSel', bare: true, cls: d => ({period: 'cy-period', predicted: 'cy-predicted'})[cyOf(d)] || ''});
+  // details for the picked day
+  const dv = visits.filter(v => v.date === sel).sort(byWhen), dss = sess.filter(o => o.date === sel).sort(byWhen);
+  const cy = cyOf(sel), ds = sel === t ? [] : dosesFor(sel);
+  const cyLine = cy === 'period' ? '🩸 Period' : cy === 'predicted' ? '🩸 Period expected' : '';
+  const rows = dv.map(visitRow).join('') + dss.map(sessionRow).join('');
+  const detail = `<div class="hcday"><div class="hchd"><b>${sel === t ? 'Today' : fmtD(sel)}</b>${cyLine ? `<span class="pill" style="background:#fbe3ea;color:#8c2343">${cyLine}</span>` : ''}${sel !== t ? `<span class="sp"></span><button class="link" data-act="hcSel|${t}">Back to today</button>` : ''}</div>
+    ${rows}${ds.length ? doseBlock(sel, ds) : ''}
+    ${!rows && !ds.length ? `<div class="small" style="padding:4px 0 2px">${sel === t ? 'No appointments today — your medicines are below.' : sel > t ? 'Nothing planned.' : 'Nothing recorded.'}</div>` : ''}</div>`;
+  return `<div class="card homecal"><h3>${ic('cal','style="width:18px;height:18px;color:var(--teal-d)"')}Calendar<span class="sp"></span><button class="link" data-act="nav|calendar">Full calendar</button></h3>${grid}${detail}</div>`;
+}
+ACT.hcMove = n => { const [y, m] = (UI.hcMonth || today().slice(0, 7)).split('-').map(Number); UI.hcMonth = iso(new Date(y, m - 1 + +n, 1)).slice(0, 7); render(); };
+ACT.hcSel = d => { UI.hcSel = d; UI.hcMonth = d.slice(0, 7); render(); };
 function cycleHomeCard(){
   if (!cycleOn()) return '';
   const st = cycleStats(); if (!st.last) return '';
@@ -1413,9 +1700,10 @@ VIEWS.calendar = () => {
   const cells = [];
   for (let i = 0; i < 42; i++) { const d = new Date(start); d.setDate(start.getDate()+i); cells.push(iso(d)); }
   const visits = list('visit'), ills = list('illness'), files = list('file');
+  const sess = allSessions(addDays(UI.calMonth + '-01', 45)).filter(o => o.s !== 'cancelled');
   const dots = d => {
     const out = [];
-    if (visits.some(v=>v.date===d)) out.push('var(--info)');
+    if (visits.some(v=>v.date===d) || sess.some(o=>o.date===d)) out.push('var(--info)');
     if (ills.some(i=>i.start<=d && (i.end||t)>=d && d<=t)) out.push('var(--bad)');
     if (dosesFor(d).length) out.push('var(--teal)');
     if (files.some(f=>f.date===d)) out.push('var(--warn)');
@@ -1428,15 +1716,16 @@ VIEWS.calendar = () => {
     <div class="calhead"><button class="iconbtn" data-act="calMove|-1">${ic('back')}</button><b>${first.toLocaleDateString(undefined,{month:'long',year:'numeric'})}</b><button class="iconbtn" data-act="calMove|1">${ic('back','style="transform:rotate(180deg)"')}</button></div>
     <div class="cal">${['Mo','Tu','We','Th','Fr','Sa','Su'].map(d=>`<div class="dh">${d}</div>`).join('')}
     ${cells.map(d => `<div class="d ${d.slice(0,7)!==UI.calMonth?'o':''} ${d===t?'today':''} ${d===sel?'sel':''}" data-act="calSel|${d}">${+d.slice(8)}<span class="dots">${dots(d).slice(0,4).map(c=>`<i style="background:${d===sel?'#fff':c}"></i>`).join('')}</span></div>`).join('')}</div>
-    <div class="legend"><span><i style="background:var(--info)"></i>Doctor visit</span><span><i style="background:var(--teal)"></i>Medication</span><span><i style="background:var(--bad)"></i>Sick</span><span><i style="background:var(--warn)"></i>Record</span></div>
+    <div class="legend"><span><i style="background:var(--info)"></i>Appointment</span><span><i style="background:var(--teal)"></i>Medication</span><span><i style="background:var(--bad)"></i>Sick</span><span><i style="background:var(--warn)"></i>Record</span></div>
   </div>
   <div class="card"><h3>${fmtD(sel)}</h3>
     ${dv.map(visitRow).join('')}
+    ${sess.filter(o => o.date === sel).sort(byWhen).map(sessionRow).join('')}
     ${di.map(illRow).join('')}
     ${started.map(x=>`<div class="row click" data-act="viewMed|${x.id}"><div class="medic">${ic('note')}</div><div class="main"><div class="ttl">Prescribed: ${esc(x.name)}</div><div class="sub">${esc([x.doctor,x.facility].filter(Boolean).join(' · '))}</div></div></div>`).join('')}
     ${dd.length ? doseRows(sel, dd) : ''}
     ${df.map(fileRow).join('')}
-    ${!dv.length && !di.length && !dd.length && !df.length && !started.length ? '<div class="empty">Nothing on this day.</div>' : ''}
+    ${!dv.length && !sess.some(o => o.date === sel) && !di.length && !dd.length && !df.length && !started.length ? '<div class="empty">Nothing on this day.</div>' : ''}
     <div class="btns" style="margin-top:8px"><button class="btn sm sec" data-act="addVisitOn|${sel}">+ Visit on this day</button></div>
   </div>`;
 };
@@ -1479,11 +1768,11 @@ const PROFILE_FIELDS = [
 VIEWS.reminders = () => {
   const s = settings(), r = s.remind;
   const notif = ('Notification' in window) ? Notification.permission : 'unsupported';
-  const dt = s.doseTimes, fs = s.freqSlots;
+  const dt = s.doseTimes, de = s.doseEnds, fs = s.freqSlots;
   return `<div class="card"><h3>${ic('pill','style="width:18px;height:18px;color:var(--teal-d)"')}Dose times</h3>
-    <div class="small" style="margin-bottom:10px">Set the times that suit your day. Prescriptions that say “morning”, “at night”, “bedtime”, “1-0-1” and so on are scheduled at these times.</div>
+    <div class="small" style="margin-bottom:12px">Set each part of your day. Prescriptions that say “morning”, “at night”, “bedtime”, “1-0-1” and so on are scheduled at the <b>start</b> time. A dose that isn't ticked by the <b>end</b> time is marked as missed.</div>
     <form id="doseForm">
-      <div class="grid2">${SLOTS.map(([k,l]) => `<label class="f">${l}<input type="time" name="${k}" value="${dt[k]}" required></label>`).join('')}</div>
+      <div class="slots">${SLOTS.map(([k,l]) => `<div class="slotrow" role="group" aria-labelledby="sl-${k}"><div class="slotname" id="sl-${k}">${l}</div><div class="slotin"><input type="time" name="${k}" value="${dt[k]}" required aria-label="${l} start"><span aria-hidden="true">–</span><input type="time" name="${k}_end" value="${de[k]}" required aria-label="${l} end"></div><div class="small slotnote" data-slotnote="${k}"></div></div>`).join('')}</div>
       <div class="sect" style="margin-top:4px">Default times for “… times a day”</div>
       ${[1,2,3,4].map(n => `<div style="margin-bottom:10px"><div style="font-weight:800;font-size:13.5px;margin-bottom:4px">${n}× a day <span class="small" data-fsum="${n}"></span></div><div class="chips">${SLOTS.map(([k,l]) => `<button type="button" class="chip ${(fs[n]||[]).includes(k)?'on':''}" data-fs="${n}|${k}">${l.split(' /')[0]}</button>`).join('')}</div></div>`).join('')}
       <div class="small" style="margin-bottom:10px">“Every 8 hours” and similar start at your morning time.</div>
@@ -2362,23 +2651,115 @@ ACT.viewFile = id => {
 /* ---- visits ---- */
 const VISIT_FIELDS = [
   {k:'date',label:'Date',type:'date',req:true,half:true},{k:'time',label:'Time',type:'time',half:true},
-  {k:'doctor',label:'Doctor',list:'dl-doc',req:true,half:true},{k:'specialty',label:'Specialty',ph:'e.g. GP, Cardiologist',half:true},
-  {k:'facility',label:'Hospital / clinic',list:'dl-fac',half:true},{k:'facilityType',label:'Place type',type:'select',opts:['Clinic','Hospital','Pharmacy','Lab','Telehealth','Other'],half:true},
-  {k:'reason',label:'Reason for visit'},
+  {k:'doctor',label:'With (name)',list:'dl-doc',ph:'e.g. Dr. Lee, Sam (physio)',half:true},{k:'specialty',label:'Specialty',ph:'e.g. GP, Sports physio',half:true},
+  {k:'facility',label:'Clinic / place',list:'dl-fac',half:true},{k:'facilityType',label:'Place type',type:'select',opts:['Clinic','Hospital','Pharmacy','Lab','Telehealth','Other'],half:true},
+  {k:'reason',label:'Reason'},
   {k:'notes',label:'Notes / outcome',type:'textarea',ph:'Diagnosis, advice, follow-up…'}
 ];
+const REMIND_OPTS = [['0','No reminder'],['60','1 hour before'],['180','3 hours before'],['1440','1 day before']];
 ACT.addVisit = () => visitForm({date: addDays(today(), 1), facilityType:'Clinic'});
 ACT.addVisitOn = d => visitForm({date: d, facilityType:'Clinic'});
+/* one form for a single appointment or a course of repeating sessions (v.kind === 'course') */
 function visitForm(v){
   const ills = list('illness').sort((a,b)=>b.start.localeCompare(a.start)).slice(0,10);
   if (!v.id && !v.caseId && v.illnessId && get(v.illnessId)) v = {...v, caseId: get(v.illnessId).caseId || ''};
-  openSheet(v.id ? 'Edit visit' : 'Doctor visit', `${datalists()}<form id="vf">${formHtml(VISIT_FIELDS, v)}
+  const isCourse = v.kind === 'course', canRepeat = !v.id;   // new appointments can be either; saved ones keep their kind
+  let mode = isCourse ? 'course' : 'one';
+  const r = isCourse ? courseRep(v) : {type:'weekly', days:[parseD(v.date || today()).getDay()], every:1};
+  let rep = r.type === 'daily' ? 'daily' : r.type === 'monthly' ? 'monthly' : (+r.every === 2 ? 'biweekly' : 'weekly');
+  const e0 = v.ends || {mode:'count', count:10, extend:true};
+  let endm = e0.mode || 'count', cdays = new Set(r.days && r.days.length ? r.days.map(Number) : [parseD(v.start || v.date || today()).getDay()]), daysTouched = isCourse;
+  const chipRow = (grp, opts, cur) => `<div class="chips" data-grp="${grp}" style="margin-bottom:10px">${opts.map(([k, l]) => `<button type="button" class="chip ${k === cur ? 'on' : ''}" data-v="${k}" aria-pressed="${k === cur}">${l}</button>`).join('')}</div>`;
+  openSheet(isCourse ? 'Edit sessions' : v.id ? 'Edit appointment' : 'New appointment', `${datalists()}<form id="vf">
+    ${fieldHtml({k:'apptType',label:'Appointment type',type:'select',opts:APPT_TYPES.map(x => x[0])}, v.apptType || 'Doctor')}
+    ${canRepeat ? chipRow('mode', [['one','One visit'],['course','Repeating sessions']], mode) : ''}
+    <div data-one class="${mode === 'one' ? '' : 'hidden'}">${formHtml(VISIT_FIELDS.slice(0, 2), v)}</div>
+    <div data-course class="${mode === 'course' ? '' : 'hidden'}">
+      <div class="grid2"><label class="f">First session *<input type="date" name="c_start" value="${esc(v.start || v.date || today())}" required></label><label class="f">Time<input type="time" name="c_time" value="${esc(v.time || '')}"></label></div>
+      <label class="f">Session length<select name="c_len">${[['','—'],['15','15 min'],['30','30 min'],['45','45 min'],['60','1 hour'],['90','1½ hours'],['120','2 hours']].map(([a, l]) => `<option value="${a}" ${String(v.len || '') === a ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
+      <div class="sect" style="margin-top:0">How often</div>
+      ${chipRow('rep', [['daily','Every day'],['weekly','Weekly'],['biweekly','Every 2 weeks'],['monthly','Monthly']], rep)}
+      <div data-daysrow><div class="chips" role="group" aria-label="Days of the week" style="margin:-2px 0 10px">${WD_ORDER.map(i => `<button type="button" class="chip" data-cwd="${i}" aria-pressed="false">${WD_SHORT[i]}</button>`).join('')}</div></div>
+      <div class="sect">Ends</div>
+      ${chipRow('end', [['count','After a number of sessions'],['date','On a date'],['ongoing','Ongoing']], endm)}
+      <div data-endcount><label class="f">Number of sessions<input type="number" name="c_count" min="1" max="200" value="${+e0.count || 10}"></label>
+        <label class="switch" style="padding-top:0;cursor:pointer"><input type="checkbox" name="c_extend" value="1" ${e0.extend !== false ? 'checked' : ''} style="width:20px;height:20px;accent-color:var(--teal)"><div class="main"><div style="font-weight:700">Add a cancelled session back at the end</div><div class="small">So you still get every session</div></div></label></div>
+      <div data-enddate><label class="f">Last day<input type="date" name="c_until" value="${esc(e0.until || '')}"></label></div>
+      <div class="alert info" data-csum style="font-size:13px"></div>
+      <div class="small" data-cerr role="alert" style="color:var(--bad);font-weight:700;margin:-4px 0 10px"></div>
+    </div>
+    ${formHtml(VISIT_FIELDS.slice(2), v)}
+    ${fieldHtml({k:'remind',label:'Remind me',type:'select',opts:REMIND_OPTS}, String(+v.remind || 0))}
     ${ills.length?fieldHtml({k:'illnessId',label:'Related illness',type:'select',opts:[['','— none —'],...ills.map(i=>[i.id, (i.title||'Unwell')+' ('+fmtDs(i.start)+')'])]}, v.illnessId):''}
     ${caseField(v)}
-    <button class="btn block" type="submit">Save visit</button></form>`, b => b.querySelector('#vf').onsubmit = e => {
-    e.preventDefault(); const val = resolveCase(readForm(e.target), null, v.date);
-    if (!val.newCase && val.caseId && val.illnessId) { const il = get(val.illnessId); if (il && !il.caseId) save({...il, caseId: val.caseId}); }
-    save({...v, ...val, kind:'visit', id: v.id || 'visit~'+uid()}); closeSheet(); toast('Visit saved.');
+    <button class="btn block" type="submit" data-save>Save</button></form>`, b => {
+    const f = b.querySelector('#vf'), q = s => f.querySelector(s);
+    const cfg = () => {
+      const start = q('[name=c_start]').value;
+      const repeat = rep === 'daily' ? {type:'daily'} : rep === 'monthly' ? {type:'monthly', day: start ? +start.slice(8) : 1} : {type:'weekly', days: [...cdays].sort((a, c) => a - c), every: rep === 'biweekly' ? 2 : 1};
+      return {start, time: q('[name=c_time]').value, len: +q('[name=c_len]').value || '', repeat,
+        ends: {mode: endm, count: Math.max(1, +q('[name=c_count]').value || 1), until: q('[name=c_until]').value, extend: q('[name=c_extend]').checked}};
+    };
+    const cErr = c => {
+      if (!c.start) return 'Pick the date of the first session.';
+      if (c.repeat.type === 'weekly' && !c.repeat.days.length) return 'Pick at least one day.';
+      if (c.ends.mode === 'date' && !c.ends.until) return 'Pick the last day, or choose another way for it to end.';
+      if (c.ends.mode === 'date' && c.ends.until < c.start) return "The last day can't be before the first session.";
+      if (c.ends.mode === 'date' && !courseSessions({...c, sessions: {}}, c.ends.until).length) return 'No sessions fall between those dates.';
+      return '';
+    };
+    const summary = () => {
+      const c = cfg(), box = q('[data-csum]');
+      if (cErr(c)) { box.classList.add('hidden'); return; }
+      box.classList.remove('hidden');
+      const ss = courseSessions({...c, sessions: isCourse ? v.sessions : {}}, c.ends.mode === 'date' ? c.ends.until : addDays(c.start, 400));
+      box.innerHTML = c.ends.mode === 'ongoing' ? `<b>${esc(courseSchedule(c))}</b>From ${fmtD(c.start)}, ongoing.`
+        : `<b>${ss.filter(o => o.s !== 'cancelled').length} sessions · ${esc(courseSchedule(c))}</b>${fmtD(ss[0].date)} – ${fmtD(ss[ss.length - 1].date)}`;
+    };
+    const show = () => {
+      q('[data-one]').classList.toggle('hidden', mode !== 'one');
+      q('[data-course]').classList.toggle('hidden', mode !== 'course');
+      const pick = (g, val) => f.querySelectorAll(`[data-grp="${g}"] [data-v]`).forEach(x => { x.classList.toggle('on', x.dataset.v === val); x.setAttribute('aria-pressed', x.dataset.v === val); });
+      pick('mode', mode); pick('rep', rep); pick('end', endm);
+      q('[data-daysrow]').classList.toggle('hidden', rep !== 'weekly' && rep !== 'biweekly');
+      f.querySelectorAll('[data-cwd]').forEach(x => { const on = cdays.has(+x.dataset.cwd); x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); });
+      q('[data-endcount]').classList.toggle('hidden', endm !== 'count');
+      q('[data-enddate]').classList.toggle('hidden', endm !== 'date');
+      q('[data-save]').textContent = mode === 'course' ? 'Save sessions' : 'Save appointment';
+      q('[data-cerr]').textContent = '';
+      summary();
+    };
+    f.querySelectorAll('[data-grp="mode"] [data-v]').forEach(x => x.onclick = () => {
+      if (x.dataset.v === 'course' && mode !== 'course') {   // carry the date and time across
+        const d = q('[name=date]').value, tm = q('[name=time]').value;
+        if (d) q('[name=c_start]').value = d; if (tm) q('[name=c_time]').value = tm;
+        if (!daysTouched && d) cdays = new Set([parseD(d).getDay()]);
+      }
+      mode = x.dataset.v; show();
+    });
+    f.querySelectorAll('[data-grp="rep"] [data-v]').forEach(x => x.onclick = () => { rep = x.dataset.v; show(); });
+    f.querySelectorAll('[data-grp="end"] [data-v]').forEach(x => x.onclick = () => { endm = x.dataset.v; show(); });
+    f.querySelectorAll('[data-cwd]').forEach(x => x.onclick = () => { const d = +x.dataset.cwd; if (cdays.has(d)) cdays.delete(d); else cdays.add(d); daysTouched = true; show(); });
+    q('[name=c_start]').addEventListener('change', () => { const d = q('[name=c_start]').value; if (!daysTouched && d) cdays = new Set([parseD(d).getDay()]); show(); });
+    ['c_time','c_len','c_count','c_until','c_extend'].forEach(n => { const el = q(`[name=${n}]`); el.addEventListener('input', summary); el.addEventListener('change', summary); });
+    show();
+    f.onsubmit = ev => {
+      ev.preventDefault();
+      const raw = readForm(f), strip = o => { Object.keys(o).filter(k => k.startsWith('c_')).forEach(k => delete o[k]); o.remind = +o.remind || 0; return o; };
+      const link = val => { if (!val.newCase && val.caseId && val.illnessId) { const il = get(val.illnessId); if (il && !il.caseId) save({...il, caseId: val.caseId}); } };
+      if (mode === 'one') {
+        const val = strip(resolveCase(raw, null, raw.date)); link(val);
+        save({...v, ...val, kind:'visit', id: v.id || 'visit~'+uid()}); closeSheet(); toast('Appointment saved.');
+        return;
+      }
+      const c = cfg(), err = cErr(c);
+      if (err) { q('[data-cerr]').textContent = err; return; }
+      const val = strip(resolveCase(raw, null, c.start)); delete val.date; delete val.time; link(val);
+      const id = isCourse ? v.id : 'course~' + uid();
+      save({...(isCourse ? v : {}), ...val, ...c, kind:'course', id, sessions: isCourse ? (v.sessions || {}) : {}});
+      const n = courseSessions(get(id), addDays(c.start, 400)).filter(o => o.s !== 'cancelled').length;
+      closeSheet(); toast(isCourse ? 'Sessions updated.' : c.ends.mode === 'ongoing' ? 'Repeating sessions booked.' : `${n} sessions booked.`);
+    };
   });
 }
 ACT.viewVisit = id => {
@@ -2577,17 +2958,30 @@ function wireDoseForm(root){
     const i = arr.indexOf(k); if (i >= 0) arr.splice(i, 1); else { arr.push(k); if (arr.length > +n) { const drop = arr.shift(); f.querySelector(`[data-fs="${n}|${drop}"]`).classList.remove('on'); } }
     b.classList.toggle('on', arr.includes(k)); summary();
   });
-  f.querySelectorAll('input[type=time]').forEach(i => i.oninput = summary);
-  summary();
-  f.querySelector('#doseReset').onclick = () => { SLOTS.forEach(([k,,t]) => f.querySelector(`[name=${k}]`).value = t); Object.keys(sel).forEach(n => delete sel[n]); Object.assign(sel, JSON.parse(JSON.stringify(DEF_FREQ_SLOTS))); f.querySelectorAll('[data-fs]').forEach(b => { const [n, k] = b.dataset.fs.split('|'); b.classList.toggle('on', sel[n].includes(k)); }); summary(); };
+  // under each part of the day: how long the window is, or what's wrong with it
+  const slotNotes = () => SLOTS.forEach(([k]) => {
+    const a = f.querySelector(`[name=${k}]`).value, b = f.querySelector(`[name=${k}_end]`).value, el = f.querySelector(`[data-slotnote="${k}"]`), row = el.closest('.slotrow');
+    let msg = '', bad = false;
+    if (a && b) {
+      const w = (hmToMin(b) - hmToMin(a) + 1440) % 1440;
+      if (!w) { msg = "The end time can't be the same as the start."; bad = true; }
+      else msg = `${w >= 60 ? Math.floor(w / 60) + ' h' + (w % 60 ? ' ' + (w % 60) + ' min' : '') : w + ' min'} to take it${hmToMin(b) < hmToMin(a) ? ' · ends after midnight' : ''}`;
+    }
+    el.textContent = msg; el.classList.toggle('bad', bad); row.querySelectorAll('input').forEach(i => i.setAttribute('aria-invalid', bad));
+  });
+  f.querySelectorAll('input[type=time]').forEach(i => i.oninput = () => { summary(); slotNotes(); });
+  summary(); slotNotes();
+  f.querySelector('#doseReset').onclick = () => { SLOTS.forEach(([k,,t]) => { f.querySelector(`[name=${k}]`).value = t; f.querySelector(`[name=${k}_end]`).value = addHours(t, MISSED_AFTER_MIN / 60); }); Object.keys(sel).forEach(n => delete sel[n]); Object.assign(sel, JSON.parse(JSON.stringify(DEF_FREQ_SLOTS))); f.querySelectorAll('[data-fs]').forEach(b => { const [n, k] = b.dataset.fs.split('|'); b.classList.toggle('on', sel[n].includes(k)); }); summary(); slotNotes(); };
   f.onsubmit = e => {
     e.preventDefault();
     const bad = [1,2,3,4].filter(n => (sel[n]||[]).length !== n);
     if (bad.length) { toast(`Pick exactly ${bad[0]} time${bad[0]>1?'s':''} for “${bad[0]}× a day”.`); return; }
-    const v = readForm(f), s = settings(), oldT = s.doseTimes, newT = {};
-    SLOTS.forEach(([k]) => newT[k] = v[k] || oldT[k]);
+    const v = readForm(f), s = settings(), oldT = s.doseTimes, newT = {}, newE = {};
+    SLOTS.forEach(([k]) => { newT[k] = v[k] || oldT[k]; newE[k] = v[k + '_end'] || s.doseEnds[k]; });
+    const same = SLOTS.find(([k]) => newT[k] === newE[k]);
+    if (same) { toast(`${same[1]}: the end time can't be the same as the start.`); f.querySelector(`[name=${same[0]}_end]`).focus(); return; }
     const oldFreq = [1,2,3,4].map(n => freqTimes(n));
-    save({...s, doseTimes: newT, freqSlots: sel});
+    save({...s, doseTimes: newT, doseEnds: newE, freqSlots: sel});
     // offer to move existing schedules that use the old times
     const map = {};
     SLOTS.forEach(([k]) => { if (oldT[k] !== newT[k]) map[oldT[k]] = newT[k]; });
@@ -2630,6 +3024,19 @@ function checkReminders(){
       fired.add(k);
       toast(`💊 ${whoH}Time to take <b>${esc(d.med.name)}</b>${d.med.dose?' '+esc(d.med.dose):''} (${fmtT(d.time)})`, {label:'Taken', fn: inP(() => toggleDose(t, d.key))}, 0);
       notify('Medication reminder', `${who}${d.med.name} ${d.med.dose||''} — ${fmtT(d.time)}`);
+    }
+  });
+  // appointment & session reminders ("Remind me" on the appointment)
+  const tmr = addDays(t, 1), whenOf = (d, tm) => { const a = parseD(d); const [hh, mm] = (tm || '09:00').split(':').map(Number); a.setHours(hh, mm, 0, 0); return a.getTime(); };
+  [...list('visit').filter(v => +v.remind > 0 && v.date >= t && v.date <= tmr).map(v => ({k: v.id, date: v.date, time: v.time, mins: +v.remind, label: v.doctor || apptShort(v), sub: v.facility})),
+   ...list('course').filter(c => +c.remind > 0).flatMap(c => courseSessions(c, tmr).filter(o => !o.s && o.date >= t && o.date <= tmr).map(o => ({k: c.id + o.orig, date: o.date, time: o.time, mins: +c.remind, label: `${c.doctor || apptShort(c)} · ${sessionLabel(o)}`, sub: c.facility})))
+  ].forEach(a => {
+    const at = whenOf(a.date, a.time), k = 'appt:' + pid + a.k + a.date;
+    if (Date.now() >= at - a.mins * 60e3 && Date.now() < at && !fired.has(k)) {
+      fired.add(k);
+      const when = `${a.date === t ? 'today' : 'tomorrow'}${a.time ? ' at ' + fmtT(a.time) : ''}`;
+      toast(`📅 ${whoH}<b>${esc(a.label)}</b> ${when}${a.sub ? ' · ' + esc(a.sub) : ''}`, null, 0);
+      notify('Appointment reminder', `${who}${a.label} ${when}${a.sub ? ' · ' + a.sub : ''}`);
     }
   });
   const due = liveTimers().filter(x => !x.fired && x.due <= Date.now());
